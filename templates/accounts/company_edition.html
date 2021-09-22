@@ -1,0 +1,73 @@
+<!--templates/client.html-->
+{%  extends '_base.html' %}
+
+{% block title %}Client{% endblock title %}
+
+{% block content %}
+
+
+<br>
+
+<div class="row">
+	
+	<div class="col-xl-4 col-lg-6">
+		<div class="card l-bg-white-dark">
+			<div class="card-statistic-3 p-4">
+				<div class="card-icon card-icon-large"><i class="far fa-building"></i></div>
+				<div class="mb-4">
+					<h3 class="card-title mb-0">{{company.name}}</h3>
+					<h5>{{company.legal_form.lf_name}}</h5>
+
+				</div>
+				<div class="row align-items-center mb-2 d-flex">
+					<div class="col-12">
+						<h2 class="d-flex align-items-center mb-0">
+							<h6><i class="fas fa-map-marker"></i> {{company.adresse}} {{company.city}}</h6>
+							<h6>IF: {{company.identifiant_fiscal}} - RC: {{company.rc}} - TP: {{company.tp}} - CNSS: {{company.cnss}} - ICE: {{company.ice}}</h6>
+							<h6>Ex Débute: {{company.fiscal_year}}</h6>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+</div>
+
+<div class="row">
+	<div class="col-sm-2">
+	  <div class="card">
+		<img
+		src="https://mdbootstrap.com/img/new/standard/nature/184.jpg"
+		class="card-img-top"
+		alt="..."
+	  />
+		<div class="card-body">
+		  <h5 class="card-title">Demande degrèvement</h5>
+		  <p class="card-text">
+			With supporting text below as a natural lead-in to additional content.
+		  </p>
+		  <a href="{% url 'editions:Edition100' company.id %}" class="btn btn-primary">Go somewhere</a>
+
+		</div>
+	  </div>
+	</div>
+	<div class="col-sm-2">
+	  <div class="card">
+		<img
+		src="https://mdbootstrap.com/img/new/standard/nature/184.jpg"
+		class="card-img-top"
+		alt="..."
+	  />
+		<div class="card-body">
+		  <h5 class="card-title">Special title treatment</h5>
+		  <p class="card-text">
+			With supporting text below as a natural lead-in to additional content.
+		  </p>
+		  <a href="#" class="btn btn-primary">Go somewhere</a>
+		</div>
+	  </div>
+	</div>
+  </div>
+
+{% endblock content %}

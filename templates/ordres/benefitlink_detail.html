@@ -1,0 +1,54 @@
+<!-- templates/ordres/benefitlink_detail.html -->
+{% extends '_base.html' %}
+{% block title %}Mise à Jour Client{% endblock title %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block content %}
+
+<br>
+<div class="row">
+    <div class="col-md-5">
+        <div class="card card-body">
+		<p>Lettre de Mission :</p><h3>{{benefitlink}}</h3>	
+
+		<hr>
+            <form action="" enctype="multipart/form-data" method="POST">
+                {% csrf_token %}
+                {{form|crispy}}
+				<a class="btn btn-warning" href="{% url 'ordres:lettremissionDetail' lettremission %}">Retour</a>
+                <input class="btn btn-primary" type="submit" name="Submit">
+            </form>
+
+		</div>
+    </div>
+
+	<div class="col-md-7">
+
+
+        <div class="card card-body">
+			<a class="btn btn-secondary" href="{%url 'ordres:createBenefitItem' benefitlink.id %}">Ajouter une Particularité</a>
+			<br>
+			<table class="table table-sm">
+				<tr>
+					<th>Particularité</th>
+					<th>Active</th>
+					<th>Editer</th>
+					<th>Supprimer</th>
+				</tr>
+
+				{% for benefititem in benefititems %}
+					<tr>
+						<td>{{benefititem.code_benefit.name}}</td>
+						<td class="myDIVNum">{{benefititem.active}}</td>
+						<td><a class="btn btn-sm btn-outline-warning" href="{% url 'ordres:updateBenefitItem' benefititem.id %}"><i class="fas fa-edit"></i> Edit</a></td>
+						<td><a class="btn btn-sm btn-outline-danger" href="{% url 'ordres:deleteBenefitItem' benefititem.id %}"><i class="fas fa-trash"></i> Sup.</a></td>
+					</tr>
+				{% endfor %}
+			</table>
+		</div>
+	</div>
+
+</div>
+
+
+{% endblock content %}

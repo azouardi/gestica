@@ -1,0 +1,58 @@
+<!-- templates/ordres/lettremission_list.html -->
+
+{% load static %}
+
+<div class="container-fluid">
+	<div class="py-5">
+
+		<div class="row">
+			
+			{% for lettremission in lettremissions %}
+			<div class="col-md-2">
+				<a class="text-dark" href="{% url 'ordres:lettremissionDetail' lettremission.id %}">
+					<div class="card mb-4 box-shadow">
+						{% if lettremission.company.file %}
+						<br>
+						<div class="cover-image mx-auto">
+							<img src="{{lettremission.company.file.url}}" alt="..." class="mx-auto d-block" height="100px" width="100%">
+						</div>
+						<br>
+						{% else %}
+						{% endif %}
+						<div class="card-body">
+							<h3 style="font-size:18px;font-weight:bold;min-height:45px;">
+								{{lettremission.company.name}}</h3>
+							<h5 style="font-size:12px;font-weight:bold;min-height:20px;">
+								{{lettremission.moduleservice}}</h5>
+							<div class="d-flex justify-content-between align-items-center">
+								<small class="text-muted">Date d'entrée : {{lettremission.entry_date}}</small>
+								<small class="text-muted">Base Données: {{lettremission.db_office}}</small>
+							</div>
+							<small class="text-muted">{{time}}</small>
+						</div>
+					</div>
+				</a>
+			</div>
+			{% endfor %}
+		</div>
+		<div class="row">
+			<div class="col-12">
+				<span class="step-links">
+					{% if page_obj.has_previous %}
+						<a href="?page=1">&laquo; first</a>
+						<a href="?page={{ page_obj.previous_page_number }}">previous</a>
+					{% endif %}
+			
+					<span class="current">
+						Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+					</span>
+			
+					{% if page_obj.has_next %}
+						<a href="?page={{ page_obj.next_page_number }}">next</a>
+						<a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+					{% endif %}
+				</span>
+			</div>
+		</div>
+	</div>
+</div>

@@ -1,0 +1,44 @@
+<!--templates/claim_update.html-->
+{%  extends '_base.html' %}
+{% load static %}
+{% block title %}Mise à Jour Service{% endblock title %}
+
+
+{% load crispy_forms_tags %}
+{% block content %}
+
+<br>
+
+<div class="row">
+	
+	<div class="col-xl-4 col-lg-6">
+		<div class="card l-bg-white-dark">
+			<div class="card-statistic-3 p-4">
+				<div class="card-icon card-icon-large"><i class="far fa-building"></i></div>
+				<div class="mb-4">
+					<h3 class="card-title mb-0">{{claim}}</h3>
+					<h5>{{company.legal_form.lf_name}}</h5>
+
+				</div>
+
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card card-body">
+            <form action="" method="POST">
+                {% csrf_token %}
+                {{form|crispy}}
+                <a class="btn btn-secondary" href="{% url 'accounts:userPortefolio' %}">Retour Portefeuille</a>
+                <a class="btn btn-warning" href="{% url 'accounts:companyTdb' claim.lettremission.company.id %}">Retour TDB Dossier</a>
+
+                <input class="btn btn-primary" type="submit" name="Submit">
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}

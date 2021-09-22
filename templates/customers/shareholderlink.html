@@ -1,0 +1,25 @@
+<!--templates/shareholderlink.html-->
+{%  extends '_base.html' %}
+{% load static %}
+{% block title %}Associés (Société){% endblock title %}
+
+{% load crispy_forms_tags %}
+{% block content %}
+
+<br>
+<div class="row">
+    <div class="col-md-6">
+        <div class="card card-body">
+            <p>Pour créer une liste d'actionnaire(s) cliquer sur Envoyer :</p>
+            <form action="{% url 'customers:createShareholderLink' company.id %}" method="POST">
+                {% csrf_token %}
+                {{form|crispy}}
+                <a class="btn btn-warning" href="{% url 'customers:companyDetail' company.id %}">Retour</a>
+
+                <input class="btn btn-primary" type="submit" name="Submit">
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}

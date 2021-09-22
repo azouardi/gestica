@@ -1,0 +1,116 @@
+<!-- templates/tasks/period_detail.html -->
+{% extends '_base.html' %}
+{% block title %}Mise à Jour Client{% endblock title %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block content %}
+
+<br>
+
+<div class="col-md-12">
+	<div class="card card-body">
+	<h3>Période : {{period}}</h3>
+	<br>
+	<a type="button" class="btn btn-primary btn-lg btn-block" href="{% url 'tasks:createWork' period.id %}">Ajouter une Tâche</a>
+	<br>
+	<form action="" enctype="multipart/form-data" method="POST">
+		{% csrf_token %}
+		<!-- {{form|crispy}} -->
+		<a class="btn btn-warning" href="{% url 'tasks:periodList' %}">Retour</a>
+		<a class="btn btn-secondary" href="{%url 'tasks:insertWork' period.id %}">Générer les Tâches</a>
+		<a class="btn btn-secondary" href="{%url 'tasks:ExtraDataUpdate' period.id %}">Générer les Valeur</a>
+		<input class="btn btn-primary" type="submit" name="OK">
+		
+	</form>
+
+	</div>
+</div>
+
+<div class="card">
+			<div id="accordion">
+			{% regroup works by lettremission as lettremission_list %}
+			
+			{% for lettremission, works in lettremission_list %}
+		
+				<div>
+						<div class="card-header" id=#{{lettremission}}>
+							<h5 class="mb-0">
+								<button class="btn btn-outline-secondary" data-toggle="collapse" data-target=#{{lettremission}} aria-expanded="true" aria-controls={{lettremission}}><i class="fas fa-caret-square-right" ></i> 
+								{{lettremission}} 
+								<button type="button" class="btn">
+									<span class="badge badge-pill badge-primary">{{ works|length}} </span>
+								  </button>
+								</button>
+							</h5>
+						</div>
+					
+						<div id={{lettremission}} class="collapse" aria-labelledby={{lettremission}} data-parent="#accordion">
+							<div class="card-body">
+								{% if lettremission %}
+								<table class="table table-sm">
+									<tr>
+										<th>Echéance</th>
+										<th>LDM</th>
+										<th>Tâche</th>
+										<th>Date Limite</th>
+										<th>Valeur</th>
+										<th>Quittance</th>
+										<th>Statut</th>
+										<th>Document</th>
+										<th>Supprimer</th>
+									</tr>
+								{% else %}
+								{% endif %}
+
+								{% for work in works %}
+
+					
+										<tr>
+											<td>{{work}}</td>
+											<td>{{work.lettremission.company|truncatechars:25}}</td>
+											<td>{{work.task}}</td>
+											<td>{{work.date_limit}}</td>
+											<td style="text-align: right"><b>{{work.value}}</b></td>
+											{% if work.proof %}
+											<td ><a class="btn btn-sm btn-success" href="{% url 'tasks:updateWork' work.id %}"><i class="fas fa-link"></i> {{work.proof}}</a></td>
+											{% else %}
+											{% if work.statut == 3 %}
+												<td><a class="btn btn-sm btn-dark" href="{% url 'tasks:updateWork' work.id %}"><i class="fas fa-unlink"></i></a></td>
+												{% else %}
+												<td><a class="btn btn-sm btn-danger" href="{% url 'tasks:updateWork' work.id %}"><i class="fas fa-unlink"></i></a></td>
+												{% endif %}
+											{% endif %}
+											{% if work.statut == 0 %}
+											<td ><a class="btn btn-sm btn-danger" href="{% url 'tasks:updateWork' work.id %}"><i class="fas fa-window-close"></i> En Attente</a></td>
+											{% elif work.statut == 1 %}
+											<td ><a class="btn btn-sm btn-warning" href="{% url 'tasks:updateWork' work.id %}"><i class="fas fa-step-forward"></i> Préparé</a></td>
+											{% elif work.statut == 2 %}
+											<td ><a class="btn btn-sm btn-success" href="{% url 'tasks:updateWork' work.id %}"><i class="fas fa-check-double"></i> Validé</a></td>
+											{% else %}
+											<td ><a class="btn btn-sm btn-dark" href="{% url 'tasks:updateWork' work.id %}"><i class="fab fa-slack-hash"></i> Non Applicable</a></td>
+											{% endif %}
+						
+											{% if work.file %}
+											<td><a class="btn btn-sm btn-success" href="{{work.file.url}}"><i class="far fa-file-alt"></i> Doc</a></td>
+											{% else %}
+											<td><a class="btn btn-sm btn-warning" href="{% url 'tasks:updateWork' work.id %}"><i class="fas fa-file-upload"></i></a></td>
+											{% endif %}
+						
+											<td><a class="btn btn-sm btn-outline-danger" href="{% url 'tasks:deleteWork' work.id %}"><i class="fas fa-trash"></i> Sup.</a></td>
+										</tr>
+
+									{% endfor %}
+								</table>
+								</div>
+						</div>
+				</div>
+				{% endfor %}
+		
+			</div>
+
+  </div>
+
+
+
+
+{% endblock content %}

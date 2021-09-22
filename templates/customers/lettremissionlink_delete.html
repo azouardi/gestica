@@ -1,0 +1,28 @@
+<!--templates/lettremissionlink_delete.html-->
+{%  extends '_base.html' %}
+{% load static %}
+{% block title %}Supprimer affectation d'une LDM{% endblock title %}
+
+{% load static %}
+{% block content %}
+
+<br>
+<div class="row">
+    <div class="col-md-6">
+        <div class="card card-body">
+            <p>Etes-vous sûr de vouloir supprimer le lien vers "{{lettremissionlink.lettremission}}" ?</p>
+
+
+            <form action="{% url 'customers:deleteLettreMissionLink' lettremissionlink.id %}" method="POST">
+                {% csrf_token %}
+                <a class="btn btn-warning" href="{% url 'customers:prospectDetail' prospect %}">Retour</a>
+            
+            
+                <input class="btn btn-danger" type="submit" name="Confirm">
+            </form>            
+        </div>
+    </div>
+</div>
+
+
+{% endblock content %}

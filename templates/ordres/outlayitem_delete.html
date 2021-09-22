@@ -1,0 +1,29 @@
+<!--templates/serviceitem_delete.html-->
+{%  extends '_base.html' %}
+{% load static %}
+
+{% block title %}Supprimer Débours{% endblock title %}
+
+{% load static %}
+{% block content %}
+
+<br>
+<div class="row">
+    <div class="col-md-6">
+        <div class="card card-body">
+            <p>Etes-vous sûr de vouloir supprimer "{{outlayitem}}" ?</p>
+
+            <form action="{% url 'ordres:deleteOutlayItem' outlayitem.id %}" method="POST">
+            
+                {% csrf_token %}
+                <a class="btn btn-warning" href="{% url 'ordres:ordreDetail' ordre %}">Retour</a>
+            
+            
+                <input class="btn btn-danger" type="submit" name="Confirm">
+            </form>            
+        </div>
+    </div>
+</div>
+
+
+{% endblock content %}

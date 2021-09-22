@@ -1,0 +1,15 @@
+pip install django-crispy-forms
+pip install django_bootstrap_icons
+pip install django-bootstrap-form-horizontal
+pip install django-allauth
+pip install django-bootstrap4
+pip install psycopg2
+pip install mysql
+pip install mysql-connector
+pip install python-dateutil
+pip install weasyprint
+pip install psycopg2-binary
+pip install python-docx
+pip install django-bootstrap-datepicker-plus
+pip install django-chartjs
+python -m pip install --upgrade pip

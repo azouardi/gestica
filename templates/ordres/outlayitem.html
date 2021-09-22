@@ -1,0 +1,25 @@
+<!--templates/outlayitem.html-->
+{%  extends '_base.html' %}
+{% load static %}
+{% block title %}Débours{% endblock title %}
+
+{% load crispy_forms_tags %}
+{% block content %}
+
+<br>
+<div class="row">
+    <div class="col-md-6">
+        <div class="card card-body">
+            <form action="{% url 'ordres:createOutlayItem' ordre.id %}" method="POST">
+                {% csrf_token %}
+                {{form|crispy}}
+                <a class="btn btn-warning" href="{% url 'ordres:ordreDetail' ordre.id %}">Retour</a>
+
+                <input class="btn btn-primary" type="submit" name="Submit">
+                <button type="submit" formnovalidate name="another" class="btn btn-danger">Enregistrer et ajouter un nouveau</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}

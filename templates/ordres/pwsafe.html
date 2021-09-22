@@ -1,0 +1,24 @@
+<!--templates/pwsafe.html-->
+{%  extends '_base.html' %}
+{% load static %}
+{% block title %}Accès{% endblock title %}
+
+{% load crispy_forms_tags %}
+{% block content %}
+
+<br>
+<div class="row">
+    <div class="col-md-6">
+        <div class="card card-body">
+            <form action="{% url 'ordres:createPWSafe' lettremission.id %}" method="POST">
+                {% csrf_token %}
+                {{form|crispy}}
+                <a class="btn btn-warning" href="{% url 'ordres:lettremissionDetail' lettremission.id %}">Retour</a>
+
+                <input class="btn btn-primary" type="submit" name="Submit">
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}

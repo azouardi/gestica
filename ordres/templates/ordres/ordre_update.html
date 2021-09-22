@@ -1,0 +1,61 @@
+<!--templates/ordre_form.html-->
+{%  extends '_base.html' %}
+{% block title %}Mise à Jour Commandes{% endblock title %}
+
+{% load static %}
+{% load crispy_forms_tags %}
+{% block content %}
+
+<br>
+<div class="row">
+    <div class="col-md-6">
+        <div class="card card-body">
+            <form action="" method="POST">
+                {% csrf_token %}
+                {{form|crispy}}
+				<a class="btn btn-warning" href="{% url 'ordres:ordres' %}">Retour</a>
+                <input class="btn btn-primary" type="submit" name="Submit">
+            </form>
+
+			<hr>
+			<a class="btn btn-secondary" href="{%url 'ordres:createServiceItem' ordre.id %}">Ajouter un service</a>
+
+		</div>
+    </div>
+	
+</div>
+
+
+<br>
+
+
+<div class="row">
+	<div class="col-md">
+		<div class="card card-body">
+			<table class="table table-sm">
+				<tr>
+					<th>Service</th>
+					<th>Montant HT</th>
+					<th>Taxe</th>
+					<th>Editer</th>
+					<th>Supprimer</th>
+				</tr>
+
+				{% for serviceitem in serviceitems %}
+
+					<tr>
+						<td>{{serviceitem.service}}</td>
+						<td>{{serviceitem.amount}}</td>
+						<td>{{serviceitem.taxe}}</td>
+						<td><a class="btn btn-sm btn-warning" href=""><i class="fas fa-edit"></i> Edit</a></td>
+						<td><a class="btn btn-sm btn-danger" href=""><i class="fas fa-trash"></i> Sup.</a></td>
+					</tr>
+
+				{% endfor %}
+
+			</table>
+		</div>
+	</div>
+</div>
+
+{% endblock content %}

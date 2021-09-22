@@ -1,0 +1,46 @@
+<!--templates/situation_update.html-->
+{%  extends '_base.html' %}
+{% load static %}
+{% block title %}Mise à Jour Service{% endblock title %}
+
+
+{% load crispy_forms_tags %}
+{% block content %}
+<br>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card card-body">
+            <form action="" enctype="multipart/form-data" method="POST">
+                {% if situation.supervised == True or situation.statut == 2 %}
+                <a class="btn btn-warning" href="{% url 'accounts:companyTdb' situation.lettremission.company.id %}">Retour</a>
+
+                <fieldset disabled>
+                {% else %}
+                <fieldset>
+                {% endif%}
+
+                {% csrf_token %}
+                <!-- <br>
+                <input class="form-control" id="disabledInput" type="text" placeholder="{{situation.lettremission.company}}" disabled>
+                <br>
+                <input class="form-control" id="disabledInput" type="text" placeholder="{{situation.task.name}}" disabled>
+                <br>
+                <input class="form-control" id="disabledInput" type="text" placeholder="Echéance du : {{situation.period.echeance}}" disabled>
+                <br>
+                <input class="form-control is-invalid" id="disabledInput" type="text" placeholder="Date Limite du : {{situation.date_limit}}" disabled>
+                <br> -->
+                {{form|crispy}}
+                {% if is_val == True %}
+                <a class="btn btn-warning" href="{% url 'accounts:userPortefolio' %}">Retour</a>
+                {% else %}
+                <a class="btn btn-warning" href="{% url 'accounts:companyTdb' situation.lettremission.company.id %}">Retour</a>
+                {% endif %}
+                <input class="btn btn-primary" type="submit" name="Submit">
+            </fieldset>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}

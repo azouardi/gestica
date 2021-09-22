@@ -1,0 +1,55 @@
+<!-- templates/customers/prospect_detail.html -->
+{% extends '_base.html' %}
+{% block title %}Mise à Jour Client{% endblock title %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block content %}
+
+<br>
+<div class="row">
+    <div class="col-md-5">
+        <div class="card card-body">
+		<h3>{{prospect.contact}}</h3>	
+		<hr>
+            <form action="" enctype="multipart/form-data" method="POST">
+                {% csrf_token %}
+                {{form|crispy}}
+				<a class="btn btn-warning" href="{% url 'customers:prospectList' %}">Retour</a>
+                <input class="btn btn-primary" type="submit" name="Submit">
+            </form>
+
+		</div>
+    </div>
+
+	<div class="col-md-7">
+		<div class="card card-body">
+			<a class="btn btn-secondary" href="{%url 'customers:createLettreMissionLink' prospect.id %}">Ajouter un lien vers LDM</a>
+			<br>
+			{% if lettremissionlinks %}
+			<table class="table table-sm">
+				<tr>
+					<th>Nom & Prénom</th>
+					<th>Lettre de Mission</th>
+					<th>Editer</th>
+					<th>Supprimer</th>
+				</tr>
+			{% else %}
+			{% endif %}
+				{% for lettremissionlink in lettremissionlinks %}
+
+					<tr>
+						<td>{{lettremissionlink.prospect.contact.person}}</td>
+						<td class="myDIVNum">{{lettremissionlink.lettremission}}</td>
+						<td><a class="btn btn-sm btn-outline-warning" href="{% url 'customers:updateLettreMissionLink' lettremissionlink.id %}"><i class="fas fa-edit"></i> Edit</a></td>
+						<td><a class="btn btn-sm btn-outline-danger" href="{% url 'customers:deleteLettreMissionLink' lettremissionlink.id %}"><i class="fas fa-trash"></i> Sup.</a></td>
+					</tr>
+				{% endfor %}
+			</table>
+		</div>
+
+
+	</div>
+
+</div>
+
+{% endblock content %}

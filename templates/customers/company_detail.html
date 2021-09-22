@@ -1,0 +1,155 @@
+<!-- templates/customers/company_detail.html -->
+{% extends '_base.html' %}
+{% block title %}Mise à Jour Client{% endblock title %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block content %}
+
+<br>
+<div class="row">
+    <div class="col-md-5">
+        <div class="card card-body">
+		<h3>{{company.name}}</h3>	
+		<hr>
+            <form action="" enctype="multipart/form-data" method="POST">
+                {% csrf_token %}
+                {{form|crispy}}
+				<a class="btn btn-warning" href="{% url 'customers:companyList' %}">Retour</a>
+                <input class="btn btn-primary" type="submit" name="Submit">
+            </form>
+
+		</div>
+    </div>
+
+	<div class="col-md-7">
+
+		<div class="card card-body">
+			<a class="btn btn-secondary" href="{%url 'customers:createShareholder' company.id %}">Ajouter un Associé</a>
+			<br>
+			{% if shareholders %}
+			<table class="table table-sm">
+				<tr>
+					<th>Nom & Prénom</th>
+					<th>Nbre Actions</th>
+					<th>Editer</th>
+					<th>Supprimer</th>
+				</tr>
+			{% else %}
+			{% endif %}
+				{% for shareholder in shareholders %}
+
+					<tr>
+						<td>{{shareholder.person}}</td>
+						<td class="myDIVNum">{{shareholder.action}}</td>
+						<td><a class="btn btn-sm btn-outline-warning" href="{% url 'customers:updateShareholder' shareholder.id %}"><i class="fas fa-edit"></i> Edit</a></td>
+						<td><a class="btn btn-sm btn-outline-danger" href="{% url 'customers:deleteShareholder' shareholder.id %}"><i class="fas fa-trash"></i> Sup.</a></td>
+					</tr>
+				{% endfor %}
+			</table>
+		</div>
+		<hr>
+
+        <div class="card card-body">
+			{% if company.shareholderlink %}
+			<a class="btn btn-secondary disabled" href="{%url 'customers:createShareholderLink' company.id %}">Ajouter un Associé (Société)</a>
+			<br>
+			<table class="table table-sm">
+				<tr>
+					<th>Lien</th>
+					<th>Editer</th>
+					<th>Supprimer</th>
+				</tr>
+
+					<tr>
+						<td>{{company.shareholderlink}}</td>
+						<td><a class="btn btn-sm btn-outline-warning" href="{% url 'customers:updateShareholderLink' company.shareholderlink.id %}"><i class="fas fa-edit"></i> Edit</a></td>
+						<td><a class="btn btn-sm btn-outline-danger" href="{% url 'customers:deleteShareholderLink' company.shareholderlink.id %}"><i class="fas fa-trash"></i> Sup.</a></td>
+					</tr>
+			</table>
+			{% else %}
+			<a class="btn btn-secondary" href="{%url 'customers:createShareholderLink' company.id %}">Ajouter un Associé (Société)</a>
+			<br>
+			{% endif %}
+
+		</div>
+
+		<hr>
+
+        <div class="card card-body">
+			<a class="btn btn-secondary" href="{%url 'customers:createRepresentative' company.id %}">Ajouter un Représentant</a>
+			<br>
+			{% if representatives %}
+			<table class="table table-sm">
+				<tr>
+					<th>Nom & Prénom</th>
+					<th>Fonction</th>
+					<th>Editer</th>
+					<th>Supprimer</th>
+				</tr>
+			{% else %}
+			{% endif %}
+
+				{% for representative in representatives %}
+
+					<tr>
+						<td>{{representative.person}}</td>
+						<td class="myDIVNum">{{representative.rolerepresentative}}</td>
+						<td><a class="btn btn-sm btn-outline-warning" href="{% url 'customers:updateRepresentative' representative.id %}"><i class="fas fa-edit"></i> Edit</a></td>
+						<td><a class="btn btn-sm btn-outline-danger" href="{% url 'customers:deleteRepresentative' representative.id %}"><i class="fas fa-trash"></i> Sup.</a></td>
+					</tr>
+				{% endfor %}
+			</table>
+		</div>
+		<hr>
+
+        <div class="card card-body">
+			{% if company.representativelink %}
+			<a class="btn btn-secondary disabled" href="{%url 'customers:createRepresentativeLink' company.id %}">Ajouter une Société Représentante</a>
+			<br>
+			<table class="table table-sm">
+				<tr>
+					<th>Lien</th>
+					<th>Editer</th>
+					<th>Supprimer</th>
+				</tr>
+					<tr>
+						<td>{{company.representativelink}}</td>
+						<td><a class="btn btn-sm btn-outline-warning" href="{% url 'customers:updateRepresentativeLink' company.representativelink.id %}"><i class="fas fa-edit"></i> Edit</a></td>
+						<td><a class="btn btn-sm btn-outline-danger" href="{% url 'customers:deleteRepresentativeLink' company.representativelink.id %}"><i class="fas fa-trash"></i> Sup.</a></td>
+					</tr>		
+			</table>
+			{% else %}
+			<a class="btn btn-secondary" href="{%url 'customers:createRepresentativeLink' company.id %}">Ajouter une Société Représentante</a>
+			<br>
+			{% endif %}		
+		</div>
+		<hr>
+
+		<div class="card card-body">
+			<a class="btn btn-secondary" href="{%url 'customers:createBankAcount' company.id %}">Ajouter un RIB</a>
+			<br>
+			{% if bankacounts %}
+			<table class="table table-sm">
+				<tr>
+					<th>Banque</th>
+					<th>RIB</th>
+					<th>Editer</th>
+					<th>Supprimer</th>
+				</tr>
+			{% else %}
+			{% endif %}
+				{% for bankacount in bankacounts %}
+					<tr>
+						<td>{{bankacount.bank_name}}</td>
+						<td>{{bankacount.rib}}</td>
+						<td><a class="btn btn-sm btn-outline-warning" href="{% url 'customers:updateBankAcount' bankacount.id %}"><i class="fas fa-edit"></i> Edit</a></td>
+						<td><a class="btn btn-sm btn-outline-danger" href="{% url 'customers:deleteBankAcount' bankacount.id %}"><i class="fas fa-trash"></i> Sup.</a></td>
+					</tr>
+				{% endfor %}
+			</table>
+		</div>
+	</div>
+
+</div>
+
+{% endblock content %}

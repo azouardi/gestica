@@ -1,0 +1,82 @@
+<!--templates/client.html-->
+{%  extends '_base.html' %}
+
+{% block title %}Client{% endblock title %}
+
+{% block content %}
+
+
+<br>
+
+<div class="row">
+	<div class="col-md">
+		<div class="card card-body">
+			<h5>Client: {{client.name}}</h5>
+			<hr>
+			<a class="btn btn-outline-info  btn-sm btn-block" href="">Mise à jour Client</a>
+		</div>
+	</div>
+
+	<div class="col-md">
+		<div class="card card-body">
+			<h5>Contact Informations</h5>
+			<hr>
+			<p>Email:  </p>
+			<p>Phone:  </p>
+		</div>
+	</div>
+
+	<div class="col-md">
+		<div class="card card-body">
+			<h5>Total Prestations</h5>
+			<hr>
+			<h1 style="text-align: center;padding: 10px">{{ordre_count}}</h1>
+		</div>
+	</div>
+</div>
+
+
+<br>
+<div class="row">
+	<div class="col">
+		<div class="card card-body">
+			<form method="get">
+
+		    <button class="btn btn-primary" type="submit">Recherche</button>
+		  </form>
+		</div>
+	</div>
+	
+</div>
+<br>
+
+<div class="row">
+	<div class="col-md">
+		<div class="card card-body">
+			<table class="table table-sm">
+				<tr>
+					<th>Cabinet</th>
+					<th>Date Commande</th>
+					<th>Statut</th>
+					<th>Editer</th>
+					<th>Supprimer</th>
+				</tr>
+
+				{% for ordre in ordres %}
+
+					<tr>
+						<td>{{ordre.office}}</td>
+						<td>{{ordre.ordre_date}}</td>
+						<td>{{ordre.statut}}</td>
+						<td><a class="btn btn-sm btn-outline-warning" href="{{ ordre.get_absolute_url }}"><i class="fas fa-edit"></i> Edit</a></td>
+						<td><a class="btn btn-sm btn-outline-danger" href="{% url 'ordres:ordreDelete' ordre.id %}"><i class="fas fa-trash"></i> Sup.</a></td>
+					</tr>
+
+				{% endfor %}
+
+			</table>
+		</div>
+	</div>
+</div>
+
+{% endblock content %}

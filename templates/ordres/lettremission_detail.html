@@ -1,0 +1,151 @@
+<!-- templates/ordres/lettremission_detail.html -->
+{% extends '_base.html' %}
+{% block title %}Mise à Jour Client{% endblock title %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block content %}
+
+<br>
+<div class="row ">
+		<div class="col-xl-7 col-lg-8">
+		<div class="card l-bg">
+			<div class="card-statistic-3 p-4">
+				<div class="card-icon card-icon-large"><i class="fas fa-wallet"></i></div>
+				<div class="mb-4">
+					<h3 class="card-title mb-0">{{lettremission}}</h3>
+				</div>
+				<div class="row align-items-center mb-2 d-flex">
+					<div class="col-8">
+						<a class="btn btn-sm btn-warning" href="{% url 'accounts:companyTdb' lettremission.company.id %}"><i class="fas fa-chart-line"></i> Consulter Tableau de Bord</a>
+
+						</h2>
+					</div>
+					<div class="col-4 text-right">
+					</div>
+				</div>
+
+			</div>
+		</div>
+	</div>
+	
+<div class="row">
+
+    <div class="col-md-5">
+        <div class="card card-body">
+            <form action="" enctype="multipart/form-data" method="POST">
+                {% csrf_token %}
+                {{form|crispy}}
+				<a class="btn btn-warning" href="{% url 'ordres:lettremissionList' %}">Retour</a>
+                <input class="btn btn-primary" type="submit" name="Submit">
+            </form>
+
+		</div>
+    </div>
+
+	<div class="col-md-7">
+
+		<div class="card card-body">
+			<a class="btn btn-secondary" href="{%url 'ordres:createPortefolio' lettremission.id %}">Ajouter à un Responsable</a>
+			<br>
+			{% if portefolios %}
+			<table class="table table-sm">
+				<tr>
+					<th>Responsable</th>
+					<th>Rôle</th>
+					<th>Editer</th>
+					<th>Supprimer</th>
+				</tr>
+			{% else %}
+			{% endif %}
+				{% for portefolio in portefolios %}
+
+					<tr>
+						<td>{{portefolio.user}}</td>
+						<td class="myDIVNum">{{portefolio.rolecollaborateur}}</td>
+						<td><a class="btn btn-sm btn-outline-warning" href="{%url 'ordres:updatePortefolio' portefolio.id %}"><i class="fas fa-edit"></i> Edit</a></td>
+						<td><a class="btn btn-sm btn-outline-danger" href="{%url 'ordres:deletePortefolio' portefolio.id %}"><i class="fas fa-trash"></i> Sup.</a></td>
+					</tr>
+				{% endfor %}
+			</table>
+		</div>
+		<hr>
+
+		<div class="card card-body">
+			<a class="btn btn-secondary" href="{%url 'ordres:createValidator' lettremission.id %}">Ajouter à un Validateur</a>
+			<br>
+			{% if validators %}
+			<table class="table table-sm">
+				<tr>
+					<th>Validateur</th>
+					<th>Editer</th>
+					<th>Supprimer</th>
+				</tr>
+			{% else %}
+			{% endif %}
+				{% for validator in validators %}
+
+					<tr>
+						<td>{{validator.user}}</td>
+						<td><a class="btn btn-sm btn-outline-warning" href="{%url 'ordres:updateValidator' validator.id %}"><i class="fas fa-edit"></i> Edit</a></td>
+						<td><a class="btn btn-sm btn-outline-danger" href="{%url 'ordres:deleteValidator' validator.id %}"><i class="fas fa-trash"></i> Sup.</a></td>
+					</tr>
+				{% endfor %}
+			</table>
+		</div>
+		<hr>
+
+		<div class="card card-body">
+			<a class="btn btn-secondary" href="{%url 'ordres:createPWSafe' lettremission.id %}">Ajouter un Accès</a>
+			<br>
+			{% if pwsafes %}
+			<table class="table table-sm">
+				<tr>
+					<th>Collaborateur</th>
+					<th>Responsable</th>
+					<th>Editer</th>
+					<th>Supprimer</th>
+				</tr>
+			{% else %}
+			{% endif %}
+				{% for pwsafe in pwsafes %}
+
+					<tr>
+						<td>{{pwsafe.user}}</td>
+						<td class="myDIVNum">{{pwsafe.responsable}}</td>
+						<td><a class="btn btn-sm btn-outline-warning" href="{%url 'ordres:updatePWSafe' pwsafe.id %}"><i class="fas fa-edit"></i> Edit</a></td>
+						<td><a class="btn btn-sm btn-outline-danger" href="{%url 'ordres:deletePWSafe' pwsafe.id %}"><i class="fas fa-trash"></i> Sup.</a></td>
+					</tr>
+				{% endfor %}
+			</table>
+		</div>
+		<hr>
+
+		<div class="card card-body">
+			{% if lettremission.benefitlink %}
+			<a class="btn btn-secondary disabled" href="{%url 'ordres:createBenefitLink' lettremission.id %}">Ajouter une Particularité</a>
+			<br>
+			<table class="table table-sm">
+				<tr>
+					<th>Lien</th>
+					<th>Editer</th>
+					<th>Supprimer</th>
+				</tr>
+
+					<tr>
+						<td>{{lettremission.benefitlink}}</td>
+						<td><a class="btn btn-sm btn-outline-warning" href="{% url 'ordres:updateBenefitLink' lettremission.benefitlink.id %}"><i class="fas fa-edit"></i> Edit</a></td>
+						<td><a class="btn btn-sm btn-outline-danger" href="{% url 'ordres:deleteBenefitLink' lettremission.benefitlink.id %}"><i class="fas fa-trash"></i> Sup.</a></td>
+					</tr>
+			</table>
+			{% else %}
+			<a class="btn btn-secondary" href="{%url 'ordres:createBenefitLink' lettremission.id %}">Ajouter une Particularité</a>
+			<br>
+			{% endif %}
+
+		</div>
+
+	</div>
+
+</div>
+
+{% endblock content %}

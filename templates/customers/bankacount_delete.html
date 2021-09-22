@@ -1,0 +1,28 @@
+<!--templates/bankacount_delete.html-->
+{%  extends '_base.html' %}
+{% load static %}
+{% block title %}Supprimer Service{% endblock title %}
+
+{% load static %}
+{% block content %}
+
+<br>
+<div class="row">
+    <div class="col-md-6">
+        <div class="card card-body">
+            <p>Etes-vous sûr de vouloir supprimer "{{bankacount}}" ?</p>
+
+            <form action="{% url 'customers:deleteBankAcount' bankacount.id %}" method="POST">
+            
+                {% csrf_token %}
+                <a class="btn btn-warning" href="{% url 'customers:companyDetail' company %}">Retour</a>
+            
+            
+                <input class="btn btn-danger" type="submit" name="Confirm">
+            </form>            
+        </div>
+    </div>
+</div>
+
+
+{% endblock content %}

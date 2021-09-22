@@ -1,0 +1,19 @@
+<!-- templates/ordres/lettremission_list_orph.html -->
+
+{%  extends '_base.html' %}
+{% load static %}
+{% block title %}Lettres de Mission Orpholines{% endblock title %}
+
+{% block content %}
+
+
+	<div class="px-0 py-2 pt-md-3 pb-md-2 mx-auto text-center">
+		<br>
+		<h1 class="display-4">Liste des Lettres de Mission Sans Reponsable</h1>
+		<p class="lead">A examiner régulièrement !</p>
+	</div>
+
+	{% include 'ordres/lettremission_list_ext.html' %}
+
+
+{% endblock content %}

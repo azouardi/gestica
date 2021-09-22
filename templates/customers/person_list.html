@@ -1,0 +1,63 @@
+<!-- templates/costomers/person_list.html -->
+
+{%  extends '_base.html' %}
+{% load static %}
+{% block title %}Portefeuille{% endblock title %}
+
+{% block content %}
+
+<br>
+<div class="container-fluid">
+	<div class="px-0 py-2 pt-md-3 pb-md-2 mx-auto text-center">
+		<a type="button" class="btn btn-secondary btn-lg btn-block" href="{% url 'customers:personCreate' %}">Ajouter un Individu</a>
+		<br>
+		<h1 class="display-4">Liste des Individus Actifs</h1>
+		<p class="lead">A chacun son rôle dans l'édifice. Une gestion efficace au quotidien !</p>
+	</div>
+
+	<div class="py-5">
+
+		<div class="row">
+			{% for person in persons %}
+			<div class="col-md-4">
+				<a class="text-dark" href="{% url 'customers:personDetail' person.id %}">
+					<div class="card mb-4 box-shadow">
+						<div class="card-body">
+							<h3 style="font-size:18px;font-weight:bold;min-height:42px;">
+								{{person|truncatechars:50}}</h3>
+							<h5 style="font-size:12px;font-weight:bold;min-height:30px;">
+								ID : {{person.id_numbre}}, né(e) le {{person.birth_date}} à {{person.birth_place}} </h5>
+							<div class="d-flex justify-content-between align-items-center">
+
+								<small class="text-muted">Adresse : {{person.adresse}} - {{person.city}}</small>
+							</div>
+							<small class="text-muted">{{time}}</small>
+						</div>
+					</div>
+				</a>
+			</div>
+			{% endfor %}
+		</div>
+		<div class="row">
+			<div class="col-12">
+				<span class="step-links">
+					{% if page_obj.has_previous %}
+						<a href="?page=1">&laquo; first</a>
+						<a href="?page={{ page_obj.previous_page_number }}">previous</a>
+					{% endif %}
+			
+					<span class="current">
+						Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+					</span>
+			
+					{% if page_obj.has_next %}
+						<a href="?page={{ page_obj.next_page_number }}">next</a>
+						<a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+					{% endif %}
+				</span>
+			</div>
+		</div>
+	</div>
+</div>
+
+{% endblock content %}

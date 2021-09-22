@@ -1,0 +1,85 @@
+{% load static %}
+
+<html>
+    <head>
+        <title>Devis</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    </head>
+    <body>
+
+        
+
+    <div class="container-fluid">
+        <img src="{% static 'images/eurodefi.png'%}" class="img-rounded" alt="" width="304" height="236"> 
+        <img src="{% static 'images/eurodefi_audit_fond_blanc.png'%}" width="100" alt="">
+
+            <h1>{{ ordre.office }}</h1>
+            <h2>Devis</h2>
+            <p>
+                Devis Réf. {{ ordre.id }}</br>
+                <span class="secondary">
+                {{ ordre.ordre_date|date:"d M Y" }}
+                </span>
+            </p>
+            <h2>Pour : {{ ordre.company }}</h2>
+            <p>
+                Adresse :{{ ordre.company.adresse }}<br>
+                Ville  :{{ ordre.company.city }}<br>
+                ICE    :{{ ordre.company.ice }}<br>
+            </p>
+            <h3>Détail:</h3>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Service</th>
+                    <th>Designation</th>
+                    <th>Taxe</th>
+                    <th>Montant HT</th>
+                </tr>
+                </thead>
+                <tbody>
+                    {% if serviceitems %}
+                        <th>Prestations</th>
+                    {% endif %}
+
+                    {% for serviceitem in serviceitems %}
+                        <tr>
+                            <th>{{serviceitem.service.text}}</th>
+                            <td>
+
+                                {% for i in serviceitem.service.servicesescription_set.all %}
+                                    <p>{{i.text}}</p>
+                                {% endfor %}
+                            </td>
+                            <td>{{serviceitem.taxe}}</td>
+                            <td class="myDIVNum">{{serviceitem.amount}}</td>
+                        </tr>
+                    {% endfor %}
+
+                    <hr>
+                    {% if outlayitems %}
+                    <th>Débours</th>    
+                    {% endif %}
+
+                    {% for outlayitem in outlayitems %}
+                    <tr>
+                        <td>{{ outlayitem.outlay }}</td>
+                        <td>{{ outlayitem.outlay.text }}</td>
+                        <td></td>
+                        <td>{{ outlayitem.amount }}</td>
+                    </tr>
+                    {% endfor %}
+                    <hr>
+                    <tr class="total">
+                    <td colspan="3">Total</td>
+                    <td class="num">{{ ordre.get_total_amount }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </body>
+</html>

@@ -1,0 +1,46 @@
+<!--templates/portefolio_situation.html-->
+{%  extends '_base.html' %}
+{% load static %}
+{% block title %}Portefeuille Situation{% endblock title %}
+
+{% block content %}
+
+<div class="container-fluid">
+	<div class="px-0 py-2 pt-md-3 pb-md-2 mx-auto text-center">
+		<h1 class="display-4">Mes Situations</h1>
+		<p class="lead">Les sociétés qui composent mon portefeuille. Une gestion efficace au quotidien !</p>
+	</div>
+	<div class="py-5">
+		<div class="row">
+			{% for item in portefolio %}
+			<div class="col-md-2">
+				<a class="text-dark" href="{% url 'accounts:LdmSituation' item.lettremission.id %}">
+					<div class="card mb-4 box-shadow">
+						{% if item.lettremission.company.file %}
+						<br>
+						<div class="cover-image mx-auto">
+							<img src="{{item.lettremission.company.file.url}}" alt="..." class="mx-auto d-block" width="120">
+						</div>
+						<br>
+						{% else %}
+						{% endif %}
+						<div class="card-body">
+							<h3 style="font-size:18px;font-weight:bold;min-height:42px;">
+								{{item.lettremission.company.name}}</h3>
+							<h5 style="font-size:12px;font-weight:bold;min-height:30px;">
+								{{item.lettremission.moduleservice}}</h5>
+							<div class="d-flex justify-content-between align-items-center">
+								<small class="text-muted">Entrée le : {{item.lettremission.entry_date}}</small>
+								<small class="text-muted">BDD: {{item.lettremission.db_office}}</small>
+							</div>
+							<small class="text-muted">{{time}}</small>
+						</div>
+					</div>
+				</a>
+			</div>
+			{% endfor %}
+		</div>
+	</div>
+</div>
+
+{% endblock content %}

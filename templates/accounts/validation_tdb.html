@@ -1,0 +1,100 @@
+<!--templates/validation.html-->
+{%  extends '_base.html' %}
+
+{% block title %}Client{% endblock title %}
+
+{% block content %}
+
+
+<br>
+
+<div class="row">
+	
+	<div class="col-xl-4 col-lg-6">
+		<div class="card l-bg-white-dark">
+			<div class="card-statistic-3 p-4">
+				<div class="card-icon card-icon-large"><i class="far fa-user"></i></div>
+				<div class="mb-4">
+					<h3 class="card-title mb-0">{{request.user.profile.name}} </h3>
+					<br>
+
+					<h3>Mes Validations</h3>
+				</div>
+
+			</div>
+		</div>
+	</div>
+
+	
+
+	
+</div>
+
+
+
+
+	
+<div class="row">
+
+
+	<div class="col-md">
+
+		{% if validations %}
+		<div class="card card-body">
+
+
+			<table class="table">
+				<tr>
+					<th>Client</th>
+					<th>Tâche</th>
+					<th>Date Limite</th>
+					<th>Quittance</th>
+					<th>Consulter</th>
+					<th>Doc</th>
+				</tr>
+
+				{% for validation in validations %}
+					<tr>
+						<td>{{validation.lettremission.company}}</td>
+						<td>{{validation.task}}</td>
+						<td>{{validation.date_limit}}</td>
+
+						{% if validation.proof %}
+						<td ><a class="btn btn-sm btn-success" href="{% url 'tasks:updateWorkColl' validation.id %}"><i class="fas fa-link"></i> {{validation.proof}}</a></td>
+						{% else %}
+							{% if validation.statut == 4 %}
+							<td><a class="btn btn-sm btn-dark" href="{% url 'tasks:updateWorkColl' validation.id %}"><i class="fas fa-unlink"></i></a></td>
+							{% else %}
+							<td><a class="btn btn-sm btn-danger" href="{% url 'tasks:updateWorkColl' validation.id %}"><i class="fas fa-unlink"></i></a></td>
+							{% endif %}
+						{% endif %}
+						{% if validation.statut == 0 %}
+						<td ><a class="btn btn-sm btn-danger" href="{% url 'tasks:updateWorkColl' validation.id %}"><i class="fas fa-window-close"></i> En Attente</a></td>
+						{% elif validation.statut == 1 %}
+						<td ><a class="btn btn-sm btn-warning" href="{% url 'tasks:updateWorkColl' validation.id %}"><i class="fas fa-step-forward"></i> Préparé</a></td>
+						{% elif validation.statut == 2 %}
+						<td ><a class="btn btn-sm btn-success" href="{% url 'tasks:updateWorkColl' validation.id %}"><i class="fas fa-check-double"></i> Validé</a></td>
+						{% elif validation.statut == 3 %}
+						<td ><a class="btn btn-sm btn-danger" href="{% url 'tasks:updateWorkColl' validation.id %}"><i class="fas fa-exclamation-triangle"></i> Non Validé</a></td>
+						{% else %}
+						<td ><a class="btn btn btn-dark" href="{% url 'tasks:updateWorkColl' validation.id %}"><i class="fab fa-slack-hash"></i> Non Applicable</a></td>
+						{% endif %}
+						{% if validation.file %}
+						<td><a class="btn btn-sm btn-success" href="{{validation.file.url}}"><i class="far fa-file-alt"></i> Doc</a></td>
+						{% else %}
+						<td><a class="btn btn-sm btn-warning" href="{% url 'tasks:updateWorkColl' validation.id %}"><i class="fas fa-file-upload"></i></a></td>
+						{% endif %}
+					</tr>
+				{% endfor %}
+			</table>
+		</div>
+		{% endif %}
+
+
+	</div>
+
+
+
+</div>
+
+{% endblock content %}

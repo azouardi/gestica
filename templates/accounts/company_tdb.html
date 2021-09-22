@@ -1,0 +1,306 @@
+<!--templates/client.html-->
+{%  extends '_base.html' %}
+
+{% block title %}Client{% endblock title %}
+
+{% block content %}
+
+
+<br>
+
+<div class="row">
+	
+	<div class="col-xl-4 col-lg-6">
+		<div class="card l-bg-white-dark">
+			<div class="card-statistic-3 p-4">
+				<div class="card-icon card-icon-large"><i class="far fa-building"></i></div>
+				<div class="mb-4">
+					<h3 class="card-title mb-0">{{company.name}}</h3>
+					<h5>{{company.legal_form.lf_name}}</h5>
+
+				</div>
+				<div class="row align-items-center mb-2 d-flex">
+					<div class="col-12">
+						<h2 class="d-flex align-items-center mb-0">
+							<h6><i class="fas fa-map-marker"></i> {{company.adresse}} {{company.city}}</h6>
+							<h6>IF: {{company.identifiant_fiscal}} - RC: {{company.rc}} - TP: {{company.tp}} - CNSS: {{company.cnss}} - ICE: {{company.ice}}</h6>
+							<h6>Ex Débute: {{company.fiscal_year}}</h6>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	{% if shareholders or shareholdercompanys %}
+	<div class="col-xl-3 col-lg-6">
+		<div class="card l-bg-white-dark">
+			<div class="card-statistic-3 p-4">
+				<div class="card-icon card-icon-large"><i class="fas fa-hand-holding-usd"></i></div>
+				<div class="mb-4">
+					<h3 class="card-title mb-0">Associés</h3>
+				</div>
+				<div class="row align-items-center mb-2 d-flex">
+					<div class="col-12">
+						<h2 class="d-flex align-items-center mb-0">
+							{% for item in shareholders %}
+							<h6>{{item}}</h6>
+							{% endfor %}
+							{% for item in shareholdercompanys %}
+							<h6>{{item}}</h6>
+							{% endfor %}
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	{% endif %}
+
+	{% if representatives or representativecompanys %}
+	<div class="col-xl-3 col-lg-6">
+		<div class="card l-bg-white-dark">
+			<div class="card-statistic-3 p-4">
+				<div class="card-icon card-icon-large"><i class="fas fa-user"></i></div>
+				<div class="mb-4">
+					<h3 class="card-title mb-0">Représentants</h3>
+				</div> 
+				<div class="row align-items-center mb-2 d-flex">
+					<div class="col-12">
+						<h2 class="d-flex align-items-center mb-0">
+							{% for item in representatives %}
+							<h6>{{item}}</h6>
+							{% endfor %}
+							{% for item in representativecompanys %}
+							<h6>{{item}}</h6>
+							{% endfor %}
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	{% endif %}
+
+	{% if contacts %}
+	<div class="col-xl-3 col-lg-6">
+		<div class="card l-bg-white-dark">
+			<div class="card-statistic-3 p-4">
+				<div class="card-icon card-icon-large"><i class="fas fa-address-card"></i></div>
+					<div class="mb-4">
+						<h3 class="card-title mb-0">Contact</h3>
+					</div>
+					<div class="row align-items-center mb-2 d-flex">
+						<div class="col-12">
+							<h2 class="d-flex align-items-center mb-0">
+								{% for item in contacts %}</h2>
+								<h6>{{item}}</h6>
+								{% endfor %}
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	{% endif %}
+</div>
+
+
+
+<div class="row">
+
+	{% if lettremissions %}
+	<div class="col-xl-3 col-lg-6">
+		<div class="card l-bg-white-dark">
+			<div class="card-statistic-3 p-4">
+				<div class="card-icon card-icon-large"><i class="far fa-file-alt"></i></div>
+					<div class="mb-4">
+						<h3 class="card-title mb-0">Mission</h3>
+					</div>
+					<div class="row align-items-center mb-2 d-flex">
+						<div class="col-12">
+							<h2 class="d-flex align-items-center mb-0">
+								{% for item in lettremissions %}
+								<h6><i class="fas fa-thumbtack text-success"></i> {{item.moduleservice}}</h6>
+									{% if item.benefitlink.benefititem_set.all %}
+									<hr>
+									<h6 class="card-title mb-0">Particularités :</h6>
+									{% for benefit in item.benefitlink.benefititem_set.all %}
+										{{ benefit }} ;
+									{% endfor %}
+									<br>
+									{% else %}
+									<h5 class="card-title mb-0">Pas de Particularité</h5>
+									{% endif %}
+								{% endfor %}
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	{% endif %}
+
+	{% if kpis %}
+
+	<div class="col-xl-3 col-lg-6">
+		<div class="card l-bg-white-dark">
+			<div class="card-statistic-3 p-4">
+				<div class="card-icon card-icon-large"><i class="far fa-chart-bar"></i></div>
+					<div class="mb-4">
+						<h3 class="card-title mb-0">KPI</h3>
+					</div>
+					<div class="row align-items-center mb-2 d-flex">
+						<div class="col-12">
+							<h2 class="d-flex align-items-center mb-0">
+								{% for item in kpis %}
+								<h6><i class="fas fa-thumbtack text-success"></i> {{item}}</h6>
+								{% endfor %}
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	{% endif %}
+
+
+</div>
+
+
+<div class="row">
+
+	{% if works %}
+
+	<div class="col-md">
+		<div class="card card-body">
+			<h3>Mes travaux</h3>
+
+			<br>
+
+			<table class="table table-sm">
+				<tr>
+					<th>Echéance</th>
+					<th>Tâche</th>
+					<th>Date Limite</th>
+					<th>Valeur</th>
+					<th>Quittance</th>
+					<th>Consulter</th>
+					<th>Document</th>
+					{% if request.user.is_staff %}
+					<th>Superviser</th>
+					{% endif %}
+				</tr>
+
+				{% for work in works %}
+					<tr>
+						<td>{{work.period.echeance}}</td>
+						<td>{{work.task}}</td>
+						<td>{{work.date_limit}}</td>
+						<td style="text-align: right"><b>{{work.value}}</b></td>
+						{% if work.proof %}
+						<td ><a class="btn btn-sm btn-success" href="{% url 'tasks:updateWorkColl' work.id %}"><i class="fas fa-link"></i> {{work.proof}}</a></td>
+						{% else %}
+							{% if work.statut == 4 %}
+							<td><a class="btn btn-sm btn-dark" href="{% url 'tasks:updateWorkColl' work.id %}"><i class="fas fa-unlink"></i></a></td>
+							{% else %}
+							<td><a class="btn btn-sm btn-danger" href="{% url 'tasks:updateWorkColl' work.id %}"><i class="fas fa-unlink"></i></a></td>
+							{% endif %}
+						{% endif %}
+						{% if work.statut == 0 %}
+						<td ><a class="btn btn-sm btn-danger" href="{% url 'tasks:updateWorkColl' work.id %}"><i class="fas fa-window-close"></i> En Attente</a></td>
+						{% elif work.statut == 1 %}
+						<td ><a class="btn btn-sm btn-warning" href="{% url 'tasks:updateWorkColl' work.id %}"><i class="fas fa-step-forward"></i> Préparé</a></td>
+						{% elif work.statut == 2 %}
+						<td ><a class="btn btn-sm btn-success" href="{% url 'tasks:updateWorkColl' work.id %}"><i class="fas fa-check-double"></i> Validé</a></td>
+						{% elif work.statut == 3 %}
+						<td ><a class="btn btn-sm btn-danger" href="{% url 'tasks:updateWorkColl' work.id %}"><i class="fas fa-exclaimation-triangle"></i> Non Validé</a></td>
+						{% else %}
+						<td ><a class="btn btn btn-dark" href="{% url 'tasks:updateWorkColl' work.id %}"><i class="fab fa-slack-hash"></i> Non Applicable</a></td>
+						{% endif %}
+
+						{% if work.file %}
+						<td><a class="btn btn-sm btn-success" href="{{work.file.url}}"><i class="far fa-file-alt"></i> Doc</a></td>
+						{% else %}
+						<td><a class="btn btn-sm btn-warning" href="{% url 'tasks:updateWorkColl' work.id %}"><i class="fas fa-file-upload"></i></a></td>
+						{% endif %}
+						{% if request.user.is_staff %}
+						{% if work.supervised == True %}
+						<td ><a class="btn btn-sm btn-success" href="{% url 'tasks:updateWorkSup' work.id %}"><i class="fas fa-stamp"></i> Supervisé</a></td>
+						
+						{% else %}
+						<td ><a class="btn btn-sm btn-primary" href="{% url 'tasks:updateWorkSup' work.id %}"><i class="fas fa-stamp"></i> Superviser</a></td>
+
+						{% endif %}
+						{% endif %}
+					</tr>
+				{% endfor %}
+			</table>
+		</div>
+	</div>
+	{% else %}
+	{% endif %}
+
+{% if claims %}
+	<div class="col-md-4">
+
+		<div class="card card-body">
+
+			<h3>Mes Réclaimations</h3>
+			<br>
+
+			<table class="table table-sm">
+				<tr>
+					<th>Objet</th>
+					<th>Date de réclaimation</th>
+					<th>Quittance</th>
+					<th>Consulter</th>
+					<th>Doc</th>
+				</tr>
+
+				{% for claim in claims %}
+					<tr>
+						<td>{{claim.objet}}</td>
+						<td>{{claim.date_start}}</td>
+
+						{% if claim.proof %}
+						<td ><a class="btn btn-sm btn-success" href="{% url 'tasks:updateClaim' claim.id %}"><i class="fas fa-link"></i> {{claim.proof}}</a></td>
+						{% else %}
+							{% if claim.statut == 4 %}
+							<td><a class="btn btn-sm btn-dark" href="{% url 'tasks:updateClaim' claim.id %}"><i class="fas fa-unlink"></i></a></td>
+							{% else %}
+							<td><a class="btn btn-sm btn-danger" href="{% url 'tasks:updateClaim' claim.id %}"><i class="fas fa-unlink"></i></a></td>
+							{% endif %}
+						{% endif %}
+						{% if claim.statut == 0 %}
+						<td ><a class="btn btn-sm btn-danger" href="{% url 'tasks:updateClaim' claim.id %}"><i class="fas fa-window-close"></i> En Cours</a></td>
+						{% elif claim.statut == 1 %}
+						<td ><a class="btn btn-sm btn-warning" href="{% url 'tasks:updateClaim' claim.id %}"><i class="fas fa-step-forward"></i> Déposée</a></td>
+						{% elif claim.statut == 2 %}
+						<td ><a class="btn btn-sm btn-success" href="{% url 'tasks:updateClaim' claim.id %}"><i class="fas fa-check-double"></i> Acceptée</a></td>
+						{% elif claim.statut == 3 %}
+						<td ><a class="btn btn-sm btn-danger" href="{% url 'tasks:updateClaim' claim.id %}"><i class="fas fa-exclaimation-triangle"></i> Rejetée</a></td>
+						{% else %}
+						<td ><a class="btn btn btn-dark" href="{% url 'tasks:updateClaim' claim.id %}"><i class="fab fa-slack-hash"></i> Annulée</a></td>
+						{% endif %}
+						{% if claim.file %}
+						<td><a class="btn btn-sm btn-success" href="{{claim.file.url}}"><i class="far fa-file-alt"></i> Doc</a></td>
+						{% else %}
+						<td><a class="btn btn-sm btn-warning" href="{% url 'tasks:updateClaim' claim.id %}"><i class="fas fa-file-upload"></i></a></td>
+						{% endif %}
+
+						{% if request.user.is_staff %}
+						<td ><a class="btn btn-sm btn-danger" href="{% url 'tasks:deleteClaim' claim.id %}"><i class="fas fa-trash-alt"></i> Supp</a></td>
+					
+						{% endif %}
+					</tr>
+				{% endfor %}
+			</table>
+		</div>
+
+
+
+	</div>
+
+{% endif %}
+
+</div>
+
+{% endblock content %}

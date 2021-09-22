@@ -1,0 +1,25 @@
+<!--templates/person_form.html-->
+{%  extends '_base.html' %}
+{% load static %}
+{% block title %}Créer un Client{% endblock title %}
+
+{% load static %}
+{% load crispy_forms_tags %}
+{% block content %}
+
+<br>
+<div class="row">
+    <div class="col-md-6">
+        <div class="card card-body">
+            <form action="" enctype="multipart/form-data" method="POST">
+                {% csrf_token %}
+                {{form|crispy}}
+				<a class="btn btn-warning" href="{% url 'customers:personList' %}">Retour</a>
+                <input class="btn btn-primary" type="submit" name="Submit">
+            </form>
+        </div>
+    </div>
+</div>
+
+
+{% endblock content %}

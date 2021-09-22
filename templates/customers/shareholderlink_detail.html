@@ -1,0 +1,54 @@
+<!-- templates/customers/shareholderlink_detail.html -->
+{% extends '_base.html' %}
+{% block title %}Mise à Jour Client{% endblock title %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block content %}
+
+<br>
+<div class="row">
+    <div class="col-md-5">
+        <div class="card card-body">
+		<p>Raison Sociale</p><h3>{{shareholderlink}}</h3>	
+
+		<hr>
+            <form action="" enctype="multipart/form-data" method="POST">
+                {% csrf_token %}
+                {{form|crispy}}
+				<a class="btn btn-warning" href="{% url 'customers:companyDetail' company %}">Retour</a>
+                <input class="btn btn-primary" type="submit" name="Submit">
+            </form>
+
+		</div>
+    </div>
+
+	<div class="col-md-7">
+
+
+        <div class="card card-body">
+			<a class="btn btn-secondary" href="{%url 'customers:createShareholderCompany' shareholderlink.id %}">Ajouter une Société Actionnaire</a>
+			<br>
+			<table class="table table-sm">
+				<tr>
+					<th>Raison Sociale</th>
+					<th>Actions</th>
+					<th>Editer</th>
+					<th>Supprimer</th>
+				</tr>
+
+				{% for shareholdercompany in shareholdercompanys %}
+					<tr>
+						<td>{{shareholdercompany.company}}</td>
+						<td class="myDIVNum">{{shareholdercompany.action}}</td>
+						<td><a class="btn btn-sm btn-outline-warning" href="{% url 'customers:updateShareholderCompany' shareholdercompany.id %}"><i class="fas fa-edit"></i> Edit</a></td>
+						<td><a class="btn btn-sm btn-outline-danger" href="{% url 'customers:deleteShareholderCompany' shareholdercompany.id %}"><i class="fas fa-trash"></i> Sup.</a></td>
+					</tr>
+				{% endfor %}
+			</table>
+		</div>
+	</div>
+
+</div>
+
+
+{% endblock content %}

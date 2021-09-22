@@ -1,0 +1,43 @@
+<!--templates/services.htmal-->
+{%  extends '_base.html' %}
+{% load static %}
+{% block title %}About{% endblock title %}
+
+{% block content %}
+        <br>
+
+        <div class="row">
+            <div class="col-md">
+                <div class="card card-body">
+                    <h5>Commandes</h5>
+                </div>
+                <div class="card card-body">
+                    <table class="table">
+                        <tr>
+                            <th>Société</th>
+                            <th>Date Commade</th>
+                            <th>Facturable</th>
+                            <th>Honoraires HT</th>
+                            <th>Débours</th>
+                            <th>Statut</th>
+                        </tr>
+
+                        {% for service in services %}
+                            <tr>
+                                <td>{{ service.company }}</td>
+                                <td>{{ service.ordre_date }}</td>
+                                <td>{{ service.charged }}</td>
+                                <td></td>
+                                <td></td>
+                                <td>{{ service.statut }}</td>
+                            </tr>
+                            
+                        {% endfor %}
+                        
+                    </table>
+                </div>  
+            </div>
+            
+        </div>
+
+{% endblock content %}

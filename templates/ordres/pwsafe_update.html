@@ -1,0 +1,25 @@
+<!--templates/pwsafe_update.html-->
+{%  extends '_base.html' %}
+{% load static %}
+{% block title %}Mise à Jour Accès{% endblock title %}
+
+
+{% load crispy_forms_tags %}
+{% block content %}
+
+<br>
+<div class="row">
+    <div class="col-md-6">
+        <div class="card card-body">
+            <form action="{% url 'ordres:updatePWSafe' pwsafe.id %}" method="POST">
+                {% csrf_token %}
+                {{form|crispy}}
+                <a class="btn btn-warning" href="{% url 'ordres:lettremissionDetail' lettremission %}">Retour</a>
+
+                <input class="btn btn-primary" type="submit" name="Submit">
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}

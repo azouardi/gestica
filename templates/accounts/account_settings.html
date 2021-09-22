@@ -1,0 +1,107 @@
+{%  extends '_base.html' %}
+{% load crispy_forms_tags %}
+{% block content %}
+
+<style>
+	.profile-pic{
+		max-width: 200px;
+		max-height:200px;
+		margin: 0 auto;
+		border-radius: 50%;
+	}
+	.eye{
+			position:sticky;
+		}
+
+	#hide1{
+		display: none;
+	}
+</style>
+
+<br>
+<div class="row">
+	<div class="col-md-3">
+		<div class="card card-body">
+			<h3 style="text-align: center">Profile</h3>
+			<hr>
+			{% if request.user.profile.file %}
+			<img class="profile-pic" src="{{request.user.profile.file.url}}" >
+			{% endif %}
+			<hr>
+			<a class="btn btn-warning" href="{% url 'accounts:userPortefolio' %}"> &#8592; Retout au Portefeuille</a>
+		</div>
+	</div>
+	<div class="col-md-9">
+		<div class="card card-body">
+			
+			<form method="POST" action="" enctype="multipart/form-data">
+				{% csrf_token %}
+                {{form|crispy}}
+		
+			<input class="btn btn-primary" type="submit" name="Update Information">
+			</form>
+		</div>
+	</div>
+</div>
+
+{% if pwsafe %}
+
+<div class="row">
+	<div class="card card-body">
+		<div class="col-lg-12">
+			<!-- <a class="nav-link" href="{% url 'accounts:register' %}">Sign Up</a> -->
+
+			<h3>Mes Accès</h3>
+				<div class="table-responsive">
+					<table class="table table-striped">
+						<thead>
+						  <tr>
+							<th scope="Client"></th>
+							<th scope="Client">Client</th>
+							<th scope="Rôle">Role</th>
+							<th scope="Login">Login</th>
+							<th></th>
+							<th scope="MP">Password</th>
+							<th></th>
+						  </tr>
+						</thead>
+						<tbody>
+						{% for item in pwsafe %}	
+						  <tr>
+							  <th>
+								{% if item.lettremission.company.file %}
+									<img src="{{item.lettremission.company.file.url}}" alt="..." class="mx-auto d-block" width="80">
+								{% else %}
+								{% endif %}
+							  </th>
+
+							<th scope="row">{{item.lettremission.company.name}}</th>
+							<td >{{item.rolecollaborateur}}</td>
+							<td>
+								{{item.username}}
+							</td>
+
+							<td>
+								<button class="btn btn-sm btn-outline-secondary copy-btn" data-username={{item.username}}><i class="fas fa-copy"></i> Copy</button>
+							</td>
+
+							<td>
+								{{item.password}}
+							</td>
+
+							<td>
+								<button class="btn btn-sm btn-outline-secondary copy-btn" data-username={{item.password}}><i class="fas fa-copy"></i> Copy</button>
+							</td>
+						  </tr>
+						  {% endfor %}
+						</tbody>
+					  </table>
+				</div>
+		</div>
+	</div>
+</div>
+{% endif %}
+
+
+
+{% endblock %}

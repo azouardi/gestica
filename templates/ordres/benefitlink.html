@@ -1,0 +1,25 @@
+<!--templates/benefitlink.html-->
+{%  extends '_base.html' %}
+{% load static %}
+{% block title %}Particularités{% endblock title %}
+
+{% load crispy_forms_tags %}
+{% block content %}
+
+<br>
+<div class="row">
+    <div class="col-md-6">
+        <div class="card card-body">
+            <p>Commencer par créer un groupe de "Particularités" en cliquant sur "Envoyer" :</p>
+            <form action="{% url 'ordres:createBenefitLink' lettremission.id %}" method="POST">
+                {% csrf_token %}
+                {{form|crispy}}
+                <a class="btn btn-warning" href="{% url 'ordres:lettremissionDetail' lettremission.id %}">Retour</a>
+
+                <input class="btn btn-primary" type="submit" name="Submit">
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}

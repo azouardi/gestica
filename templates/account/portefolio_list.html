@@ -1,0 +1,10 @@
+<!-- templates/accounts/portefolio_list.html -->
+{% extends '_base.html' %}
+{% block title %}Portefeuille{% endblock title %}
+{% block content %}
+    {% for portefolio in portefolio %}
+        <div>
+        <h2><a href="">{{ portefolio.id }}</a></h2>
+        </div>
+    {% endfor %}
+{% endblock content %}

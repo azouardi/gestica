@@ -1,0 +1,72 @@
+<!--templates/about.htmal-->
+{%  extends '_base.html' %}
+
+{% block title %}Prestations Facturées{% endblock title %}
+
+{% block content %}
+
+<br>
+<div class="row">
+	<div class="col-md-4">
+		<h5>Clients</h5>
+		<hr>
+		<div class="card card-body">
+			<table class="table table-sm">
+				<tr>
+					<th></th>
+					<th>Client</th>
+					<th>Chiffre d'affaires</th>
+				</tr>
+
+				{% for customer in customers %}
+					<tr>
+						<td><a class="btn btn-sm btn-info" href="{% url 'ordres:customer' customer.id %}">Voir</a></td>
+						<td>{{customer.name}}</td>
+						<td></td>
+					</tr>
+				{% endfor %}
+			</table>
+		</div>
+	</div>
+
+	<div class="col-md-8">
+		<h5>Prestations Facturées</h5>
+		<hr>
+		<div class="card card-body">
+			<a class="btn btn-secondary  btn-sm btn-block" href="{% url 'ordres:ordres' %}">Facturer une Prestation</a>
+			<table class="table table-hover">
+				<thead>
+				  <tr>
+					<th scope="col">Client</th>
+					<th scope="col">Date Commande</th>
+					<th scope="col">Initiateur</th>
+					<th scope="col"></th>
+					<th scope="col"></th>
+				  </tr>
+				</thead>
+				<tbody>
+
+				<th class="bg-success" colspan="5">Facturées</th>
+
+				{% for ordre in ordres_statut4 %}
+
+					<tr class="table-success">
+						<th scope="row">{{ordre.company}}</td>
+						<td>{{ordre.ordre_date}}</td>
+						<td>{{ordre.incharge}}</td>
+						<td><a class="btn btn-sm btn-warning" href="{% url 'ordres:update_ordre' ordre.id %}"><i class="fas fa-edit"></i> Edit</a></td>
+						<td><a class="btn btn-sm btn-danger" href="{% url 'ordres:delete_ordre' ordre.id %}"><i class="fas fa-trash"></i> Sup.</a></td>
+					</tr>
+
+				{% endfor %}
+
+			</tbody>
+		</table>
+
+		</div>
+	</div>
+
+</div>
+
+
+{% endblock content %}

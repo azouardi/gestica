@@ -1,0 +1,28 @@
+<!--templates/ordre_delete.html-->
+{%  extends '_base.html' %}
+{% load static %}
+{% block title %}Supprimer Commandes{% endblock title %}
+
+{% load static %}
+{% block content %}
+
+<br>
+<div class="row">
+    <div class="col-md-6">
+        <div class="card card-body">
+            <p>Etes-vous sûr de vouloir supprimer "{{ordre}}" ?</p>
+
+            <form action="{% url 'ordres:ordreDelete' ordre.id %}" method="POST">
+            
+                {% csrf_token %}
+                <a class="btn btn-warning" href="{% url 'ordres:ordres' %}">Retour</a>
+            
+            
+                <input class="btn btn-danger" type="submit" name="Confirm">
+            </form>            
+        </div>
+    </div>
+</div>
+
+
+{% endblock content %}

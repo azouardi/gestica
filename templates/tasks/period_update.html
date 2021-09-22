@@ -1,0 +1,23 @@
+<!--templates/period_update.html-->
+{%  extends '_base.html' %}
+{% load static %}
+{% block title %}Créer une Echéance{% endblock title %}
+
+{% load crispy_forms_tags %}
+{% block content %}
+
+<br>
+<div class="row">
+    <div class="col-md-6">
+        <div class="card card-body">
+            <form action="" enctype="multipart/form-data" method="POST">
+                {% csrf_token %}
+                {{form|crispy}}
+				<a class="btn btn-warning" href="{% url 'tasks:periodList' %}">Retour</a>
+                <input class="btn btn-primary" type="submit" name="Submit">
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}
