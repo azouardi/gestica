@@ -1,9 +1,9 @@
 from .base import *
-DEBUG = True
+DEBUG = Falsegit
 ADMINS = (
 ('Admin', 'azouardi@gmail.com'),
 )
-ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'https://gestica.herokuapp.com/']
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',

@@ -13,3 +13,8 @@ pip install python-docx
 pip install django-bootstrap-datepicker-plus
 pip install django-chartjs
 python -m pip install --upgrade pip
+pip install django-filter
+pip install django-storages
+pip install boto3
+pip pip install pillow
+pip install gunicorn whitenoise

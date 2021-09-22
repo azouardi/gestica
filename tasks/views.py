@@ -1245,4 +1245,4 @@ class UpdateSituationDataView(LoginRequiredMixin, UserAccessMixin, ExerciceObjec
     #                     else:
     #                         extradata_update(t=ct, lm=lm, p=p, d=0, s=4, request=request, pk=pk)  
 
-        return redirect('/exerice/'+str(pk)+'/
+        return redirect('/exerice/'+str(pk)+'/')
