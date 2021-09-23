@@ -18,7 +18,7 @@ DATABASES = {
     }
 }
 dj_from_env = dj_database_url.config(conn_max_age=600)
-DATABASES['default'].update(dj_from_envp)
+DATABASES['default'].update(dj_from_env)
 
 # Heroku settings.
 import django_heroku
