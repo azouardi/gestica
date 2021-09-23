@@ -43,7 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.humanize',
     
     # Third-party
-    'bootstrap_form_horizontal',
+    # 'bootstrap_form_horizontal',
     'django_bootstrap_icons',
     'crispy_forms', # new
     'allauth', # new
