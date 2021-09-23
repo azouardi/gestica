@@ -48,9 +48,8 @@ INSTALLED_APPS = [
     # 'crispy_forms', # new
     'allauth', # new
     'allauth.account', 
-    'bootstrap4',# new
-    'bootstrap_datepicker_plus',
-    'whitenoise.runserver_nostatic', # new
+    # 'bootstrap4',# new
+    # 'bootstrap_datepicker_plus',
     
     # Local
     'accounts.apps.AccountsConfig',
