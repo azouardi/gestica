@@ -1,4 +1,6 @@
 from .base import *
+import dj_database_url
+
 DEBUG = True
 ADMINS = (
 ('Admin', 'azouardi@gmail.com'),
@@ -15,6 +17,8 @@ DATABASES = {
         'PORT': 5432
     }
 }
+dj_from_env = dj_database_url.config(conn_max_age=600)
+DATABASES['default'].update(dj_from_envp)
 
 # Heroku settings.
 import django_heroku
