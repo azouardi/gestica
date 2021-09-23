@@ -44,8 +44,8 @@ INSTALLED_APPS = [
     
     # Third-party
     # 'bootstrap_form_horizontal',
-    'django_bootstrap_icons',
-    'crispy_forms', # new
+    # 'django_bootstrap_icons',
+    # 'crispy_forms', # new
     'allauth', # new
     'allauth.account', 
     'bootstrap4',# new
