@@ -43,14 +43,14 @@ INSTALLED_APPS = [
     'django.contrib.humanize',
     
     # Third-party
-    # 'bootstrap_form_horizontal',
-    # 'django_bootstrap_icons',
-    # 'crispy_forms', # new
+    'bootstrap_form_horizontal',
+    'django_bootstrap_icons',
+    'crispy_forms', # new
     'allauth', # new
     'allauth.account', 
     'psycopg2',
-    # 'bootstrap4',# new
-    # 'bootstrap_datepicker_plus',
+    'bootstrap4',# new
+    'bootstrap_datepicker_plus',
     
     # Local
     'accounts.apps.AccountsConfig',

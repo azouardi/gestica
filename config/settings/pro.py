@@ -1,5 +1,5 @@
 from .base import *
-DEBUG = True
+DEBUG = False
 ADMINS = (
 ('Admin', 'azouardi@gmail.com'),
 )
