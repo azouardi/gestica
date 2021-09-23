@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     # 'crispy_forms', # new
     'allauth', # new
     'allauth.account', 
+    'psycopg2',
     # 'bootstrap4',# new
     # 'bootstrap_datepicker_plus',
     
