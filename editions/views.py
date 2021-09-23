@@ -21,8 +21,10 @@ from docx.enum.text import WD_PARAGRAPH_ALIGNMENT, WD_ALIGN_PARAGRAPH
 from docx.enum.section import WD_ORIENTATION
 from docx.enum.style import WD_STYLE_TYPE
 
-import locale
-locale.setlocale(locale.LC_NUMERIC, 'de_DE.utf-8')
+# import locale
+# locale.setlocale(locale.LC_NUMERIC, 'de_DE.utf-8')
+# locale.setlocale(locale.LC_ALL, 'de_DE.utf-8')
+
 
 def writingword(request, pk, code_docmodel):
     company=Company.objects.get(pk=pk)
