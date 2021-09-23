@@ -3,7 +3,7 @@ DEBUG = False
 ADMINS = (
 ('Admin', 'azouardi@gmail.com'),
 )
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'https://gestica.herokuapp.com/']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'gestica.herokuapp.com', 'gestica-go.herokuapp.com']
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
