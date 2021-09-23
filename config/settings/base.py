@@ -13,6 +13,9 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 import os
 from pathlib import Path
 
+# Heroku settings.
+import django_heroku
+django_heroku.settings(locals())
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(os.path.join(__file__, os.pardir)).resolve().parent.parent
@@ -49,6 +52,7 @@ INSTALLED_APPS = [
     'allauth.account', 
     'bootstrap4',# new
     'bootstrap_datepicker_plus',
+    'whitenoise.runserver_nostatic', # new
     
     # Local
     'accounts.apps.AccountsConfig',
@@ -62,7 +66,8 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
+    'django.middleware.security.SecurityMiddleware',  
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -147,12 +152,14 @@ USE_THOUSAND_SEPARATOR = True
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = (str(BASE_DIR.joinpath('static/')),) # new
-STATIC_ROOT = str(BASE_DIR.joinpath('staticfiles/')) # new
-#STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
+# STATIC_ROOT = str(BASE_DIR.joinpath('staticfiles/')) # new
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_FINDERS = [
 "django.contrib.staticfiles.finders.FileSystemFinder",
 "django.contrib.staticfiles.finders.AppDirectoriesFinder",
 ]
+
+STATICFILES_STORAGE ='whitenoise.storage.CompressedManifestStaticFilesStorage' # new
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
@@ -192,3 +199,4 @@ EMAIL_USE_TLS= False
 # config/settings.py
 MEDIA_URL = '/media/' # new
 MEDIA_ROOT = str(BASE_DIR.joinpath('media')) # new
+

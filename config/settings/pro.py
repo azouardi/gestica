@@ -1,5 +1,5 @@
 from .base import *
-DEBUG = Falsegit
+DEBUG = False
 ADMINS = (
 ('Admin', 'azouardi@gmail.com'),
 )
