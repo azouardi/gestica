@@ -1,6 +1,6 @@
 <!-- templates/tasks/period_detail.html -->
 {% extends '_base.html' %}
-{% block title %}Mise à Jour Client{% endblock title %}
+{% block title %}Mise à Jour Echéance{% endblock title %}
 {% load static %}
 {% load crispy_forms_tags %}
 {% block content %}
@@ -18,7 +18,7 @@
 		<!-- {{form|crispy}} -->
 		<a class="btn btn-warning" href="{% url 'tasks:periodList' %}">Retour</a>
 		<a class="btn btn-secondary" href="{%url 'tasks:insertWork' period.id %}">Générer les Tâches</a>
-		<a class="btn btn-secondary" href="{%url 'tasks:ExtraDataUpdate' period.id %}">Générer les Valeur</a>
+		<a class="btn btn-secondary" href="{%url 'tasks:ExtraDataUpdate' period.id %}">Générer les Valeurs</a>
 		<input class="btn btn-primary" type="submit" name="OK">
 		
 	</form>
@@ -26,26 +26,28 @@
 	</div>
 </div>
 
-<div class="card">
-			<div id="accordion">
-			{% regroup works by lettremission as lettremission_list %}
+<div class="col-md-12">
+	<div class="card card-body">
+	<div class="accordion" id="accordionFlushExample">
+		{% regroup works by lettremission as lettremission_list %}
 			
 			{% for lettremission, works in lettremission_list %}
-		
-				<div>
-						<div class="card-header" id=#{{lettremission}}>
-							<h5 class="mb-0">
-								<button class="btn btn-outline-secondary" data-toggle="collapse" data-target=#{{lettremission}} aria-expanded="true" aria-controls={{lettremission}}><i class="fas fa-caret-square-right" ></i> 
-								{{lettremission}} 
-								<button type="button" class="btn">
-									<span class="badge badge-pill badge-primary">{{ works|length}} </span>
-								  </button>
-								</button>
-							</h5>
-						</div>
+			<div class="card-body">
+
+			<div class="accordion-item">
+					<h5 class="accordion-header" id=#{{lettremission}}>
+						<button class="btn btn-outline-secondary" data-bs-toggle="collapse" data-bs-target=#{{lettremission}} aria-expanded="false" aria-controls={{lettremission}}><i class="fas fa-caret-square-right" ></i>
+							{{lettremission}} 
+							<button type="button" class="btn">
+								<span class="badge badge-pill badge-primary">{{ works|length}} </span>
+							  </button>
+						</button>
+
+					</h5>
 					
-						<div id={{lettremission}} class="collapse" aria-labelledby={{lettremission}} data-parent="#accordion">
-							<div class="card-body">
+					<div id={{lettremission}} class="collapse" aria-labelledby={{lettremission}} data-bs-parent="#accordionFlushExample">
+							<div class="accordion-body">
+						<div class="card-body">
 								{% if lettremission %}
 								<table class="table table-sm">
 									<tr>
@@ -63,8 +65,7 @@
 								{% endif %}
 
 								{% for work in works %}
-
-					
+				
 										<tr>
 											<td>{{work}}</td>
 											<td>{{work.lettremission.company|truncatechars:25}}</td>
@@ -98,16 +99,17 @@
 						
 											<td><a class="btn btn-sm btn-outline-danger" href="{% url 'tasks:deleteWork' work.id %}"><i class="fas fa-trash"></i> Sup.</a></td>
 										</tr>
-
 									{% endfor %}
 								</table>
-								</div>
+							</div>
 						</div>
+					</div>
 				</div>
+			</div>
 				{% endfor %}
 		
 			</div>
-
+	</div>	
   </div>
 
 

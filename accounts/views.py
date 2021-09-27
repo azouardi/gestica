@@ -222,7 +222,7 @@ class CompanyTdbView(LoginRequiredMixin, UserAccessMixin, View):
             claims = Claim.objects.filter(lettremission__company_id=company)
         else:
             works = Work.objects.filter(lettremission__company_id=company).filter(lettremission__portefolio__user=profile).exclude(supervised=True)
-            claims = Claim.objects.filter(lettremission__company_id=company).filter(lettremission__portefolio__user=profile).exclude(supervised=True)
+            claims = Claim.objects.filter(lettremission__company_id=company).filter(lettremission__portefolio__user=profile)
         validations = Work.objects.filter(lettremission__validator__user=profile).filter(statut__in=[1]).exclude(supervised=True)
         # works = Work.objects.raw('SELECT * FROM "tasks_work" INNER JOIN "ordres_lettremission" ON "tasks_work"."lettremission_id"="ordres_lettremission"."id" INNER JOIN "customers_company" ON "ordres_lettremission"."company_id"="customers_company"."id" WHERE ordres_lettremission.company_id=%s', [pk,])
         context = {
@@ -236,3 +236,16 @@ class CompanyTdbView(LoginRequiredMixin, UserAccessMixin, View):
                    'contacts': contacts}
         return render(request, self.template_name, context)
     
+class SituationRFView(LoginRequiredMixin, UserAccessMixin, View):
+    raise_exception = True
+    permission_required = 'customers.view_company'
+    template_name = 'accounts/situation_rf.html'  
+     
+    def get(self, request):
+        context = {}
+        profile = request.user.profile
+        # model = DocModel.objects.all()
+        context = {'profile':profile,
+                #    'model':model
+                   }
+        return render(request, self.template_name, context)

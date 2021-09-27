@@ -233,15 +233,41 @@ class Exercice(models.Model):
 
    
 class Account(models.Model):
-    code_account = models.CharField(max_length=10, primary_key=True, verbose_name="Code Post / Compte")
-    name_account = models.CharField(max_length=50, verbose_name="Libellé du Compte")
+    code_account = models.CharField(max_length=20, primary_key=True, verbose_name="Code Post / Compte")
+    name_account = models.CharField(max_length=100, verbose_name="Libellé du Compte")
+    class Nature(models.IntegerChoices):
+        court = (0,'Courant')
+        No_cour = (1,'Non Courant')
+    nature = models.IntegerField(verbose_name="Nature", choices=Nature.choices, default=0)
+    class DedReint(models.IntegerChoices):
+        Reint = (0,'Réintégration')
+        Deduc = (1,'Déduction')
+    deduc_reint = models.IntegerField(verbose_name="Déduction ou Réintégration", choices=DedReint.choices, default=0)
+    class Rubrique(models.IntegerChoices):
+        commun = (0,'Commun')
+        resultat = (1,'Résultat Fiscal')
+        deficit = (2,'Imputation Déficites')
+        report = (3,'Déficites Reportables')
+        decl = (4,'Déclaration')
+    taxreturn = models.IntegerField(verbose_name="Rubrique Déclaration Fiscal", choices=Rubrique.choices, default=0, blank=True)
     class Sens(models.IntegerChoices):
         Debit = (0,'Débit')
         Done = (1,'Crédit')
     sens = models.IntegerField(verbose_name="Sens", choices=Sens.choices)
-    account_lower = models.IntegerField(verbose_name="Compte Inférieure")
-    account_upper = models.IntegerField(verbose_name="Compte Supérieure")
-
+    account_lower = models.CharField(max_length=10, verbose_name="Compte Inférieure")
+    account_upper = models.CharField(max_length=10, verbose_name="Compte Supérieure")
+    class Exer(models.IntegerChoices):
+        Ex_n = (0,'Exercice N (en Cours)')
+        Ex_n1 = (1,'Exercice N-1')
+        Ex_n2 = (2,'Exercice N-2')
+        Ex_n3 = (3,'Exercice N-3')
+        Ex_n4 = (4,'Exercice N-4')
+    exercice = models.IntegerField(verbose_name="Quel Exercice ?", choices=Exer.choices, default=0)
+    class Sens(models.IntegerChoices):
+        Debit = (0,'BETWEEN')
+        Done = (1,'LIKE')
+    sql = models.IntegerField(verbose_name="SQL ?", choices=Sens.choices, default=0)
+    
     def __str__(self):
         """return the name"""
         return str(self.name_account) +' ('+ str(self.code_account) +')'   
@@ -272,16 +298,22 @@ class Situation(models.Model):
         """return the name"""
         return str(self.exercice) +' ('+ str(self.lettremission) +')'
 
-class DataAccount(models.Model):
-    id = models.UUIDField(primary_key=True,default=uuid.uuid4,editable=False)
-    exercice = models.ForeignKey(Situation, on_delete=models.CASCADE, verbose_name="Exercice")
-    account = models.ForeignKey(Account, on_delete=models.SET_NULL, verbose_name="Post / Compte", null=True)
+    
+class TaxReturn(models.Model):
+    situation = models.ForeignKey(Situation, on_delete=models.CASCADE, verbose_name="Exercice")
+    rubrique = models.CharField(max_length=100, verbose_name="Rubrique")
+    class DedReint(models.IntegerChoices):
+        Reint = (0,'Réintégration')
+        Deduc = (1,'Déduction')
+    deduc_reint = models.IntegerField(verbose_name="Déduction ou Réintégration", choices=DedReint.choices, default=0)
+    class Nature(models.IntegerChoices):
+        court = (0,'Courant')
+        No_cour = (1,'Non Courant')
+    nature = models.IntegerField(verbose_name="Nature", choices=Nature.choices)
     Amount = models.FloatField(verbose_name="Montant", default=0)
-       
+    auto_genre = models.BooleanField(verbose_name="Compte Auto-Généré ?", default=False)
+    code_account = models.CharField(max_length=20, verbose_name="Code Post / Compte", null=True, blank=True)
+           
     def __str__(self):
         """return the name"""
-        return str(self.account) +' ('+ str(self.Amount) +')'
-    
-
-    
-
+        return str(self.rubrique) +' ('+ str(self.situation) +')'

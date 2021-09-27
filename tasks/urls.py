@@ -16,8 +16,7 @@ urlpatterns = [
     
     path('create_work/<uuid:pk>/', CreateWorkView.as_view(), name='createWork'),
     path('update_work/<uuid:pk>/', UpdateWorkView.as_view(), name='updateWork'),
-    path('delete_work/<uuid:pk>/', DeleteWorkView.as_view(), name='deleteWork'),
-    
+    path('delete_work/<uuid:pk>/', DeleteWorkView.as_view(), name='deleteWork'),   
     path('update_work_coll/<uuid:pk>/', UpdateWorkViewColl.as_view(), name='updateWorkColl'),
     path('update_work_sup/<uuid:pk>/', UpdateWorkViewSup.as_view(), name='updateWorkSup'),
 
@@ -44,6 +43,13 @@ urlpatterns = [
     path('update_situation_sup/<uuid:pk>/', UpdateSituationViewSup.as_view(), name='updateSituationSup'),
 
     path('insert_situation/<uuid:pk>/', InsertSituationView.as_view(), name='insertSituation'),
-    path('extradata_update/<uuid:pk>/', UpdateSituationDataView.as_view(), name='SituationDataUpdate'),
+    path('situationdata_update/<uuid:pk>/', UpdateSituationDataView.as_view(), name='SituationDataUpdate'),
 
+
+    path('create_taxreturn/<uuid:pk>/', CreateTaxReturnView.as_view(), name='createTaxReturn'),
+    path('update_taxreturn/<uuid:pk>/', UpdateTaxReturnView.as_view(), name='updateTaxReturn'),
+    path('delete_taxreturn/<uuid:pk>/', DeleteTaxReturnView.as_view(), name='deleteTaxReturn'),   
+    path('update_taxreturn_coll/<uuid:pk>/', UpdateTaxReturnViewColl.as_view(), name='updateTaxReturnColl'),
+    path('update_taxreturn_sup/<uuid:pk>/', UpdateTaxReturnViewSup.as_view(), name='updateTaxReturnSup'),
+    
 ]

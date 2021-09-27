@@ -20,6 +20,8 @@ urlpatterns = [
     # path('company_edition/<uuid:pk>/', CompanyEditionView.as_view(), name='companyEdition'),
     path('ldm_edition/<uuid:pk>/', LdmEditionView.as_view(), name='LdmEdition'),
     path('ldm_situation/<uuid:pk>/', LdmSituationView.as_view(), name='LdmSituation'),
+    
+    path('situation_rf/', SituationRFView.as_view(), name='situationRF'),
     #path('accounts/', AccountSetting.as_view(), name='account'),
     #path('accounts/<int:pk>/', AccountSettingView.as_view(), name='account'),
 

@@ -1,4 +1,4 @@
-<!--templates/situation_delete.html-->
+<!--templates/taxreturn_delete.html-->
 {%  extends '_base.html' %}
 {% load static %}
 {% block title %}Supprimer Service{% endblock title %}
@@ -10,12 +10,12 @@
 <div class="row">
     <div class="col-md-6">
         <div class="card card-body">
-            <p>Etes-vous sûr de vouloir supprimer "{{situation}}" ?</p>
+            <p>Etes-vous sûr de vouloir supprimer "{{taxreturn}}" ?</p>
 
-            <form action="{% url 'tasks:deleteSituation' situation.id %}" method="POST">
+            <form action="{% url 'tasks:deleteTaxReturn' taxreturn.id %}" method="POST">
             
                 {% csrf_token %}
-                <a class="btn btn-warning" href="{% url 'tasks:exerciceDetail' exercice %}">Retour</a>
+                <a class="btn btn-warning" href="{% url 'tasks:situationDetail' situation %}">Retour</a>
             
             
                 <input class="btn btn-danger" type="submit" name="Confirm">

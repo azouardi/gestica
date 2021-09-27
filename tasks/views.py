@@ -5,8 +5,8 @@ from config.mysqlconn import create_connection, create_connection_db_check, exec
 import datetime
 from django.views.generic.base import View
 from django.views.generic.edit import ModelFormMixin
-from tasks.forms import ClaimForm, ExerciceForm, PeriodForm, SituationCollForm, SituationForm, WorkCollForm, WorkForm
-from tasks.models import BenefitItem, BenefitLink, Exercice, Period, Situation, Task, Work, Claim
+from tasks.forms import ClaimForm, ExerciceForm, PeriodForm, SituationCollForm, SituationForm, WorkCollForm, WorkForm, TaxReturnForm, TaxReturnCollForm
+from tasks.models import Account, BenefitItem, BenefitLink, Exercice, Period, Situation, Task, Work, Claim, TaxReturn
 from ordres.models import LettreMission
 from django.views.generic import ListView, DetailView, CreateView, DeleteView
 from django.shortcuts import render, redirect, get_object_or_404
@@ -1099,7 +1099,6 @@ class UpdateSituationViewSup(LoginRequiredMixin, UserAccessMixin, View):
         return render(request, self.template_name, context)
 
 
-
 class InsertSituationView(LoginRequiredMixin, UserAccessMixin, ExerciceObjectMixin, View):
     raise_exception = True
     permission_required = 'tasks.change_exercice'
@@ -1148,15 +1147,13 @@ class InsertSituationView(LoginRequiredMixin, UserAccessMixin, ExerciceObjectMix
                     Situation.objects.create(date_start=date_o, date_closing = date_c , numbre_month= num_months, date_declaration = date_c+relativedelta(months=add_date_decl), exercice_id = pk, date_ago =date_c+relativedelta(months=6), lettremission_id=lm.id, statut=0, supervised=False)
 
         return redirect('/exercice/'+str(pk)+'/')
-
-        
-        
+      
 
 class UpdateSituationDataView(LoginRequiredMixin, UserAccessMixin, ExerciceObjectMixin, View):
     raise_exception = True
     permission_required = 'tasks.change_exercice'
     template_name = 'tasks/exercice_detail.html'
-    form_class = SituationForm
+    # form_class = SituationForm
 
     def get(self, request, pk=None, *args, **kwargs):
         context = {}
@@ -1168,81 +1165,225 @@ class UpdateSituationDataView(LoginRequiredMixin, UserAccessMixin, ExerciceObjec
         context = {}
         obj = self.get_object()
         year=obj.exercice
-        pk = obj.pk
-        # lettremissions=LettreMission.objects.filter(situation__exercice=p)
-        # nbre=lettremissions.count()
-        # lettremissions=LettreMission.objects.filter(company__statut=1).filter(company__create_date__lte=p.echeance)
-  
+        pk = obj.pk     
 
-    #     # Employeur            
-    #     for lm in lettremissions:
-    #         db_name=lm.db_office+"vs"
-    #         db_ip=lm.office.ip
-    #         db_port=lm.office.port
-    #         db_pass=lm.office.password
-    #         works=Work.objects.filter(lettremission_id=lm, period=p, task_id__in=[301, 311, 601, 602, 603, 604])
-    #         # print('works', works)
-    #         connection = create_connection(db_ip, db_port, db_pass, db_name)
-    #         for w in works:
-    #             ct=w.task_id
-    #             # IR
-    #             if ct=='301':
-    #                 select_datas = "SELECT sum(Retenue_result) as Value FROM abnlbulletin WHERE CodeRubrique_result = 490 and annee_bul = " + str(year) +" and mois_bul = " + str(month) + "  group by annee_bul and mois_bul;"
-    #                 datas = execute_read_query(connection, select_datas)
-
-    #                 if datas :
-    #                     extradata_update(t=ct, lm=lm, p=p, d=(datas[0])[0], s=0, request=request, pk=pk)
-    #                 else:
-    #                     extradata_update(t=ct, lm=lm, p=p, d=0, s=4, request=request, pk=pk)               
-    #             #CSS
-    #             if ct=='311':
-    #                 select_datas = "SELECT sum(Retenue_result) as Value FROM abnlbulletin WHERE CodeRubrique_result = 669 and annee_bul = " + str(year) +" and mois_bul = " + str(month) + "  group by annee_bul and mois_bul;"
-    #                 datas = execute_read_query(connection, select_datas)
-
-    #                 if datas :
-    #                     extradata_update(t=ct, lm=lm, p=p, d=(datas[0])[0], s=0, request=request, pk=pk)
-    #                 else:
-    #                     extradata_update(t=ct, lm=lm, p=p, d=0, s=4, request=request, pk=pk)  
-
-    #             #CNSS
-    #             if ct=='601':
-    #                 select_datas = "SELECT sum(Retenue_result) as Value FROM abnlbulletin WHERE (CodeRubrique_result BETWEEN 459 AND 465) and annee_bul = " + str(year) +" and mois_bul = " + str(month) + "  group by annee_bul and mois_bul;"
-    #                 datas = execute_read_query(connection, select_datas)
-
-    #                 if datas :
-    #                     extradata_update(t=ct, lm=lm, p=p, d=(datas[0])[0], s=0, request=request, pk=pk)
-    #                 else:
-    #                     extradata_update(t=ct, lm=lm, p=p, d=0, s=4, request=request, pk=pk)  
+        situations=Situation.objects.filter(exercice=obj).exclude(supervised=True)
+        # print('situations', situations)
+        for s in situations:
+            lm=s.lettremission
+            db_name=lm.db_office+"vs"
+            db_ip=lm.office.ip
+            db_port=lm.office.port
+            db_pass=lm.office.password
+            accounts = Account.objects.all()
+            connection = create_connection(db_ip, db_port, db_pass, db_name)
                 
-    #             if month in [3,6,9,12]:
-    #                 #Retraite
-    #                 if ct=='604':
-    #                     select_datas = "SELECT sum(Retenue_result) as Retenues_Retraite FROM abnlbulletin bl INNER JOIN abnretraite rt ON bl.CodeRubrique_result = rt.code_rubps OR bl.CodeRubrique_result = rt.code_rubpp WHERE bl.annee_bul =" + str(year) + " and (bl.mois_bul  BETWEEN " +str(month - 2) + " and " + str(month)+ ")  and rt.estCIMR=0 group by bl.annee_bul and bl.mois_bul;"
-    #                     datas = execute_read_query(connection, select_datas)
+            for a in accounts:
+                ex_diff = a.exercice
+                year=int(year)-int(ex_diff)
+                if a.sql == 0:
+                    select_datas = "SELECT  (Sum(MontantmvtsD) - Sum(MontantmvtsC)) As Solde, Annee FROM abnecrits WHERE  Ncompte between '"+str(a.account_lower)+"%' and '"+str(a.account_upper)+"%' and Annee=" + str(year) +";"
+                else:
+                    select_datas = "SELECT  (Sum(MontantmvtsD) - Sum(MontantmvtsC)) As Solde, Annee FROM abnecrits WHERE  (Ncompte like '"+str(a.account_lower)+"%' or Ncompte like '"+str(a.account_upper)+"%') and Annee=" + str(year) +";"
+                datas = execute_read_query(connection, select_datas)
+                print(s, datas)
+                if (datas[0])[0] == None:
+                    solde=0
+                else:
+                    if a.sens == 0:
+                        solde=(datas[0])[0]
+                    else:
+                        solde=-(datas[0])[0]
+                data_acc = TaxReturn.objects.filter(situation_id=s.id).filter(code_account=a.code_account)
+                if data_acc.exists():
+                    data_acc.update(Amount=solde)
+                else:
+                    TaxReturn.objects.create(situation_id=s.id, code_account=a.code_account, Amount=solde, rubrique=a.name_account, deduc_reint=a.deduc_reint, nature=a.nature)    
 
-    #                     if datas :
-    #                         extradata_update(t=ct, lm=lm, p=p, d=(datas[0])[0], s=0, request=request, pk=pk)
-    #                     else:
-    #                         extradata_update(t=ct, lm=lm, p=p, d=0, s=4, request=request, pk=pk)  
+        return redirect('/exercice/'+str(pk)+'/')
 
-    #                 #Mutuelle
-    #                 if ct=='602':
-    #                     select_datas = "SELECT sum(Retenue_result) as Retenues_Mutuelle FROM abnlbulletin bl INNER JOIN abnassmaladie rt ON bl.CodeRubrique_result = rt.code_rubps OR bl.CodeRubrique_result = rt.code_rubpp WHERE bl.annee_bul =" + str(year) + " and (bl.mois_bul  BETWEEN " +str(month - 2) + " and " + str(month)+ ") group by bl.annee_bul and bl.mois_bul;"
-    #                     datas = execute_read_query(connection, select_datas)
 
-    #                     if datas :
-    #                         extradata_update(t=ct, lm=lm, p=p, d=(datas[0])[0], s=0, request=request, pk=pk)
-    #                     else:
-    #                         extradata_update(t=ct, lm=lm, p=p, d=0, s=4, request=request, pk=pk)  
 
-    #                 # #CIMR
-    #                 if ct=='603':
-    #                     select_datas = "SELECT sum(Retenue_result) as Retenues_CIMR FROM abnlbulletin bl INNER JOIN abnretraite rt ON bl.CodeRubrique_result = rt.code_rubps OR bl.CodeRubrique_result = rt.code_rubpp WHERE bl.annee_bul =" +str(year)+ " and (bl.mois_bul  BETWEEN " +str(month - 2) + " and " + str(month)+ ")  and rt.estCIMR=1 group by bl.annee_bul and bl.mois_bul;"
-    #                     datas = execute_read_query(connection, select_datas)
 
-    #                     if datas :
-    #                         extradata_update(t=ct, lm=lm, p=p, d=(datas[0])[0], s=0, request=request, pk=pk)
-    #                     else:
-    #                         extradata_update(t=ct, lm=lm, p=p, d=0, s=4, request=request, pk=pk)  
+class SituationObjectMixin(object):
+    model = Situation
+    def get_object(self):
+        pk = self.kwargs.get('pk')
+        obj = None
+        if pk is not None:
+            obj = get_object_or_404(self.model, pk=pk)
+        return obj
 
-        return redirect('/exerice/'+str(pk)+'/')
+class CreateTaxReturnView(LoginRequiredMixin, UserAccessMixin, SituationObjectMixin, View):
+    raise_exception = True
+    permission_required = 'tasks.change_situation'
+    form_class = TaxReturnForm
+    template_name = 'tasks/taxreturn.html'
+
+    def get(self, request, pk=None, *args, **kwargs):
+        context = {}
+        obj = self.get_object()
+        form = self.form_class()
+        context = {'situation': obj, 'form': form}
+        return render(request, self.template_name, context)
+
+    def post(self, request, pk=None, *args, **kwargs):
+        context = {}
+        obj = self.get_object()
+        pk = obj.pk
+        if request.method != 'POST':
+            # No data submitted; create a blank form.
+            form = self.form_class()
+        else:
+            form = self.form_class(request.POST, request.FILES)
+            #form = self.form_class(request.POST)
+            if form.is_valid():
+                new_item = form.save(commit=False)
+                new_item.situation = obj
+                new_item.save()
+                return redirect('/situation/'+str(pk)+'/')
+
+        context = {'situation': obj, 'form': form}
+        return render(request, self.template_name, context)
+
+
+class UpdateTaxReturnView(LoginRequiredMixin, UserAccessMixin, View):
+    raise_exception = True
+    permission_required = 'tasks.change_situation'
+    form_class = TaxReturnForm
+    template_name = 'tasks/taxreturn_update.html'
+
+    def get(self, request, pk=None, *args, **kwargs):
+        context = {}
+        taxreturn = TaxReturn.objects.get(pk=pk)
+        situation = taxreturn.situation.id
+        if taxreturn is not None:
+            form = self.form_class(instance=taxreturn)
+            context = {'situation': situation,'taxreturn': taxreturn, 'form': form}
+        return render(request, self.template_name, context)
+
+    def post(self, request, pk=None, *args, **kwargs):
+        context = {}
+        taxreturn = TaxReturn.objects.get(pk=pk)
+        situation = taxreturn.situation.id
+        if taxreturn is not None:
+            form = self.form_class(request.POST, request.FILES, instance=taxreturn)
+            #form = self.form_class(request.POST, instance=taxreturn)
+            if form.is_valid():
+                form.save()
+                return redirect('/situation/'+str(situation)+'/')
+                
+        context = {'situation': situation, 'taxreturn': taxreturn, 'form': form}
+        return render(request, self.template_name, context)
+
+
+class DeleteTaxReturnView(LoginRequiredMixin, UserAccessMixin, View):
+    raise_exception = True
+    permission_required = 'tasks.change_situation'
+    template_name = 'tasks/taxreturn_delete.html'
+
+    def get(self, request, pk=None, *args, **kwargs):
+        context = {}
+        taxreturn = TaxReturn.objects.get(pk=pk)
+        situation = taxreturn.situation.id
+        if taxreturn is not None:
+            context = {'taxreturn': taxreturn, 'situation': situation}
+        return render(request, self.template_name, context)
+
+    def post(self, request, pk=None, *args, **kwargs):
+        context = {}
+        taxreturn = TaxReturn.objects.get(pk=pk)
+        situation = taxreturn.situation.id
+        if taxreturn is not None:
+            taxreturn.delete()
+            return redirect('/situation/'+str(situation)+'/')
+            
+        context = {'taxreturn': taxreturn, 'situation': situation}
+        return render(request, self.template_name, context) 
+
+
+class UpdateTaxReturnViewColl(LoginRequiredMixin, UserAccessMixin, View):
+    raise_exception = True
+    permission_required = 'tasks.change_taxreturn'
+    form_class = TaxReturnCollForm
+    template_name = 'tasks/taxreturn_update_coll.html'
+
+    def get(self, request, pk=None, *args, **kwargs):
+        context = {}
+        taxreturn = TaxReturn.objects.get(pk=pk)
+        situation = taxreturn.situation.id
+        user = request.user.profile
+        if taxreturn is not None:
+            form = self.form_class(instance=taxreturn)
+            class Statut_R(models.IntegerChoices):
+                InProcess = (0,'En Cours')
+                Done = (1,'Traitée')
+                InChecked = (3,'Non-validée')
+                NonApplicable = (4,'Non Applicable')
+            class Statut_V(models.IntegerChoices):
+                Done = (1,'Traitée')
+                Checked = (2,'Validée')
+                InChecked = (3,'Non-validée')
+            is_resp = Portefolio.objects.filter(user=user, lettremission_id=taxreturn.lettremission_id).exists()
+            is_val = Validator.objects.filter(user=user, lettremission_id=taxreturn.lettremission_id).exists()
+
+            if taxreturn.statut == 2 or (is_resp == True and is_val == True):
+                pass
+            elif is_resp==True :
+                form.fields['statut'].choices =Statut_R.choices
+            elif is_val==True :
+                form.fields['statut'].choices =Statut_V.choices
+                
+        context = {'situation': situation,'taxreturn': taxreturn, 'form': form, 'is_val':is_val}
+            
+        return render(request, self.template_name, context)
+
+    def post(self, request, pk=None, *args, **kwargs):
+        context = {}
+        taxreturn = TaxReturn.objects.get(pk=pk)
+        situation = taxreturn.situation.id
+        user = request.user.profile
+        if taxreturn is not None:
+            form = self.form_class(request.POST, request.FILES, instance=taxreturn)
+            #form = self.form_class(request.POST, instance=taxreturn)
+            if form.is_valid():
+                form.save()
+                
+                is_val = Validator.objects.filter(user=user, lettremission_id=taxreturn.lettremission_id).exists()
+                if is_val == True :
+                    return redirect('/user_portefolio/')
+                else:
+                    return redirect('/company_tdb/'+str(taxreturn.lettremission.company.id)+'/')
+
+                                
+        context = {'situation': situation, 'taxreturn': taxreturn, 'form': form}
+        return render(request, self.template_name, context)
+
+class UpdateTaxReturnViewSup(LoginRequiredMixin, UserAccessMixin, View):
+    raise_exception = True
+    permission_required = 'tasks.change_taxreturn'
+    form_class = TaxReturnForm
+    template_name = 'tasks/taxreturn_update_sup.html'
+
+    def get(self, request, pk=None, *args, **kwargs):
+        context = {}
+        taxreturn = TaxReturn.objects.get(pk=pk)
+        situation = taxreturn.situation.id
+        if taxreturn is not None:
+            form = self.form_class(instance=taxreturn)
+            context = {'situation': situation,'taxreturn': taxreturn, 'form': form}
+        return render(request, self.template_name, context)
+
+    def post(self, request, pk=None, *args, **kwargs):
+        context = {}
+        taxreturn = TaxReturn.objects.get(pk=pk)
+        situation = taxreturn.situation.id
+        if taxreturn is not None:
+            form = self.form_class(request.POST, request.FILES, instance=taxreturn)
+            #form = self.form_class(request.POST, instance=taxreturn)
+            if form.is_valid():
+                form.save()
+                return redirect('/company_tdb/'+str(taxreturn.lettremission.company.id)+'/')
+                
+        context = {'situation': situation, 'taxreturn': taxreturn, 'form': form}
+        return render(request, self.template_name, context)
