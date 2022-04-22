@@ -1,0 +1,277 @@
+<!--templates/das_update.html-->
+{%  extends '_base.html' %}
+{% load static %}
+
+{% block title %}Déclaration anneulle des salaires{% endblock title %}
+
+
+{% load crispy_forms_tags %}
+{% block content %}
+
+
+
+
+<br>
+<div class="row">
+	
+	<div class="col-xl-3 col-lg-6">
+		<div class="card l-bg-white-dark">
+			<div class="card-statistic-3 p-4">
+				<div class="card-icon card-icon-large"></div>
+				<div class="mb-4">
+					<h3 class="card-title mb-0">{{das.lettremission.company.name}} / {{das.exercice}}</h3>
+				</div>
+				<div class="row align-items-center mb-2 d-flex">
+					<div class="col-12">
+
+                            {% if das.supervised == True or das.statut == 2 and is_manager == False %}
+
+                            {% if is_manager == True %}
+                            <a class="btn btn-warning" href="{% url 'tasks:exerciceDASDetailManager' das.exercice.id %}">Retour</a>
+                            {% else %}
+                            <a class="btn btn-warning" href="{% url 'accounts:LdmDAS' das.lettremission.id %}">Retour</a>
+                            {% endif %}            
+                            <fieldset disabled>
+                            {% else %}
+                            <fieldset>
+                            {% endif%}
+                            <br>
+                            <button type="button" class="btn btn-success btn-lg btn-block" data-toggle="modal" data-target="#myModal">
+                                {% if dasdetails0 %}
+                                Actualiser les Données 
+                                {% else %}
+                                Générer les Elements DAS
+                                {% endif %}
+                            </button>
+                            <br>
+                            {% if is_manager == True %}
+                            <a class="btn btn-warning" href="{% url 'tasks:exerciceDASDetailManager' das.exercice.id %}">Retour</a>
+                            {% else %}
+                            <a class="btn btn-warning" href="{% url 'accounts:LdmDAS' das.lettremission.id %}">Retour</a>
+                            {% endif %}
+                            </fieldset>
+
+
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="col-xl-4 col-lg-6">
+		<div class="card l-bg-white-dark">
+			<div class="card-statistic-3 p-4">
+				<div class="card-icon card-icon-large"></div>
+				<div class="mb-4">
+
+                    <div class="modal" id="myModal">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <!-- Modal Header -->
+                                <div class="modal-header">
+                                    <h4 class="modal-title text-secondary">Confirmation</h4>
+                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                </div>
+                                <!-- Modal body -->
+                                <div  class="modal-body text-secondary">
+                                    Confirmer la génération des données ?
+                                </div>
+                                <!-- Modal footer -->
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-danger" data-dismiss="modal">Fermer</button>
+                                    <div class="spinner-grow text-warning"></div>
+            
+                                    <form action="{%url 'tasks:updateDataOneDAS' das.id %}" enctype="multipart/form-data" method="POST">
+                                        {% csrf_token %}
+                                        <input class="btn btn-warning" type="submit" name="OK">
+                                    </form>
+                                </div>
+                            </div>
+                        </div>           
+                    </div>
+					<h3 class="card-title mb-0">Element Paie DAS</h3>
+				</div> 
+				<div class="row align-items-center mb-2 d-flex">
+					<div class="col-12">
+
+    
+
+                        
+                        {% if dasdetails0 %}
+                        <br>
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Rubrique</th>
+                                            <th class = "text-right">Valeur</th>
+    
+                                        </tr>
+                                    </thead>
+                        {% for item in dasdetails0 %}
+                                        <tbody>
+                                            {% if item.coherence == True %}
+                                            <tr class="table-success">
+                                                <td>{{item.dasmodel.name_rubrique}}</td>
+                                                <td class = "text-right"><i class="fas fa-check text-success"> </i> {{item.amount}} </td>
+                                            {% else %}
+                                            <tr>
+                                                <td>{{item.dasmodel.name_rubrique}}</td>
+                                                <td class = "text-right"> {{item.amount}} </td>
+                                            {% endif%}
+                                            </tr>
+                                        </tbody>
+                        {% endfor %}
+                                </table>
+                        {% endif %} 
+
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="col-xl-4 col-lg-6">
+		<div class="card l-bg-white-dark">
+			<div class="card-statistic-3 p-4">
+					<div class="mb">
+						<h3 class="card-title mb-0">Impôt Revenu Versé DAS</h3>
+					</div>
+					<div class="row align-items-center mb-2 d-flex">
+						<div class="col-12">
+                            {% if dasdetails1 %}
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>Rubrique</th>
+                                                <th class = "text-right">Valeur</th>
+        
+                                            </tr>
+                                        </thead>
+                            {% for item in dasdetails1 %}
+                                            <tbody>
+                                                {% if item.coherence == True %}
+                                                <tr class="table-success">
+                                                    <td>{{item.dasmodel.name_rubrique}}</td>
+                                                    <td class = "text-right"><i class="fas fa-check text-success"> </i> {{item.amount}} </td>
+                                                {% else %}
+                                                <tr>
+                                                    <td>{{item.dasmodel.name_rubrique}}</td>
+                                                    <td class = "text-right"> {{item.amount}} </td>
+                                                {% endif%}
+
+                                                </tr>
+                                            </tbody>
+                            {% endfor %}
+                                    </table>
+                            {% endif %} 
+
+						</div>
+                        <br>
+                        <br>
+
+                        <div class="mb">
+                            <h3 class="card-title mb-0">Masse Salariale Comptabilisée</h3>
+                        </div>
+                        <div class="row align-items-center mb-2 d-flex">
+                        <div class="col-12">
+                            
+                            {% if dasdetails2 %}
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>Rubrique</th>
+                                                <th class = "text-right">Valeur</th>
+        
+                                            </tr>
+                                        </thead>
+                            {% for item in dasdetails2 %}
+                                            <tbody>
+                                                {% if item.coherence == True %}
+                                                <tr class="table-success">
+                                                    <td>{{item.dasmodel.name_rubrique}}</td>
+                                                    <td class = "text-right"><i class="fas fa-check text-success"> </i> {{item.amount}}</td>
+                                                {% else %}
+                                                <tr>
+                                                    <td>{{item.dasmodel.name_rubrique}}</td>
+                                                    <td class = "text-right"> {{item.amount}} </td>
+                                                {% endif%}
+                                                </tr>
+                                            </tbody>
+                            {% endfor %}
+                                    </table>
+                            {% endif %} 
+
+						</div>
+
+                        <div class="mb">
+                            <h3 class="card-title mb-0">Etat Détaillé Exonération</h3>
+                        </div>
+                        <div class="row align-items-center mb-2 d-flex">
+                        <div class="col-12">
+                            
+                            {% if dasdetails3 %}
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>Rubrique</th>
+                                                <th class = "text-right">Valeur</th>
+        
+                                            </tr>
+                                        </thead>
+                            {% for item in dasdetails3 %}
+                                            <tbody>
+                                                {% if item.coherence == True %}
+                                                <tr class="table-success">
+                                                    <td>{{item.dasmodel.name_rubrique}}</td>
+                                                    <td class = "text-right"><i class="fas fa-check text-success"> </i> {{item.amount}}</td>
+                                                {% else %}
+                                                <tr>
+                                                    <td>{{item.dasmodel.name_rubrique}}</td>
+                                                    <td class = "text-right"> {{item.amount}} </td>
+                                                {% endif%}
+                                                </tr>
+                                            </tbody>
+                            {% endfor %}
+                                    </table>
+                            {% endif %} 
+
+						</div>
+                        {% if dasdetails_no_ir %}
+                        <div class="mb">
+                            <h3 class="card-title mb-0">Contrats Exonérés d'IR</h3>
+                        </div>
+                        <div class="row align-items-center mb-2 d-flex">
+                        <div class="col-12">
+                                                        
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr class="table-warning">
+                                                <th>Nombre de pièces justificatives (Tahfiz, Anapec, ...) </th>
+                                                <th class="text-right">{{dasdetails_no_ir}}</th>
+                                            </tr>
+                                        </thead>
+                                    </table>
+						</div>
+                        {% endif %} 
+
+					</div>
+				</div>
+			</div>
+		</div>
+
+
+
+        
+	</div>
+
+</div>
+
+
+
+
+
+
+
+
+
+{% endblock content %}

@@ -124,7 +124,7 @@ class BankAcount(models.Model):
     iban =models.CharField(verbose_name="Code IBAN", max_length=2, null=False, blank=True)
     closed = models.BooleanField(verbose_name="Compte Clôturé ?", default=False)
     clos_date=models.DateTimeField(verbose_name="Date de clôture", null=True, blank=True)
-    company = models.ForeignKey(Company, on_delete=models.SET_NULL, null=True)
+    company = models.ForeignKey(Company, on_delete=models.CASCADE, null=True)
     file = models.FileField(verbose_name="Joindre RIB", upload_to='files/customers/rib', null=True, blank=True) # new
 
     class Meta:
@@ -177,7 +177,7 @@ class Contact(models.Model):
     id = models.UUIDField(primary_key=True,default=uuid.uuid4,editable=False)
     fonction = models.CharField(max_length=100, verbose_name="Fonction", null=False)
     person=models.ForeignKey(Person, on_delete=models.SET_NULL, verbose_name="Nom du Contact", null=True)
-    company = models.ForeignKey(Company, on_delete=models.SET_NULL, verbose_name="Raison Sociale", null=True, blank=True)
+    company = models.ForeignKey(Company, on_delete=models.CASCADE, verbose_name="Raison Sociale", null=True, blank=True)
     email = models.EmailField(max_length=100, verbose_name="Email", null=False)
     phone = models.CharField(max_length=100, verbose_name="Téléphone", null=False)
     active = models.BooleanField(verbose_name="Actif ?" ,default=1)
@@ -191,7 +191,7 @@ class Contact(models.Model):
         return str(self.person) +' ('+ str(self.fonction) +' - '+ str(self.company) + ')'
 class Shareholder(models.Model):
     id = models.UUIDField(primary_key=True,default=uuid.uuid4,editable=False)
-    company = models.ForeignKey(Company, on_delete=models.SET_NULL, verbose_name="Raison Sociale", null=True)
+    company = models.ForeignKey(Company, on_delete=models.CASCADE, verbose_name="Raison Sociale", null=True)
     person = models.ForeignKey(Person, on_delete=models.SET_NULL, verbose_name="Nom de l'Actionnaire", null=True)
     action = models.IntegerField(verbose_name="Nombre d'Action", null=False)
 
@@ -217,7 +217,7 @@ class ShareholderLink(models.Model):
 class ShareholderCompany(models.Model):
     id = models.UUIDField(primary_key=True,default=uuid.uuid4,editable=False)
     shareholderlink = models.ForeignKey(ShareholderLink, on_delete=models.SET_NULL, verbose_name="Raison Sociale", null=True)
-    company = models.ForeignKey(Company, on_delete=models.SET_NULL, verbose_name="Société Actionnaire", null=True)
+    company = models.ForeignKey(Company, on_delete=models.CASCADE, verbose_name="Société Actionnaire", null=True)
     action = models.IntegerField(verbose_name="Nombre d'Action", null=False)
     
     class Meta:
@@ -237,7 +237,7 @@ class RoleRepresentative(models.Model):
     
 class Representative(models.Model):
     id = models.UUIDField(primary_key=True,default=uuid.uuid4,editable=False)
-    company = models.ForeignKey(Company, on_delete=models.SET_NULL, verbose_name="Raison Sociale", null=True)
+    company = models.ForeignKey(Company, on_delete=models.CASCADE, verbose_name="Raison Sociale", null=True)
     person = models.ForeignKey(Person, on_delete=models.SET_NULL, verbose_name="Nom du Représentant", null=True)
     rolerepresentative = models.ForeignKey(RoleRepresentative,verbose_name="Rôle du Représentant", null=True, on_delete=models.SET_NULL)
     date_nomination = models.DateTimeField(verbose_name="Date de Nomination", auto_now=True)
@@ -266,7 +266,7 @@ class RepresentativeLink(models.Model):
 class RepresentativeCompany(models.Model):
     id = models.UUIDField(primary_key=True,default=uuid.uuid4,editable=False)
     representativelink = models.ForeignKey(RepresentativeLink, on_delete=models.SET_NULL, verbose_name="Société Représentée", null=True)
-    company = models.ForeignKey(Company, on_delete=models.SET_NULL, verbose_name="Raison Sociale", null=True)
+    company = models.ForeignKey(Company, on_delete=models.CASCADE, verbose_name="Raison Sociale", null=True)
     rolerepresentative = models.ForeignKey(RoleRepresentative,verbose_name="Rôle du Représentant", null=True, on_delete=models.SET_NULL)
     date_nomination = models.DateTimeField(verbose_name="Date de Nomination", auto_now=True)
     terminate_role = models.BooleanField(default=False, verbose_name="Fin de Mandat ?")
@@ -302,3 +302,67 @@ class Prospect(models.Model):
     def __str__(self):
         """return the name of Prospect"""
         return str(self.contact)
+
+class BlackList(models.Model):
+    id = models.UUIDField(primary_key=True,default=uuid.uuid4,editable=False)
+    office = models.ForeignKey(Office, on_delete=models.SET_NULL, verbose_name= "Cabinet", null=True)
+    codedb = models.CharField(max_length=3,verbose_name="Code Base Donnée", null=True)
+
+    class Meta:
+        unique_together = ['codedb', 'office']
+                
+    def __str__(self):
+        """return the name of Prospect"""
+        return str(self.codedb) +"/" +str(self.office)
+
+class CompanyTemps(models.Model):
+    exclude = models.BooleanField(default=False, verbose_name="Ajouter à la Fiche Société ?")
+    codedb = models.CharField(max_length=3,verbose_name="Code Base Donnée", null=True)
+    name = models.CharField(max_length=100, verbose_name="Raison Sociale", null=False, unique=True)
+    adresse = models.TextField(max_length=300, verbose_name="Adresse", null=True)
+    code_postal = models.CharField(max_length=50, verbose_name="Code Postal", null=True)
+    city = models.CharField(max_length=100, verbose_name="Ville", null=False)
+    country = models.ForeignKey(Country, on_delete=models.SET_NULL, verbose_name="Pays", null=True, default='212')
+    nationality = models.ForeignKey(Nationality, on_delete=models.SET_NULL, null=True, verbose_name="Nationalité", blank=True, default='212')
+    national_law = models.BooleanField(default=True, verbose_name="De Droit National ?")
+    ice = models.CharField(max_length=15, verbose_name="ICE", null=True, blank=True)
+    identifiant_fiscal = models.CharField(max_length=10, verbose_name="Identifiant Fiscal", null=True, blank=True)
+    cnss = models.CharField(max_length=10, verbose_name="Num Affiliation CNSS", null=True, blank=True)
+    rc = models.CharField(max_length=10, verbose_name="Num Registre de Commerce", null=True, blank=True)
+    tp = models.CharField(max_length=10, verbose_name="Num Taxe Professionnelle", null=True, blank=True)
+    activity = models.TextField(max_length=300, verbose_name="Activité", null=True)
+
+    class Month(models.IntegerChoices):
+        Janvier = (1,'Janvier')
+        Février = (2,'Février')
+        Mars = (3,'Mars')
+        Avril =(4, 'Avril')
+        Mai = (5, 'Mai')
+        Juin = (6, 'Juin')
+        Juillet = (7, 'Juillet')
+        Août = (8, 'Août')
+        Septembre = (9, 'Septembre')
+        Octobre = (10, 'Octobre')
+        Novembre = (11, 'Novembre')
+        Décembre = (12, 'Décembre')
+        
+    fiscal_year = models.IntegerField(verbose_name="Mois d'Ouverture Année Fiscale", choices=Month.choices, null=False, default=1)
+    create_date = models.DateField(verbose_name="Date de Création", null=True, blank=True)
+    
+    class Statut(models.IntegerChoices):
+        En_Attente = 0, ('En Attente')
+        Actif = 1, ('Actif')
+        Suspendu = 2, ('Suspendu')
+        InActif = 3, ('InActif')
+
+    legal_form = models.ForeignKey(LegalForm, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Forme Juridique")
+    share_capital = models.FloatField(verbose_name="Capital Social", blank=True)
+    nominal_value = models.FloatField(verbose_name="Valeur Nominale", blank=True)
+    currency = models.ForeignKey(Currency, on_delete=models.SET_NULL, null=True, verbose_name="Devise", default='MAD')
+    statut = models.IntegerField(verbose_name="Statut", choices=Statut.choices, default=0)
+    terminate_date = models.DateField(verbose_name="Date de Cessation/Dissolution", null=True, blank=True)
+    liquidation_date = models.DateField(verbose_name="Date de Liquidation", null=True, blank=True)
+    
+    def __str__(self):
+        """return the name of company"""
+        return self.name

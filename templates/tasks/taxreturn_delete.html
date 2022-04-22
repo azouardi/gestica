@@ -12,10 +12,10 @@
         <div class="card card-body">
             <p>Etes-vous sûr de vouloir supprimer "{{taxreturn}}" ?</p>
 
-            <form action="{% url 'tasks:deleteTaxReturn' taxreturn.id %}" method="POST">
+            <form action="" method="POST">
             
                 {% csrf_token %}
-                <a class="btn btn-warning" href="{% url 'tasks:situationDetail' situation %}">Retour</a>
+                <a class="btn btn-warning" href="{% url 'tasks:updateSituationColl' situation %}">Retour</a>
             
             
                 <input class="btn btn-danger" type="submit" name="Confirm">

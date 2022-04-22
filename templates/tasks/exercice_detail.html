@@ -45,25 +45,86 @@
 	</style>
 
 <br>
-
-
-<div class="col-md-12">
+<div class="col-md-6">
 	<div class="card card-body">
-	<h3>Exercice : <b>{{exercice}}</b></h3>
-	<br>
-	<a type="button" class="btn btn-primary btn-lg btn-block" href="{% url 'tasks:createSituation' exercice.id %}">Ajouter une Situation</a>
-	<br>
-	<form action="" enctype="multipart/form-data" method="POST">
-		{% csrf_token %}
-		<!-- {{form|crispy}} -->
-		<a class="btn btn-warning" href="{% url 'tasks:exerciceList' %}">Retour</a>
-		<a class="btn btn-secondary" href="{%url 'tasks:insertSituation' exercice.id %}">Générer les Situations</a>
-		<a class="btn btn-secondary" href="{%url 'tasks:SituationDataUpdate' exercice.id %}">Générer les Valeurs</a>
-		<input class="btn btn-primary" type="submit" name="OK">
-		
-	</form>
+
+		<div class="row">
+			<div class="col">
+				<h3>Exercice : <b>{{exercice}}</b></h3>
+				<br>
+				<a type="button" class="btn btn-primary btn-lg btn-block" href="{% url 'tasks:createSituation' exercice.id %}">Ajouter une Situation</a>
+					<br>		
+					<!-- Button to Open the Modal -->
+					<button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#myModal1">
+						Générer les Situations
+					</button>	  
+					<!-- The Modal -->
+					<div class="modal fade" id="myModal1">
+						<div class="modal-dialog">
+							<div class="modal-content">			
+								<!-- Modal Header -->
+								<div class="modal-header">
+									<h4 class="modal-title">Confirmation</h4>
+									<button type="button" class="close" data-dismiss="modal">&times;</button>
+								</div>			  
+								<!-- Modal body -->
+								<div class="modal-body">
+									Confirmer l'insertion des situations ?
+					
+								</div>			  
+								<!-- Modal footer -->
+								<div class="modal-footer">
+									<button type="button" class="btn btn-danger" data-dismiss="modal">Fermer</button>
+									<div class="spinner-grow text-warning"></div>
+
+									<form action="{%url 'tasks:insertSituation' exercice.id %}" enctype="multipart/form-data" method="POST">
+										{% csrf_token %}
+										<!-- {{form|crispy}} -->
+										<input class="btn btn-warning" type="submit" name="OK">					
+									</form>
+								</div>	  
+							</div>
+						</div>
+					</div>
+
+					<button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#myModal">
+						Générer les Valeurs
+					</button>
+					<!-- The Modal -->
+					<div class="modal fade" id="myModal">
+					<div class="modal-dialog">
+						<div class="modal-content">
+							<!-- Modal Header -->
+							<div class="modal-header">
+								<h4 class="modal-title">Confirmation</h4>
+								<button type="button" class="close" data-dismiss="modal">&times;</button>
+							</div>
+							<!-- Modal body -->
+							<div class="modal-body">
+								Confirmer la génération des données ?
+
+							</div>
+							<!-- Modal footer -->
+							<div class="modal-footer">
+								<button type="button" class="btn btn-danger" data-dismiss="modal">Fermer</button>
+								<div class="spinner-grow text-warning"></div>
+
+								<form action="{%url 'tasks:SituationDataUpdate' exercice.id %}" enctype="multipart/form-data" method="POST">
+									{% csrf_token %}
+									<!-- {{form|crispy}} -->
+									<input class="btn btn-warning" type="submit" name="OK">
+								</form>
+							</div>
+						</div>
+					</div>
+				</div>
+				<a class="btn btn-warning" href="{% url 'tasks:exerciceList' %}">Retour</a>
+			</div>
+
+		</div>
 	</div>
 </div>
+
 
 <div class="col-md-12">
 	<div class="card card-body">
@@ -74,51 +135,60 @@
 				<button class="accordion">{{lettremission}} </button>
 				<div class="panel">	
 						<div class="card-body">
-								{% if lettremission %}
-								<table class="table table-sm">
+							{% if lettremission %}
+							<table class="table table-hover table-sm">
+							<thead>
+								<tr>
+									<th>LDM</th>
+									<th>Exercice</th>
+									<th>Date Ouverture</th>
+									<th>Date Clôture</th>
+									<th>Durée en mois</th>
+									<th>Situation</th>
+									<th>Révision</th>
+									<th>Résultat Fiscal</th>
+									<th>Liasse Fiscal</th>
+									<th>Document</th>
+								</tr>
+							</thead>
+							{% else %}
+							{% endif %}
+							<tbody id="myTable">
+
+							{% for situation in situations %}
+			
 									<tr>
-										<th>LDM</th>
-										<th>Exercice</th>
-										<th>Date Ouverture</th>
-										<th>Date Clôture</th>
-										<th>Durée en mois</th>
-										<th>Statut</th>
-										<th>Document</th>
-										<th>Supprimer</th>
-									</tr>
-								{% else %}
-								{% endif %}
+										<td>{{situation.lettremission.company|truncatechars:25}}</td>
+										<td><b>{{situation.exercice}}</b></td>
+										<td>{{situation.date_start}}</td>
+										<td>{{situation.date_closing}}</td>
+										<td><b>{{situation.numbre_month}}</b></td>
 
-								{% for situation in situations %}
-				
-										<tr>
-											<td>{{situation.lettremission.company|truncatechars:25}}</td>
-											<td><b>{{situation.exercice}}</b></td>
-											<td>{{situation.date_start}}</td>
-											<td>{{situation.date_closing}}</td>
-											<td><b>{{situation.numbre_month}}</b></td>
-
-											{% if situation.statut == 0 %}
-											<td ><a class="btn btn-sm btn-danger" href="{% url 'tasks:updateSituation' situation.id %}"><i class="fas fa-window-close"></i> En Attente</a></td>
-											{% elif situation.statut == 1 %}
-											<td ><a class="btn btn-sm btn-warning" href="{% url 'tasks:updateSituation' situation.id %}"><i class="fas fa-step-forward"></i> Préparé</a></td>
-											{% elif situation.statut == 2 %}
-											<td ><a class="btn btn-sm btn-success" href="{% url 'tasks:updateSituation' situation.id %}"><i class="fas fa-check-double"></i> Validé</a></td>
-											{% else %}
-											<td ><a class="btn btn-sm btn-dark" href="{% url 'tasks:updateSituation' situation.id %}"><i class="fab fa-slack-hash"></i> Non Applicable</a></td>
-											{% endif %}
-						
-											{% if situation.file %}
-											<td><a class="btn btn-sm btn-success" href="{{situation.file.url}}"><i class="far fa-file-alt"></i> Doc</a></td>
-											{% else %}
-											<td><a class="btn btn-sm btn-warning" href="{% url 'tasks:updateSituation' situation.id %}"><i class="fas fa-file-upload"></i></a></td>
-											{% endif %}
-						
-											<td><a class="btn btn-sm btn-outline-danger" href="{% url 'tasks:deleteSituation' situation.id %}"><i class="fas fa-trash"></i> Sup.</a></td>
-										</tr>
+										{% if situation.statut == 0 %}
+										<td ><a class="btn btn-sm btn-danger" href="{% url 'tasks:updateSituation' situation.id %}"><i class="fas fa-window-close"></i> En Attente</a></td>
+										{% elif situation.statut == 1 %}
+										<td ><a class="btn btn-sm btn-warning" href="{% url 'tasks:updateSituation' situation.id %}"><i class="fas fa-step-forward"></i> Préparé</a></td>
+										{% elif situation.statut == 2 %}
+										<td ><a class="btn btn-sm btn-success" href="{% url 'tasks:updateSituation' situation.id %}"><i class="fas fa-check-double"></i> Validé</a></td>
+										{% else %}
+										<td ><a class="btn btn-sm btn-dark" href="{% url 'tasks:updateSituation' situation.id %}"><i class="fab fa-slack-hash"></i> Non Applicable</a></td>
+										{% endif %}
+					
+										<td ><a class="btn btn-sm btn-info" href="{% url 'tasks:updateSituationSection' situation.id %}"><i class="fas fa-eye"></i> Révision</a></td>
+										<td ><a class="btn btn-sm btn-info" href="{% url 'tasks:updateSituationColl' situation.id %}"><i class="fas fa-eye"></i> Résultat Fiscal</a></td>
+										<td ><a class="btn btn-sm btn-info" href="{% url 'tasks:updateSituationLiasseFiscal' situation.id %}"><i class="fas fa-eye"></i> Liasse Fiscal</a></td>
 										
-									{% endfor %}
-								</table>
+
+										{% if situation.file %}
+										<td><a class="btn btn-sm btn-success" href="{{situation.file.url}}"><i class="far fa-file-alt"></i> Doc</a></td>
+										{% else %}
+										<td><a class="btn btn-sm btn-warning" href="{% url 'tasks:updateSituation' situation.id %}"><i class="fas fa-file-upload"></i></a></td>
+										{% endif %}
+									</tr>
+									
+								{% endfor %}
+							</tbody>
+							</table>
 						</div>
 					</div>
 				</div>

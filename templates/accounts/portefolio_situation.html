@@ -5,12 +5,59 @@
 
 {% block content %}
 
+<br>
+
+<div class="col-md-10 ">
+	<div class="row ">
+		<div class="col-xl-3 col-lg-6">
+			<div class="card l-bg-orange-dark">
+				<div class="card-statistic-3 p-4">
+					<div class="card-icon card-icon-large"><i class="fas fa-tasks"></i></div>
+					<div class="mb-4">
+						<h5 class="card-title mb-0">Situations en cours</h5>
+					</div>
+					<div class="row align-items-center mb-2 d-flex">
+						<div class="col-8">
+							<h2 class="d-flex align-items-center mb-0">
+							[ {{situations.count}} ]
+							</h2>
+						</div>
+
+					</div>
+
+				</div>
+			</div>
+		</div>
+		<div class="col-xl-3 col-lg-6">
+			<div class="card l-bg-orange-dark">
+				<div class="card-statistic-3 p-4">
+					<div class="card-icon card-icon-large"><i class="fas fa-check-double"></i></div>
+					<div class="mb-4">
+						<h5 class="card-title mb-0">Validation en attente</h5>
+					</div>
+					<div class="row align-items-center mb-2 d-flex">
+						<div class="col-8">
+							<h2 class="d-flex align-items-center mb-0">
+							[ {{validations.count}} ]
+							</h2>
+						</div>
+
+					</div>
+
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
 <div class="container-fluid">
 	<div class="px-0 py-2 pt-md-3 pb-md-2 mx-auto text-center">
 		<h1 class="display-4">Mes Situations</h1>
 		<p class="lead">Les sociétés qui composent mon portefeuille. Une gestion efficace au quotidien !</p>
+		<input class="form-control" id="myInput" type="text" placeholder="Recherche..">
+
 	</div>
-	<div class="py-5">
+	<div id="myDIV" class="py-5">
 		<div class="row">
 			{% for item in portefolio %}
 			<div class="col-md-2">
@@ -19,7 +66,7 @@
 						{% if item.lettremission.company.file %}
 						<br>
 						<div class="cover-image mx-auto">
-							<img src="{{item.lettremission.company.file.url}}" alt="..." class="mx-auto d-block" width="120">
+							<img src="{{item.lettremission.company.file.url}}" alt="..." cclass="mx-auto d-block" height="100px" width="100%">
 						</div>
 						<br>
 						{% else %}
@@ -42,5 +89,12 @@
 		</div>
 	</div>
 </div>
+
+
+
+
+
+
+
 
 {% endblock content %}

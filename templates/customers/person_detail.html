@@ -29,13 +29,15 @@
 			{% if shareholders %}
 			<h5>Est actionnaire de : </h5>
 			<br>
-			<table class="table table-sm">
-				<tr>
+			<table class="table table-hover table-sm">
+			<thead>
+			<tr>
 					<th>Raison Sociale</th>
 					<th>Nbre Actions</th>
 					<th>Editer</th>
 					<th>Supprimer</th>
 				</tr>
+			</thead>
 			{% else %}
 			{% endif %}
 				{% for shareholder in shareholders %}
@@ -57,14 +59,16 @@
 			{% if representatives %}
 			<h5>Est représentant de : </h5>
 			<br>
-			<table class="table table-sm">
-				<tr>
+			<table class="table table-hover table-sm">
+			<thead>
+			<tr>
 					<th>Raison Sociale</th>
 					<th>Fonction</th>
 					<th>Editer</th>
 					<th>Supprimer</th>
-				</tr>
-			{% else %}
+			</tr>
+		</thead>
+		{% else %}
 			{% endif %}
 				{% for representative in representatives %}
 					<tr>

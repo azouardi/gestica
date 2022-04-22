@@ -24,7 +24,7 @@ urlpatterns = [
     
     #User management
     path('accounts/', include('allauth.urls')), # new
-
+    path('^', include('django.contrib.auth.urls')),
     # Local apps
     path('', include('accounts.urls')),
     path('', include('tasks.urls')),
@@ -33,5 +33,6 @@ urlpatterns = [
     path('', include('ordres.urls')),
     path('', include('editions.urls')),
     path('', include('csvs.urls')),
+    path('', include('audits.urls')),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

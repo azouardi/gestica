@@ -1,5 +1,5 @@
 from editions.models import DocModel
-from tasks.models import Claim, Work
+from tasks.models import DAS, Claim, Situation, Work
 from customers.models import Company, RepresentativeCompany, ShareholderCompany
 from django.contrib.auth.mixins import PermissionRequiredMixin, LoginRequiredMixin
 
@@ -54,7 +54,6 @@ def loginPage(request):
 	if request.method == 'POST':
 		username = request.POST.get('username')
 		password =request.POST.get('password')
-
 		user = authenticate(request, username=username, password=password)
 
 		if user is not None:
@@ -104,15 +103,46 @@ class UserView(LoginRequiredMixin, UserAccessMixin, View):
     def get(self, request):
         context = {}
         profile = request.user.profile
-        portefolio = request.user.profile.portefolio_set.all()
-        validations = Work.objects.filter(lettremission__validator__user=profile).filter(statut__in=[1]).exclude(supervised=True)
-        works = Work.objects.filter(lettremission__portefolio__user=profile).filter(statut__in=[0,1,3]).exclude(supervised=True)
-        claims = Claim.objects.filter(lettremission__portefolio__user=profile).filter(statut__in=[0,1])
-        bilans = Work.objects.filter(lettremission__portefolio__user=profile).filter(statut__in=[0,1,3]).filter(task__in=[409,408, 310, 401, 304]).exclude(supervised=True)
+        if request.user.is_staff:
+            portefolio = LettreMission.objects.all().order_by('company__name')
+            claims = Claim.objects.all().exclude(supervised=True)
+            bilans = Work.objects.filter(statut__in=[0,1,3]).filter(task__in=[409,408, 310, 401, 304]).exclude(supervised=True)
+            validations = Work.objects.filter(statut__in=[1]).exclude(supervised=True)
+            works = Work.objects.filter(statut__in=[0,1,3]).exclude(supervised=True)
+        else:
+            portefolio = request.user.profile.portefolio_set.all().filter(lettremission__terminate=False).order_by('lettremission__company__name')
+            claims = Claim.objects.filter(lettremission__portefolio__user=profile).exclude(supervised=True)
+            bilans = Work.objects.filter(lettremission__portefolio__user=profile).filter(statut__in=[0,1,3]).filter(task__in=[409,408, 310, 401, 304]).exclude(supervised=True)
+            validations = Work.objects.filter(lettremission__validator__user=profile).filter(statut__in=[1]).exclude(supervised=True)
+            works = Work.objects.filter(lettremission__portefolio__user=profile).filter(statut__in=[0,1,3]).exclude(supervised=True)
 
         context = {'bilans':bilans,'claims':claims,'portefolio':portefolio, 'validations':validations,'works':works}   
         return render(request, self.template_name, context)
 
+class UserManagerView(LoginRequiredMixin, UserAccessMixin, View):
+    raise_exception = True
+    permission_required = 'customers.view_company'
+    template_name = 'accounts/portefolio_manager_task.html'  
+ 
+    def get(self, request):
+        context = {}
+        profile = request.user.profile
+        if request.user.is_staff:
+            portefolio = LettreMission.objects.all().order_by('company__name')
+            claims = Claim.objects.all().exclude(supervised=True)
+            bilans = Work.objects.filter(statut__in=[0,1,3]).filter(task__in=[409,408, 310, 401, 304]).exclude(supervised=True)
+            validations = Work.objects.filter(statut__in=[1]).exclude(supervised=True)
+            works = Work.objects.filter(statut__in=[0,1,3]).exclude(supervised=True)
+        else:
+            # portefolio = LettreMission.objects.filter(terminate=False).filter(manager__user=profile).order_by('company__name')
+            portefolio = request.user.profile.manager_set.all().filter(lettremission__terminate=False).order_by('lettremission__company__name')
+            claims = Claim.objects.filter(lettremission__manager__user=profile).exclude(supervised=True)
+            bilans = Work.objects.filter(lettremission__manager__user=profile).filter(statut__in=[0,1,3]).filter(task__in=[409,408, 310, 401, 304]).exclude(supervised=True)
+            validations = Work.objects.filter(lettremission__manager__user=profile).filter(statut__in=[1]).exclude(supervised=True)
+            works = Work.objects.filter(lettremission__manager__user=profile).filter(statut__in=[0,1,3]).exclude(supervised=True)
+
+        context = {'bilans':bilans,'claims':claims,'portefolio':portefolio, 'validations':validations,'works':works}   
+        return render(request, self.template_name, context)
 
 class UserSituationView(LoginRequiredMixin, UserAccessMixin, View):
     raise_exception = True
@@ -124,7 +154,19 @@ class UserSituationView(LoginRequiredMixin, UserAccessMixin, View):
         portefolio = request.user.profile.portefolio_set.all()        
         context = {'portefolio':portefolio}   
         return render(request, self.template_name, context)
-    
+
+class UserSupervisionView(LoginRequiredMixin, UserAccessMixin, View):
+    raise_exception = True
+    permission_required = 'customers.view_company'
+    template_name = 'accounts/portefolio_manager.html'  
+     
+    def get(self, request):
+        context = {}
+        user = request.user.profile
+        supervision = user.manager_set.all()        
+        situations_1 = Situation.objects.filter(statut=1).filter(lettremission__manager__user=user)        
+        context = {'supervision':supervision, 'situations_1':situations_1}   
+        return render(request, self.template_name, context)    
     
 class UserValidationView(LoginRequiredMixin, UserAccessMixin, View):
     raise_exception = True
@@ -140,7 +182,16 @@ class UserValidationView(LoginRequiredMixin, UserAccessMixin, View):
             'validations':validations}   
         return render(request, self.template_name, context)
 
-
+class UserManagerEditionView(LoginRequiredMixin, UserAccessMixin, View):
+    raise_exception = True
+    permission_required = 'customers.view_company'
+    template_name = 'accounts/portefolio_edition_manager.html'  
+     
+    def get(self, request):
+        context = {}
+        portefolio = request.user.profile.manager_set.all().order_by('lettremission__company__name')        
+        context = {'portefolio':portefolio}   
+        return render(request, self.template_name, context)
 class UserEditionView(LoginRequiredMixin, UserAccessMixin, View):
     raise_exception = True
     permission_required = 'customers.view_company'
@@ -195,9 +246,16 @@ class LdmSituationView(LoginRequiredMixin, UserAccessMixin, View):
         context = {}
         profile = request.user.profile
         lettremission=LettreMission.objects.get(pk=pk)
+        is_manager = Manager.objects.filter(user=profile, lettremission_id=lettremission).exists()
+        if is_manager:
+            situations=Situation.objects.filter(lettremission=lettremission)
+        else:
+            situations=lettremission.situation_set.all()
+        
         # model = DocModel.objects.all()
         context = {'profile':profile,
                    'lettremission':lettremission,
+                   'situations':situations
                 #    'model':model
                    }
         return render(request, self.template_name, context)
@@ -217,7 +275,8 @@ class CompanyTdbView(LoginRequiredMixin, UserAccessMixin, View):
         representatives=company.representative_set.all()
         lettremissions = company.lettremission_set.all()
         contacts = company.contact_set.all()
-        if 	request.user.is_staff:
+        is_manager = LettreMission.objects.filter(company=company).filter(manager__user=profile)
+        if 	request.user.is_staff or is_manager:
             works = Work.objects.filter(lettremission__company_id=company)
             claims = Claim.objects.filter(lettremission__company_id=company)
         else:
@@ -249,3 +308,51 @@ class SituationRFView(LoginRequiredMixin, UserAccessMixin, View):
                 #    'model':model
                    }
         return render(request, self.template_name, context)
+
+class LdmDASView(LoginRequiredMixin, UserAccessMixin, View):
+    raise_exception = True
+    permission_required = 'customers.view_company'
+    template_name = 'accounts/lettremission_das.html'  
+     
+    def get(self, request, pk):
+        context = {}
+        profile = request.user.profile
+        lettremission=LettreMission.objects.get(pk=pk)
+        is_manager = Manager.objects.filter(user=profile, lettremission_id=lettremission).exists()
+        if is_manager:
+            dass=DAS.objects.filter(lettremission=lettremission)
+        else:
+            dass=lettremission.das_set.all()
+        
+        # model = DocModel.objects.all()
+        context = {'profile':profile,
+                   'lettremission':lettremission,
+                   'dass':dass
+                #    'model':model
+                   }
+        return render(request, self.template_name, context)
+
+
+class UserDASView(LoginRequiredMixin, UserAccessMixin, View):
+    raise_exception = True
+    permission_required = 'customers.view_company'
+    template_name = 'accounts/portefolio_das.html'  
+     
+    def get(self, request):
+        context = {}
+        portefolio = request.user.profile.portefolio_set.all()        
+        context = {'portefolio':portefolio}   
+        return render(request, self.template_name, context)
+
+class UserSupervisionDASView(LoginRequiredMixin, UserAccessMixin, View):
+    raise_exception = True
+    permission_required = 'customers.view_company'
+    template_name = 'accounts/portefolio_manager_das.html'  
+     
+    def get(self, request):
+        context = {}
+        user = request.user.profile
+        supervision_das = user.manager_set.all()        
+        dass_1 = DAS.objects.filter(statut=1).filter(lettremission__manager__user=user)        
+        context = {'supervision_das':supervision_das, 'dass_1':dass_1}   
+        return render(request, self.template_name, context)    

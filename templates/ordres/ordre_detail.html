@@ -32,14 +32,16 @@
 		<div class="card card-body">
 			<a class="btn btn-secondary" href="{%url 'ordres:createServiceItem' ordre.id %}">Ajouter un Service</a>
 			<br>
-			<table class="table table-sm">
-				<tr>
+			<table class="table table-hover table-sm">
+			<thead>
+			<tr>
 					<th>Service</th>
 					<th>Montant HT</th>
 					<th>Taxe</th>
 					<th>Editer</th>
 					<th>Supprimer</th>
 				</tr>
+			</thead>
 
 				{% for serviceitem in serviceitems %}
 
@@ -62,13 +64,15 @@
 
 			<a class="btn btn-secondary" href="{%url 'ordres:createOutlayItem' ordre.id %}">Ajouter un Débours</a>
 			<br>
-			<table class="table table-sm">
-				<tr>
+			<table class="table table-hover table-sm">
+			<thead>
+			<tr>
 					<th>Débours</th>
 					<th>Montant</th>
 					<th>Editer</th>
 					<th>Supprimer</th>
 				</tr>
+			</thead>
 
 				{% for outlayitem in outlayitems %}
 

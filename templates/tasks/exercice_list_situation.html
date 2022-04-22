@@ -1,0 +1,104 @@
+<!-- templates/costomers/exercice_list.html -->
+
+{%  extends '_base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block title %}Portefeuille{% endblock title %}
+{% block content %}
+
+
+<br>
+<div class="col-md-10 ">
+	<div class="row ">
+			<div class="col-xl-3 col-lg-6">
+			<div class="card l-bg-blue-dark">
+				<div class="card-statistic-3 p-4">
+					<div class="card-icon card-icon-large"><i class="fas fa-tasks"></i></div>
+					<div class="mb-4">
+						<h5 class="card-title mb-0">Situations</h5>
+					</div>
+					<div class="row align-items-center mb-2 d-flex">
+						<div class="col-8">
+							<h2 class="d-flex align-items-center mb-0">
+								000
+							</h2>
+						</div>
+						<div class="col-4 text-right">
+							<span>00%<i class="fas fa-arrow-up"></i></span>
+						</div>
+					</div>
+					<div class="progress mt-1 " data-height="8" style="height: 8px;">
+						<div class="progress-bar l-bg-orange" role="progressbar" data-width="25%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100" style="width: 25%;"></div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="col-xl-3 col-lg-6">
+			<div class="card l-bg-blue-dark">
+				<div class="card-statistic-3 p-4">
+					<div class="card-icon card-icon-large"><i class="fas fa-clipboard-check"></i></div>
+					<div class="mb-4">
+						<h5 class="card-title mb-0">Validations</h5>
+					</div>
+					<div class="row align-items-center mb-2 d-flex">
+						<div class="col-8">
+							<h2 class="d-flex align-items-center mb-0">
+								000
+							</h2>
+						</div>
+						<div class="col-4 text-right">
+							<span>00% <i class="fas fa-arrow-up"></i></span>
+						</div>
+					</div>
+					<div class="progress mt-1 " data-height="8" style="height: 8px;">
+						<div class="progress-bar l-bg-orange" role="progressbar" data-width="25%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100" style="width: 25%;"></div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="container-fluid">
+	<div class="px-0 py-2 pt-md-3 pb-md-2 mx-auto text-center">
+		<h1 class="display-4">Liste des Exercices / Situations Comptables</h1>
+		<p class="lead">A chacun son rôle dans l'édifice. Une gestion efficace au quotidien !</p>
+		<input class="form-control" id="myInput" type="text" placeholder="Recherche..">
+
+	</div>
+	<br>
+	
+	{% if exercices %}
+
+	<div class="col-md">
+
+		<div class="card card-body">
+			<table class="table table-hover table-sm">
+			<thead>
+			<tr>
+					<th></th>
+					<th>Exercice</th>
+					<th>Mois</th>
+					<th>Situation</th>
+				</tr>
+			</thead>
+			<tbody id="myTable">
+
+				{% for exercice in exercices %}
+
+					<tr>
+						<td></td>
+						<td>{{exercice.exercice}}</td>
+						<td>{{exercice.month}}</td>
+						<td><a class="btn btn-sm btn-outline-info" href="{% url 'tasks:exerciceDetailManager' exercice.id %}"><i class="fas fa-eye"></i> View</a></td>
+					</tr>
+				{% endfor %}
+				</tbody>
+			</table>
+		</div>
+	</div>
+	{% else %}
+	{% endif %}
+</div>
+
+{% endblock content %}

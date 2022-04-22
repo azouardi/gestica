@@ -1,0 +1,193 @@
+<!-- templates/tasks/exercice_detail.html -->
+{% extends '_base.html' %}
+{% block title %}Mise à Jour Exercice{% endblock title %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block content %}
+
+
+<br>
+<div class="col-md-6">
+	<div class="card card-body">
+
+		<div class="row">
+			<div class="col">
+				<h3>Exercice : <b>{{exercice}}</b></h3>
+				<br>
+					<a type="button" class="btn btn-primary btn-lg btn-block" href="{% url 'tasks:createDAS' exercice.id %}">Ajouter une DAS</a>
+					<br>		
+					<!-- Button to Open the Modal -->
+					<button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#myModal1">
+						Générer les DASs
+					</button>	  
+					<!-- The Modal -->
+					<div class="modal fade" id="myModal1">
+						<div class="modal-dialog">
+							<div class="modal-content">			
+								<!-- Modal Header -->
+								<div class="modal-header">
+									<h4 class="modal-title">Confirmation</h4>
+									<button type="button" class="close" data-dismiss="modal">&times;</button>
+								</div>			  
+								<!-- Modal body -->
+								<div class="modal-body">
+									Confirmer l'insertion des dass ?
+					
+								</div>			  
+								<!-- Modal footer -->
+								<div class="modal-footer">
+									<button type="button" class="btn btn-danger" data-dismiss="modal">Fermer</button>
+									<div class="spinner-grow text-warning"></div>
+
+									<form action="{%url 'tasks:insertDAS' exercice.id %}" enctype="multipart/form-data" method="POST">
+										{% csrf_token %}
+										<!-- {{form|crispy}} -->
+										<input class="btn btn-warning" type="submit" name="OK">					
+									</form>
+								</div>	  
+							</div>
+						</div>
+					</div>
+
+					<button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#myModal">
+						Générer les Valeurs "Tous"
+					</button>
+					<!-- The Modal -->
+					<div class="modal fade" id="myModal">
+					<div class="modal-dialog">
+						<div class="modal-content">
+							<!-- Modal Header -->
+							<div class="modal-header">
+								<h4 class="modal-title">Confirmation</h4>
+								<button type="button" class="close" data-dismiss="modal">&times;</button>
+							</div>
+							<!-- Modal body -->
+							<div class="modal-body">
+								Confirmer la génération des données ?
+
+							</div>
+							<!-- Modal footer -->
+							<div class="modal-footer">
+								<button type="button" class="btn btn-danger" data-dismiss="modal">Fermer</button>
+								<div class="spinner-grow text-warning"></div>
+
+								<form action="{%url 'tasks:DASDataUpdate' exercice.id %}" enctype="multipart/form-data" method="POST">
+									{% csrf_token %}
+									<!-- {{form|crispy}} -->
+									<input class="btn btn-warning" type="submit" name="OK">
+								</form>
+							</div>
+						</div>
+					</div>
+					
+					</div>
+
+					<button type="button" class="btn btn-danger" data-toggle="modal" data-target="#myModal2">
+						Générer les Valeurs pour "En Attente"
+					</button>
+					<!-- The Modal -->
+					<div class="modal fade" id="myModal2">
+					<div class="modal-dialog">
+						<div class="modal-content">
+							<!-- Modal Header -->
+							<div class="modal-header">
+								<h4 class="modal-title">Confirmation</h4>
+								<button type="button" class="close" data-dismiss="modal">&times;</button>
+							</div>
+							<!-- Modal body -->
+							<div class="modal-body">
+								Confirmer la génération des données ?
+
+							</div>
+							<!-- Modal footer -->
+							<div class="modal-footer">
+								<button type="button" class="btn btn-danger" data-dismiss="modal">Fermer</button>
+								<div class="spinner-grow text-warning"></div>
+
+								<form action="{%url 'tasks:DASDataUpdateAttente' exercice.id %}" enctype="multipart/form-data" method="POST">
+									{% csrf_token %}
+									<!-- {{form|crispy}} -->
+									<input class="btn btn-warning" type="submit" name="OK">
+								</form>
+							</div>
+						</div>
+					</div>
+					
+					</div>					
+				
+				<a class="btn btn-warning" href="{% url 'tasks:exerciceListDAS' %}">Retour</a>
+
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="col-md-12">
+	<div class="card card-body">
+			<h3>Liste des <b>{{ dass|length}}</b> dass</h3>			
+			<div class="card-body">
+				<input class="form-control" id="myInput" type="text" placeholder="Recherche..">
+
+						<div class="card-body">
+							{% if dass %}
+							<table class="table table-hover table-sm">
+							<thead>
+								<tr>
+									<th>LDM</th>
+									<th>Exercice</th>
+									<th>Mois</th>
+									<th>DAS</th>
+									<th>Récap DAS</th>
+									<th>Calcul IR DAS</th>
+									<th>CSS DAS</th>
+									<th>Exonération DAS</th>
+									<th>Informations DAS</th>
+									<th>Document</th>
+								</tr>
+							</thead>
+							<tbody id="myTable">
+
+							{% for das in dass %}
+			
+									<tr>
+										<td>{{das.lettremission.company|truncatechars:25}}</td>
+										<td><b>{{das.exercice}}</b></td>
+										<td>{{das.month}}</td>
+										{% if das.statut == 0 %}
+										<td ><a class="btn btn-sm btn-danger" href="{% url 'tasks:updateDAS' das.id %}"><i class="fas fa-window-close"></i> En Attente</a></td>
+										{% elif das.statut == 1 %}
+										<td ><a class="btn btn-sm btn-warning" href="{% url 'tasks:updateDAS' das.id %}"><i class="fas fa-step-forward"></i> Préparé</a></td>
+										{% elif das.statut == 2 %}
+										<td ><a class="btn btn-sm btn-success" href="{% url 'tasks:updateDAS' das.id %}"><i class="fas fa-check-double"></i> Validé</a></td>
+										{% elif das.statut == 3 %}
+										<td ><a class="btn btn-sm btn-danger" href="{% url 'tasks:updateDAS' das.id %}"><i class="fas fa-window-close"></i> Non Validé</a></td>
+										{% else %}
+										<td ><a class="btn btn-sm btn-dark" href="{% url 'tasks:updateDAS' das.id %}"><i class="fab fa-slack-hash"></i> Non Applicable</a></td>
+										{% endif %}									
+										<td ><a class="btn btn-sm btn-info" href="{% url 'tasks:updateDASDetail' das.id %}"><i class="fas fa-eye"></i> Récap DAS</a></td>
+										<td ><a class="btn btn-sm btn-info" href="{% url 'tasks:updateDASMatriculeDetail' das.id %}"><i class="fas fa-eye"></i> Calcul IR DAS</a></td>
+										<td ><a class="btn btn-sm btn-info" href="{% url 'tasks:updateDASCSSDetail' das.id %}"><i class="fas fa-eye"></i> CSS DAS</a></td>
+										<td ><a class="btn btn-sm btn-info" href="{% url 'tasks:updateDASExoDetail' das.id %}"><i class="fas fa-eye"></i> Exonération DAS</a></td>
+										<td ><a class="btn btn-sm btn-info" href="{% url 'tasks:updateDASFIPPDetail' das.id %}"><i class="fas fa-eye"></i> Informations DAS</a></td>
+										{% if das.file %}
+										<td><a class="btn btn-sm btn-success" href="{{das.file.url}}"><i class="far fa-file-alt"></i> Doc</a></td>
+										{% else %}
+										<td><a class="btn btn-sm btn-warning" href="{% url 'tasks:updateDAS' das.id %}"><i class="fas fa-file-upload"></i></a></td>
+										{% endif %}
+									</tr>
+									
+								{% endfor %}
+							</tbody>
+							</table>
+						</div>
+				</div>
+				{% else %}
+
+				{% endif %}
+		
+			</div>
+  </div>
+
+
+
+{% endblock content %}

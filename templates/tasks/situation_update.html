@@ -1,25 +1,51 @@
 <!--templates/situation_update.html-->
 {%  extends '_base.html' %}
 {% load static %}
-{% block title %}Mise à Jour Service{% endblock title %}
+
+{% block title %}Déclaration du résultat fiscal{% endblock title %}
 
 
 {% load crispy_forms_tags %}
 {% block content %}
-<br>
 
+
+
+
+<br>
 <div class="row">
-    <div class="col-md-6">
+    <div class="col-md-4">
         <div class="card card-body">
-            <form action="{% url 'tasks:updateSituation' situation.id %}" enctype="multipart/form-data" method="POST">
+            <div class="mb-4">
+                <h3 class="card-title mb-0">{{situation.lettremission.company.name}} / {{situation.exercice}}</h3>
+            </div>            
+            <form action="" enctype="multipart/form-data" method="POST">
+                {% if situation.supervised == True or situation.statut == 2 and is_manager == False %}
+                {% if is_manager == True %}
+                <a class="btn btn-warning" href="{% url 'tasks:exerciceDetailManager' exercice %}">Retour</a>
+                {% else %}
+                <a class="btn btn-warning" href="{% url 'accounts:LdmSituation' situation.lettremission.id %}">Retour</a>
+                {% endif%}
+
+                <fieldset disabled>
+                {% else %}
+                <fieldset>
+                {% endif%}
+
                 {% csrf_token %}
                 {{form|crispy}}
-                <a class="btn btn-warning" href="{% url 'tasks:exerciceDetail' exercice %}">Retour</a>
 
+                {% if is_manager == True %}
+                <a class="btn btn-warning" href="{% url 'tasks:exerciceDetailManager' exercice %}">Retour</a>
+                {% else %}
+                <a class="btn btn-warning" href="{% url 'accounts:LdmSituation' situation.lettremission.id %}">Retour</a>
+                {% endif%}
                 <input class="btn btn-primary" type="submit" name="Submit">
+            </fieldset>
             </form>
         </div>
     </div>
 </div>
+
+
 
 {% endblock content %}

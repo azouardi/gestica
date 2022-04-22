@@ -12,26 +12,17 @@
     <div class="col-md-6">
         <div class="card card-body">
             <form action="" enctype="multipart/form-data" method="POST">
-                {% if work.supervised == True or work.statut == 2 %}
+                {% if work.supervised == True or work.statut == 2 and is_manager == False %}
                 <a class="btn btn-warning" href="{% url 'accounts:companyTdb' work.lettremission.company.id %}">Retour</a>
-
                 <fieldset disabled>
                 {% else %}
                 <fieldset>
                 {% endif%}
-
                 {% csrf_token %}
-                <!-- <br>
-                <input class="form-control" id="disabledInput" type="text" placeholder="{{work.lettremission.company}}" disabled>
-                <br>
-                <input class="form-control" id="disabledInput" type="text" placeholder="{{work.task.name}}" disabled>
-                <br>
-                <input class="form-control" id="disabledInput" type="text" placeholder="Echéance du : {{work.period.echeance}}" disabled>
-                <br>
-                <input class="form-control is-invalid" id="disabledInput" type="text" placeholder="Date Limite du : {{work.date_limit}}" disabled>
-                <br> -->
                 {{form|crispy}}
-                {% if is_val == True %}
+                {% if is_manager == True %}
+                <a class="btn btn-warning" href="{% url 'accounts:companyTdb' work.lettremission.company.id %}">Retour</a>
+                {% elif is_val == True %}
                 <a class="btn btn-warning" href="{% url 'accounts:userPortefolio' %}">Retour</a>
                 {% else %}
                 <a class="btn btn-warning" href="{% url 'accounts:companyTdb' work.lettremission.company.id %}">Retour</a>

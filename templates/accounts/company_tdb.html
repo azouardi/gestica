@@ -10,7 +10,7 @@
 
 <div class="row">
 	
-	<div class="col-xl-4 col-lg-6">
+	<div class="col-xl-5 col-lg-6">
 		<div class="card l-bg-white-dark">
 			<div class="card-statistic-3 p-4">
 				<div class="card-icon card-icon-large"><i class="far fa-building"></i></div>
@@ -41,7 +41,6 @@
 				</div>
 				<div class="row align-items-center mb-2 d-flex">
 					<div class="col-12">
-						<h2 class="d-flex align-items-center mb-0">
 							{% for item in shareholders %}
 							<h6>{{item}}</h6>
 							{% endfor %}
@@ -56,7 +55,7 @@
 	{% endif %}
 
 	{% if representatives or representativecompanys %}
-	<div class="col-xl-3 col-lg-6">
+	<div class="col-xl-2 col-lg-6">
 		<div class="card l-bg-white-dark">
 			<div class="card-statistic-3 p-4">
 				<div class="card-icon card-icon-large"><i class="fas fa-user"></i></div>
@@ -65,7 +64,6 @@
 				</div> 
 				<div class="row align-items-center mb-2 d-flex">
 					<div class="col-12">
-						<h2 class="d-flex align-items-center mb-0">
 							{% for item in representatives %}
 							<h6>{{item}}</h6>
 							{% endfor %}
@@ -80,7 +78,7 @@
 	{% endif %}
 
 	{% if contacts %}
-	<div class="col-xl-3 col-lg-6">
+	<div class="col-xl-2 col-lg-6">
 		<div class="card l-bg-white-dark">
 			<div class="card-statistic-3 p-4">
 				<div class="card-icon card-icon-large"><i class="fas fa-address-card"></i></div>
@@ -89,7 +87,6 @@
 					</div>
 					<div class="row align-items-center mb-2 d-flex">
 						<div class="col-12">
-							<h2 class="d-flex align-items-center mb-0">
 								{% for item in contacts %}</h2>
 								<h6>{{item}}</h6>
 								{% endfor %}
@@ -107,7 +104,7 @@
 <div class="row">
 
 	{% if lettremissions %}
-	<div class="col-xl-3 col-lg-6">
+	<div class="col-xl-4 col-lg-6">
 		<div class="card l-bg-white-dark">
 			<div class="card-statistic-3 p-4">
 				<div class="card-icon card-icon-large"><i class="far fa-file-alt"></i></div>
@@ -116,11 +113,9 @@
 					</div>
 					<div class="row align-items-center mb-2 d-flex">
 						<div class="col-12">
-							<h2 class="d-flex align-items-center mb-0">
 								{% for item in lettremissions %}
 								<h6><i class="fas fa-thumbtack text-success"></i> {{item.moduleservice}}</h6>
 									{% if item.benefitlink.benefititem_set.all %}
-									<hr>
 									<h6 class="card-title mb-0">Particularités :</h6>
 									{% for benefit in item.benefitlink.benefititem_set.all %}
 										{{ benefit }} ;
@@ -140,7 +135,7 @@
 
 	{% if kpis %}
 
-	<div class="col-xl-3 col-lg-6">
+	<div class="col-xl-4 col-lg-6">
 		<div class="card l-bg-white-dark">
 			<div class="card-statistic-3 p-4">
 				<div class="card-icon card-icon-large"><i class="far fa-chart-bar"></i></div>
@@ -149,7 +144,6 @@
 					</div>
 					<div class="row align-items-center mb-2 d-flex">
 						<div class="col-12">
-							<h2 class="d-flex align-items-center mb-0">
 								{% for item in kpis %}
 								<h6><i class="fas fa-thumbtack text-success"></i> {{item}}</h6>
 								{% endfor %}
@@ -172,10 +166,12 @@
 	<div class="col-md">
 		<div class="card card-body">
 			<h3>Mes travaux</h3>
+			<input class="form-control" id="myInput" type="text" placeholder="Recherche..">
 
 			<br>
 
-			<table class="table table-sm">
+			<table class="table table-hover table-sm">
+			<thead>
 				<tr>
 					<th>Echéance</th>
 					<th>Tâche</th>
@@ -188,6 +184,8 @@
 					<th>Superviser</th>
 					{% endif %}
 				</tr>
+			</thead>
+			<tbody id="myTable">
 
 				{% for work in works %}
 					<tr>
@@ -211,7 +209,7 @@
 						{% elif work.statut == 2 %}
 						<td ><a class="btn btn-sm btn-success" href="{% url 'tasks:updateWorkColl' work.id %}"><i class="fas fa-check-double"></i> Validé</a></td>
 						{% elif work.statut == 3 %}
-						<td ><a class="btn btn-sm btn-danger" href="{% url 'tasks:updateWorkColl' work.id %}"><i class="fas fa-exclaimation-triangle"></i> Non Validé</a></td>
+						<td ><a class="btn btn-sm btn-danger" href="{% url 'tasks:updateWorkColl' work.id %}"><i class="fas fa-exclamation-triangle"></i> Non Validé</a></td>
 						{% else %}
 						<td ><a class="btn btn btn-dark" href="{% url 'tasks:updateWorkColl' work.id %}"><i class="fab fa-slack-hash"></i> Non Applicable</a></td>
 						{% endif %}
@@ -232,6 +230,7 @@
 						{% endif %}
 					</tr>
 				{% endfor %}
+			</tbody>
 			</table>
 		</div>
 	</div>
@@ -243,18 +242,19 @@
 
 		<div class="card card-body">
 
-			<h3>Mes Réclaimations</h3>
+			<h3>Mes Réclamations</h3>
 			<br>
 
-			<table class="table table-sm">
+			<table class="table table-hover table-sm">
+			<thead>
 				<tr>
 					<th>Objet</th>
-					<th>Date de réclaimation</th>
+					<th>Date de réclamation</th>
 					<th>Quittance</th>
 					<th>Consulter</th>
 					<th>Doc</th>
 				</tr>
-
+			</thead>
 				{% for claim in claims %}
 					<tr>
 						<td>{{claim.objet}}</td>
@@ -276,7 +276,7 @@
 						{% elif claim.statut == 2 %}
 						<td ><a class="btn btn-sm btn-success" href="{% url 'tasks:updateClaim' claim.id %}"><i class="fas fa-check-double"></i> Acceptée</a></td>
 						{% elif claim.statut == 3 %}
-						<td ><a class="btn btn-sm btn-danger" href="{% url 'tasks:updateClaim' claim.id %}"><i class="fas fa-exclaimation-triangle"></i> Rejetée</a></td>
+						<td ><a class="btn btn-sm btn-danger" href="{% url 'tasks:updateClaim' claim.id %}"><i class="fas fa-exclamation-triangle"></i> Rejetée</a></td>
 						{% else %}
 						<td ><a class="btn btn btn-dark" href="{% url 'tasks:updateClaim' claim.id %}"><i class="fab fa-slack-hash"></i> Annulée</a></td>
 						{% endif %}

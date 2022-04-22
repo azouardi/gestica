@@ -1,0 +1,323 @@
+
+
+<!-- templates/home.html -->
+{% extends '_base.html' %}
+{% load static %}
+{% block title %}Dashboard{% endblock title %}
+
+
+{% block scripts %}
+
+<script>
+    $(document).ready(function(){
+        const ctx = document.getElementById('myChart').getContext('2d');
+        const myChart = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: ['En cours', 'En attente de validation', 'Non-validé'],
+                datasets: [{
+                    label: 'Répartition des mes travaux en cours',
+                    data: ['{{w_0}}', '{{w_1}}', '{{w_3}}'],
+                    backgroundColor: [
+                    'rgba(249, 65, 68, 0.9)',
+                    'rgba(243, 114, 44, 0.9)',
+                    'rgba(248, 150, 30, 0.9)',
+                    'rgba(249, 199, 79, 0.9)',
+                    'rgba(144, 190, 109, 0.9)',
+                    'rgba(67, 170, 139, 0.9)',
+                    'rgba(87, 117, 144, 0.9)'
+                    ],
+                    borderColor: [
+                    'rgba(249, 65, 68, 1)',
+                    'rgba(243, 114, 44, 1)',
+                    'rgba(248, 150, 30, 1)',
+                    'rgba(249, 199, 79, 1)',
+                    'rgba(144, 190, 109, 1)',
+                    'rgba(67, 170, 139, 1)',
+                    'rgba(87, 117, 144, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+        });        
+});
+</script>
+
+<script>
+    $(document).ready(function(){
+        const ctx = document.getElementById('myChart1').getContext('2d');
+        const myChart1 = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['En cours', 'En attente de validation', 'Non-validé'],
+                datasets: [{
+                    label: 'Répartition des mes travaux en cours',
+                    data: ['{{w_0}}', '{{w_1}}', '{{w_3}}'],
+                    backgroundColor: [
+                    'rgba(0, 48, 73, 0.9)',
+                    'rgba(214, 40, 40, 0.9)',
+                    'rgba(247, 127, 0, 0.9)',
+                    'rgba(252, 191, 73, 0.9)',
+                    'rgba(234, 226, 183, 0.9)',
+                    'rgba(38, 70, 83, 0.9)',
+                    'rgba(42, 157, 143, 0.9)',
+                    'rgba(233, 196, 106, 0.9)',
+                    'rgba(244, 162, 97, 0.9)',
+                    'rgba(231, 111, 81, 0.9)'
+  
+                    ],
+                    borderColor: [
+                    'rgba(0, 48, 73, 1)',
+                    'rgba(214, 40, 40, 1)',
+                    'rgba(247, 127, 0, 1)',
+                    'rgba(252, 191, 73, 1)',
+                    'rgba(234, 226, 183, 1)',
+                    'rgba(38, 70, 83, 1)',
+                    'rgba(42, 157, 143, 1)',
+                    'rgba(233, 196, 106, 1)',
+                    'rgba(244, 162, 97, 1)',
+                    'rgba(231, 111, 81, 1)'
+
+                    ],
+                    borderWidth: 1
+                }]
+            },
+
+        });        
+});
+</script>
+
+<script>
+    $(document).ready(function(){
+        const ctx = document.getElementById('myChart2').getContext('2d');
+        const myChart2 = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['En cours', 'En attente de validation', 'Non-validé'],
+                datasets: [{
+                    label: 'Répartition des mes travaux en cours',
+                    data: ['{{w_0}}', '{{w_1}}', '{{w_3}}'],
+                    backgroundColor: [
+                    'rgba(0, 48, 73, 0.9)',
+                    'rgba(214, 40, 40, 0.9)',
+                    'rgba(247, 127, 0, 0.9)',
+                    'rgba(252, 191, 73, 0.9)',
+                    'rgba(234, 226, 183, 0.9)',
+                    'rgba(38, 70, 83, 0.9)',
+                    'rgba(42, 157, 143, 0.9)',
+                    'rgba(233, 196, 106, 0.9)',
+                    'rgba(244, 162, 97, 0.9)',
+                    'rgba(231, 111, 81, 0.9)'
+  
+                    ],
+                    borderColor: [
+                    'rgba(0, 48, 73, 1)',
+                    'rgba(214, 40, 40, 1)',
+                    'rgba(247, 127, 0, 1)',
+                    'rgba(252, 191, 73, 1)',
+                    'rgba(234, 226, 183, 1)',
+                    'rgba(38, 70, 83, 1)',
+                    'rgba(42, 157, 143, 1)',
+                    'rgba(233, 196, 106, 1)',
+                    'rgba(244, 162, 97, 1)',
+                    'rgba(231, 111, 81, 1)'
+
+                    ],
+                    borderWidth: 1
+                }]
+            },
+
+        });        
+});
+</script>
+
+{% endblock scripts %}
+
+{% block content %}
+<br>
+
+<div class="row">
+    {% if user.is_authenticated %}
+    <h3>Hi {{ user.first_name }} !</h3>
+    <p><a href="{% url 'account_logout' %}">Se Déconnecter</a></p>
+
+	
+	<div class="col-lg">
+		<div class="card l-bg-white-dark">
+			<div class="card-statistic-3 p-4">
+				<div class="card-icon card-icon-large"></i></div>
+				<div class="mb-4">
+					<h3 class="card-title mb-0">Mes travaux</h3>
+
+                    <canvas id="myChart" width="100" height="100"></canvas>
+
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="col-lg">
+		<div class="card l-bg-white-dark">
+			<div class="card-statistic-3 p-4">
+				<div class="card-icon card-icon-large"></div>
+				<div class="mb-4">
+					<h3 class="card-title mb-0">Exemple 2</h3>
+                    <canvas id="myChart1" width="100" height="100"></canvas>
+				</div>
+
+			</div>
+		</div>
+	</div>
+
+	<div class="col-lg">
+		<div class="card l-bg-white-dark">
+			<div class="card-statistic-3 p-4">
+				<div class="card-icon card-icon-large"></div>
+				<div class="mb-4">
+					<h3 class="card-title mb-0">Exemple 3</h3>
+                    <canvas id="myChart2" width="100" height="100"></canvas>
+
+				</div> 
+
+			</div>
+		</div>
+	</div>
+</div>
+
+
+
+
+{% else %}
+<p>Vous n'êtes pas connectés</p>
+    <p><a href="{% url 'account_login' %}">Se Connecter</a> |
+    <a href="{% url 'account_signup' %}">S'Inscrire</a></p>
+{% endif %}
+<div>
+<img class="logo" src="{% static 'images/eurodefi.png' %}">
+</div>
+
+
+
+{% comment %} Dossiers et travaux du portefeuille {% endcomment %}
+
+<div class="row">
+
+	{% if portefeuil_coll_list %}
+
+	<div class="col-md-4">
+		<div class="card card-body">
+			<h3>Travaux par dossier</h3>
+			{% comment %} <input class="form-control" id="myInput" type="text" placeholder="Recherche.."> {% endcomment %}
+
+			<br>
+
+			<table class="table table-hover table-sm">
+			<thead>
+				<tr>
+					<th>Dossier</th>
+					<th>Tâches en cours</th>
+					<th>Rêquetes</th>
+				</tr>
+			</thead>
+			<tbody id="myTable">
+
+				{% for dossier in portefeuil_coll_list %}
+                        <tr>
+                            <td>{{dossier.Dossier}}</td>
+                            <td><a class="btn btn-sm btn-primary" href="{% url 'accounts:companyTdb' dossier.ID %}"><i class="fas fa-eye"></i> {{dossier.Tache}}</a></td>
+                            {% if dossier.Requete > 0 %}
+                            <td><a class="btn btn-sm btn-warning" href="{% url 'accounts:companyTdb' dossier.ID %}"><i class="fas fa-eye"></i> {{dossier.Requete}}</a></td>
+                            {% else %}
+                            <td></td>
+                            {% endif %}
+
+                        </tr>
+
+				{% endfor %}
+			</tbody>
+			</table>
+		</div>
+	</div>
+	{% else %}
+	{% endif %}
+
+    <div class="col-md-4">
+
+        {% comment %} validations en cours {% endcomment %}
+        {% if validations %}
+        <div class="col-md">
+            <div class="card card-body">
+                <a class="text-success" href="{% url 'accounts:userValidation' %}">							</a>
+
+                <h3 class=text-success>En Attente de Validations</h3>
+                <br>
+
+                <table class="table table-sm table-success">
+                    <tr>
+                        <th>Client</th>
+                        <th>Tâche</th>
+                        <th>Date Limite</th>
+                        <th></th>
+                    </tr>
+                    {% for validation in validations %}
+                    <tr>
+                        <td>{{validation.lettremission.company}}</td>
+                        <td>{{validation.task}}</td>
+                        <td>{{validation.date_limit}}</td>
+                        <td><a class="btn btn-sm btn-success" href="{% url 'tasks:updateWorkColl' validation.id %}"><i class="fas fa-eye"></i></a></td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            </div>
+        </div>
+        {% else %}
+        {% endif %}
+
+        {% comment %} bilan en cours  {% endcomment %}
+        {% if bilans %}
+        <div class="col-md">
+            <div class="card card-body">
+                <h3 class=text-primary>Bilan en Cours</h3>
+                <br>
+                <table class="table table-sm table-primary">
+                    <tr>
+                        <th>Client</th>
+                        <th>Objet</th>
+                        <th>Date Limite</th>
+                        <th></th>
+                    </tr>
+                    {% for bilan in bilans %}
+                    <tr>
+                        <td>{{bilan.lettremission.company}}</td>
+                        <td>{{bilan.task}}</td>
+                        <td>{{bilan.date_limit}}</td>
+                        <td><a class="btn btn-sm btn-primary" href="{% url 'tasks:updateWorkColl' bilan.id %}"><i class="fas fa-eye"></i></a></td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            </div>
+        </div>
+        {% else %}
+        {% endif %}
+    </div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script> 
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.min.js"></script> 
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@0.4.0/dist/chartjs-plugin-datalabels.min.js"></script> 
+
+
+
+{% endblock content %}

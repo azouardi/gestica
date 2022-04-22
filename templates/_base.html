@@ -1,6 +1,7 @@
 {% load bootstrap4 %}
 {% load static %}
 {% load humanize %}
+
 {% bootstrap_css %}         {# Embed Bootstrap CSS #}
 {% bootstrap_javascript jquery='full' %}  {# Embed Bootstrap JS+jQuery #}
 {{ form.media }}            {# Adds date-picker required JS and CSS #}
@@ -24,10 +25,24 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
     <link rel="stylesheet" type="text/css" href="{% static 'css/base.css' %}">
 
-    
-<!-- Custom js copy-btn -->
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">    
+    <!--Chart js-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js" integrity="sha256-Uv9BNBucvCPipKQ2NS9wYpJmi8DTOEfTA/nH2aoJALw=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.css" integrity="sha256-aa0xaJgmK/X74WM224KMQeNQC2xYKwlAt08oZqjeF0E=" crossorigin="anonymous" />
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Google Chart -->
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 
 </head>
+
+
+
+
+
+
 
 <body id="body-pd">
   <header class="header" id="header">
@@ -47,30 +62,21 @@
               <div class="nav_list">
             {% if user.is_authenticated %}
 
+            <a href="{% url 'home' %}" class="nav_link text-light"> 
+              <i class='bx bx-grid-alt nav_icon'></i> 
+              <span class="nav_name">Dashboard</span>
+           </a> 
+
                 {% if request.user.is_staff %}
 
-                   <a href="#" class="nav_link"> 
-                       <i class='bx bx-grid-alt nav_icon'></i> 
-                       <span class="nav_name">Dashboard</span>
-                    </a> 
+ 
  
                     <a href="#" class="nav_link"> 
                         <i class='bx bx-message-square-detail nav_icon'></i> 
                         <span class="nav_name">Messages</span> 
                     </a>
+                
 
-                    <a href="{% url 'tasks:periodList' %}" class="nav_link"> 
-                        <i class="bx bx-calendar-check nav_icon"></i>
-                        <span class="nav_name">Echéances</span> 
-                    </a>
-                    <a href="{% url 'tasks:exerciceList' %}" class="nav_link"> 
-                      <i class="fas fa-cash-register nav_icon"></i>
-                      <span class="nav_name">Situations</span> 
-                  </a>
-                    <a href="{% url 'ordres:lettremissionList' %}" class="nav_link"> 
-                        <i class='bx bx-wallet nav_icon'></i> 
-                        <span class="nav_name">Clients</span> 
-                    </a> 
 
                     <a href="#" class="nav_link"> 
                         <i class='bx bx-bar-chart-alt-2 nav_icon'></i> 
@@ -82,27 +88,62 @@
                         <span class="nav_name">Missions</span> 
                     </a> 
                     
-                    <a href="{% url 'customers:integrationData' %}" class="nav_link"> 
-                        <i class='bx bxs-book-content nav_icon'></i> 
-                        <span class="nav_name">Fiches</span> 
-                    </a>
+
                     {% endif %}
 
+
+
+                    {% if 'Managers' in groups or request.user.is_staff %}
+                    <a href="{% url 'customers:integrationData' %}" class="nav_link text-light"> 
+                      <i class='bx bxs-book-content nav_icon'></i> 
+                      <span class="nav_name">Fiches</span> 
+                  </a>
+                    <a href="{% url 'ordres:lettremissionList' %}" class="nav_link text-light"> 
+                      <i class='bx bx-wallet nav_icon'></i> 
+                      <span class="nav_name">Clients</span> 
+                  </a> 
+                    <a href="{% url 'tasks:periodList' %}" class="nav_link text-light"> 
+                      <i class="bx bx-calendar-check nav_icon"></i>
+                      <span class="nav_name">Gestion Echéances</span> 
+                  </a>
+                  <a href="{% url 'tasks:exerciceList' %}" class="nav_link text-light"> 
+                    <i class="fas fa-layer-group nav_icon"></i>
+                    <span class="nav_name">Gestion Exercices</span> 
+                  </a>
+                  <a href="{% url 'accounts:userPortefolioManager' %}" class="nav_link text-light"> 
+                      <i class='fas fa-tasks nav_icon'></i> 
+                      <span class="nav_name">Supervision Tâches</span> 
+                    </a> 
+                    <a href="{% url 'tasks:exerciceListSituation' %}" class="nav_link text-light"> 
+                      <i class='fas fa-eye nav_icon'></i> 
+                      <span class="nav_name">Supervision Situations</span> 
+                    </a>
+                    <a href="{% url 'tasks:exerciceListDAS' %}" class="nav_link text-light"> 
+                      <i class='fas fa-search-dollar nav_icon'></i> 
+                      <span class="nav_name">Supervision DAS</span> 
+                    </a>
+                    <a href="{% url 'accounts:userPortefolioEditionManager' %}" class="nav_link text-light"> 
+                      <i class='fas fa-print nav_icon'></i> 
+                        <span class="nav_name">Supervision Editions</span> 
+                    </a> 
+                    {% endif %}
                     <a href="{% url 'accounts:userPortefolio' %}" class="nav_link"> 
                       <i class='bx bx-briefcase nav_icon'></i> 
-                      <span class="nav_name">Portefeuille</span> 
+                      <span class="nav_name">Mes Tâches</span> 
                     </a> 
 
                     <a href="{% url 'accounts:userPortefolioEdition' %}" class="nav_link"> 
                       <i class='bx bx-printer nav_icon'></i> 
-                        <span class="nav_name">Editions</span> 
+                        <span class="nav_name">Mes Editions</span> 
                     </a> 
-
                     <a href="{% url 'accounts:userPortefolioSituation' %}" class="nav_link"> 
-                      <i class='bx bx-briefcase nav_icon'></i> 
-                      <span class="nav_name">Situations</span> 
-                    </a> 
-
+                      <i class='fas fa-cash-register nav_icon'></i> 
+                      <span class="nav_name">Mes Situations</span> 
+                    </a>
+                    <a href="{% url 'accounts:userPortefolioDAS' %}" class="nav_link"> 
+                      <i class='fas fa-hand-holding-usd nav_icon'></i> 
+                      <span class="nav_name">Mes DAS</span> 
+                    </a>
                     <a href="{% url 'accounts:account' %}" class="nav_link"> 
                         <i class='bx bx-user nav_icon'></i> 
                         <span class="nav_name">Profile</span> 
@@ -136,10 +177,11 @@
   <div>
     <br>
     <br>
+    {% block scripts %}
+
+    {% endblock scripts %}
+
     {% block content %}
-
-
-
 
     {% endblock content %}
   </div>
@@ -187,6 +229,64 @@
         // Your code to run since DOM is loaded and ready
         });
   </script>
+  
+  <!-- filter anything -->
+<script>
+	$(document).ready(function(){
+	  $("#myInput").on("keyup", function() {
+		var value = $(this).val().toLowerCase();
+		$("#myDIV *").filter(function() {
+		  $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+		});
+	  });
+	});
+	</script>
+
+  <!-- filtre table -->
+  <script>
+    $(document).ready(function(){
+      $("#myInput").on("keyup", function() {
+        var value = $(this).val().toLowerCase();
+        $("#myTable tr").filter(function() {
+          $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+        });
+      });
+    });
+    </script>
+<!-- delete company temps---------
+    <script>
+      $(document).ready(function(){
+        $('#delete_btn').click(function(){
+          if(confirm('Are you sure you want to delete / apply this items ?')){
+            var id=[];
+            var csrf=$('input[name=csrfmiddlewaretoken]').val();
+            $(':checkbox:checked').each(function(i){
+              id[i]=$(this).val()
+            })
+            if(id.length===0){
+              alert('Please select items to delete / apply !')
+            }else{
+              console.log(id)
+              $.ajax({
+                method:"POST",
+                data:{
+                  id,
+                  csrfmiddlewaretoken:csrf
+                },
+                success:function(response){
+                  for(var i=0; i < id.length; i++){
+                  $('tr#'+id[i]+'').css('backgroud-color', '#ccc');
+                  $('tr#'+id[i]+'').fadeOut('slow');
+                  }
+                }
+              })
+            }
+    
+    
+          }
+        })
+      })
+    </script> -->
 
   </body>
   <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>

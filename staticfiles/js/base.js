@@ -1,27 +1,3 @@
-// static/js/base.js
-console.log('JavaScript here!')
-
-const copyBtns = [...document.getElementsByClassName('copy-btn')]
-console.log(copyBtns)
-
-let previous = null
-
-copyBtns.forEach(btn=> btn.addEventListener('click', ()=>{
-    // console.log('click')
-    const username = btn.getAttribute('data-username')
-    // console.log(username)
-    navigator.clipboard.writeText(username)
-    btn.textContent='Copied'
-    navigator.clipboard.readText().then(clipText=>{
-        console.log(clipText)
-        btn.textContent= `Copied ${clipText}`
-    })
-
-    if (previous) {
-        previous.textContent='Copy'
-    }
-    previous = btn
-}))
 
 
 //Bootstrap 5 sidebar menu with toggle button
@@ -64,4 +40,27 @@ document.addEventListener("DOMContentLoaded", function(event) {
     // Your code to run since DOM is loaded and ready
     });
 
-    
+    // static/js/base.js
+console.log('JavaScript here!')
+
+const copyBtns = [...document.getElementsByClassName('copy-btn')]
+console.log(copyBtns)
+
+let previous = null
+
+copyBtns.forEach(btn=> btn.addEventListener('click', ()=>{
+    // console.log('click')
+    const username = btn.getAttribute('data-username')
+    // console.log(username)
+    navigator.clipboard.writeText(username)
+    btn.textContent='Copied'
+    navigator.clipboard.readText().then(clipText=>{
+        console.log(clipText)
+        btn.textContent= `Copied ${clipText}`
+    })
+
+    if (previous) {
+        previous.textContent='Copy'
+    }
+    previous = btn
+}))

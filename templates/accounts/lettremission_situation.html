@@ -5,27 +5,108 @@
 
 {% block content %}
 
-<div class="row">
-	<div class="col-md-5">
-        <div class="card card-body">
-		<h3>{{lettremission.company.name}}</h3>	
-		<h3>{{lettremission.situation}}</h3>	
+<br>
+<div class="col-md">
 
-		</div>
-    </div>
+<div class="row">
 	
+	<div class="col-xl-4 col-lg-6">
+		<div class="card l-bg-white-dark">
+			<div class="card-statistic-3 p-4">
+				<div class="card-icon card-icon-large"><i class="far fa-building"></i></div>
+				<div class="mb-4">
+					<h3 class="card-title mb-0">{{lettremission.company.name}}</h3>
+					<h5>{{lettremission.company.legal_form.lf_name}}</h5>
+
+				</div>
+				<div class="row align-items-center mb-2 d-flex">
+					<div class="col-12">
+						<h2 class="d-flex align-items-center mb-0">
+							<h6><i class="fas fa-map-marker"></i> {{lettremission.company.adresse}} {{lettremission.company.city}}</h6>
+							<h6>IF: {{lettremission.company.identifiant_fiscal}} - RC: {{lettremission.company.rc}} - TP: {{lettremission.company.tp}} - CNSS: {{lettremission.company.cnss}} - ICE: {{lettremission.company.ice}}</h6>
+							<h6>Ex Débute: {{lettremission.company.fiscal_year}}</h6>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 
 
 </div>
+</div>
+<p>
 
+<div class="col-md">
+	<div class="card card-body">
+		{% regroup situations by lettremission as lettremission_list %}
+		<h3>Liste des <b>{{ situations|length}}</b> situations</h3>
+		<input class="form-control" id="myInput" type="text" placeholder="Recherche..">
+			
+			{% for lettremission, situations in lettremission_list %}
+			<div class="card-body">
+						<div class="card-body">
+								{% if lettremission %}
+								<table class="table table-hover table-sm">
+								<thead>
+									<tr>
+										<th>LDM</th>
+										<th>Exercice</th>
+										<th>Date Ouverture</th>
+										<th>Date Clôture</th>
+										<th>Durée en mois</th>
+										<th>Situation</th>
+										<th>Révision</th>
+										<th>Résultat Fiscal</th>
+										<th>Liasse Fiscal</th>
+										<th>Document</th>
+									</tr>
+								</thead>
+								{% else %}
+								{% endif %}
+								<tbody id="myTable">
 
+								{% for situation in situations %}
+				
+										<tr>
+											<td>{{situation.lettremission.company|truncatechars:25}}</td>
+											<td><b>{{situation.exercice}}</b></td>
+											<td>{{situation.date_start}}</td>
+											<td>{{situation.date_closing}}</td>
+											<td><b>{{situation.numbre_month}}</b></td>
 
-<hr>
+											{% if situation.statut == 0 %}
+											<td ><a class="btn btn-sm btn-danger" href="{% url 'tasks:updateSituation' situation.id %}"><i class="fas fa-window-close"></i> En Attente</a></td>
+											{% elif situation.statut == 1 %}
+											<td ><a class="btn btn-sm btn-warning" href="{% url 'tasks:updateSituation' situation.id %}"><i class="fas fa-step-forward"></i> Préparé</a></td>
+											{% elif situation.statut == 2 %}
+											<td ><a class="btn btn-sm btn-success" href="{% url 'tasks:updateSituation' situation.id %}"><i class="fas fa-check-double"></i> Validé</a></td>
+											{% else %}
+											<td ><a class="btn btn-sm btn-dark" href="{% url 'tasks:updateSituation' situation.id %}"><i class="fab fa-slack-hash"></i> Non Applicable</a></td>
+											{% endif %}
+						
+											<td ><a class="btn btn-sm btn-info" href="{% url 'tasks:updateSituationSection' situation.id %}"><i class="fas fa-eye"></i> Révision</a></td>
+											<td ><a class="btn btn-sm btn-info" href="{% url 'tasks:updateSituationColl' situation.id %}"><i class="fas fa-eye"></i> Résultat Fiscal</a></td>
+											<td ><a class="btn btn-sm btn-info" href="{% url 'tasks:updateSituationLiasseFiscal' situation.id %}"><i class="fas fa-eye"></i> Liasse Fiscal</a></td>
+											
+											{% if situation.file %}
+											<td><a class="btn btn-sm btn-success" href="{{situation.file.url}}"><i class="far fa-file-alt"></i> Doc</a></td>
+											{% else %}
+											<td><a class="btn btn-sm btn-warning" href="{% url 'tasks:updateSituation' situation.id %}"><i class="fas fa-file-upload"></i></a></td>
+											{% endif %}
+										</tr>
+										
+									{% endfor %}
+								</tbody>
+								</table>
+						</div>
+				</div>
+				{% endfor %}
 		
-{%  include 'accounts/situation_rf.html' %}
+			</div>
+  </div>
 
 
 
-
+		
 
 {% endblock content %}

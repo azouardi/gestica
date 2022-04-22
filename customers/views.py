@@ -1,16 +1,17 @@
 # customers/views.py
 
-from ordres.models import LettreMissionLink
+import datetime
+from ordres.models import LettreMission, LettreMissionLink
 from mysql.connector import errors
 from accounts.views import UserAccessMixin
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import ListView, DetailView, CreateView, DeleteView
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
-from .models import Company, Contact, Person, Prospect, Representative, RepresentativeCompany, RepresentativeLink, Shareholder, ShareholderCompany, ShareholderLink, BankAcount
-from .forms import BankAcountForm, CompanyForm, ContactForm, LettreMissionLinkForm, PersonForm, ProspectForm, RepresentativeForm, RepresentativeLinkForm, ShareholderCompanyForm, ShareholderForm, RepresentativeCompanyForm, ShareholderLinkForm
+from .models import BlackList, Company, CompanyTemps, Contact, Office, Person, Prospect, Representative, RepresentativeCompany, RepresentativeLink, Shareholder, ShareholderCompany, ShareholderLink, BankAcount
+from .forms import BankAcountForm, CompanyForm, ContactForm, LettreMissionLinkForm, OfficeForm, PersonForm, ProspectForm, RepresentativeForm, RepresentativeLinkForm, ShareholderCompanyForm, ShareholderForm, RepresentativeCompanyForm, ShareholderLinkForm
 from django.shortcuts import render
-from config.mysqlconn import create_connection
+from config.mysqlconn import create_connection, execute_read_query
 
 #connection = create_connection("192.168.1.101", "mysql.connexion", "----------", "010vs")
 # def execute_read_query(connection, query):
@@ -1159,3 +1160,124 @@ class DeleteLettreMissionLinkView(LoginRequiredMixin, UserAccessMixin, View):
             
         context = {'lettremissionlink': lettremissionlink, 'prospect': prospect}
         return render(request, self.template_name, context)
+    
+
+# --------------DB société depuis ERP--------------
+class InsertCompanyTempsView(LoginRequiredMixin, UserAccessMixin, View):
+    raise_exception = True
+    permission_required = 'customers.change_company'
+    template_name = 'customers/companytemps_list.html'
+    form_class = OfficeForm
+
+    def get(self, request, *args, **kwargs):
+        context = {}
+        companytemps = CompanyTemps.objects.all()
+        form = self.form_class()
+                  
+        context = {'companytemps': companytemps, 'form':form}
+        return render(request, self.template_name, context)
+
+    def post(self, request, *args, **kwargs):
+        user = request.user.profile
+        office = Office.objects.filter(code_lf=user.office_id)                 
+        db_name="parambd"
+        db_ip=office[0].ip
+        db_port=office[0].port
+        db_pass=office[0].password
+        connection = create_connection(db_ip, db_port, db_pass, db_name)
+        
+        select_datas = "SELECT `code_soci`, `nom_soci`,`adre_soci`, `codp_soci` , `pate_soci` , `idef_soci` ,`reco_soci` ,`cnss_soci` ,`activ_soc` ,`moisex_soci` , `model_soci`, `rtva_soci`, `Nom_vill`,`Date_creation` ,`ICE`,`fj_soci` FROM parambd.abnsoci;"       
+        datas = execute_read_query(connection, select_datas)
+        for i in datas:
+            ldm = LettreMission.objects.filter(db_office=str(i[0])).filter(office_id=office[0])
+            if ldm.exists():
+                pass
+            else:
+                blacklist = BlackList.objects.filter(codedb=str(i[0])).filter(office_id=office[0])
+                if blacklist.exists():
+                    pass
+                else:
+                    print(str(i[15]))
+                    if str(i[15])==str('SARL ') or str(i[15])==str('SARL'):
+                        legal_form =5
+                    elif str(i[15]) =='SARLAU' or str(i[15]) == str('SARL AU') or str(i[15]) == str('SARL à Associé Unique'):
+                        legal_form =6
+                    elif str(i[15])==str('SA') or str(i[15])==str('SA '):
+                        legal_form =4
+                    elif str(i[15]) ==str('PP'):
+                        legal_form =3
+                    elif str(i[15]) ==str('SAS'):
+                        legal_form =7
+                    elif str(i[15]) ==str('SCS') or str(i[15])==str('SUCCURSAL') or str(i[15])==str('SUCC'):
+                        legal_form =8
+                    elif str(i[15]) ==str('PARTICULIER'):
+                        legal_form =12
+                    else:
+                        legal_form=None
+                                                                       
+                    if i[13]==None:
+                        create_date = None
+                    else:
+                        create_date = datetime.datetime.strptime(str(i[13]),'%Y-%m-%d')
+                                                                 
+                    companytemps = CompanyTemps.objects.filter(codedb =str(i[0]))
+                    if companytemps.exists():
+                        companytemps.update(exclude = False,  name = str(i[1]),    adresse = str(i[2]),    code_postal = str(i[3]),    city = str(i[12]),    country_id =212 ,    nationality_id =212 ,
+                                               currency_id='MAD' , national_law =True ,  ice =str(i[14]) ,  identifiant_fiscal = str(i[5]), cnss = str(i[7]), rc =str(i[6]) ,    tp =str(i[4]) ,    activity =str(i[8]) ,  fiscal_year =str(i[9]),
+                                               share_capital =0 ,    nominal_value =100 , create_date = create_date, legal_form_id=legal_form)
+                    else:
+                        CompanyTemps.objects.create(codedb =str(i[0]), exclude = False , name = str(i[1]),    adresse = str(i[2]),    code_postal = str(i[3]),    city = str(i[12]),    country_id =212 ,    nationality_id =212 ,
+                                               currency_id='MAD' , national_law =True ,  ice =str(i[14]) ,  identifiant_fiscal = str(i[5]), cnss = str(i[7]), rc =str(i[6]) ,    tp =str(i[4]) ,    activity =str(i[8]) ,  fiscal_year =str(i[9]),
+                                               share_capital =0 ,    nominal_value =100 , create_date = create_date, legal_form_id=legal_form)
+
+                   
+                   
+        return redirect('/delete/')
+
+class CompanyTemps_view(LoginRequiredMixin, UserAccessMixin,View):
+    raise_exception = True
+    permission_required = 'customers.change_company'
+    template_name = 'customers/companytemps_list.html'
+        
+    def get(self, request, *args, **kwargs):
+        context = {}
+        companytemps = CompanyTemps.objects.all()    
+        context = {'companytemps': companytemps}
+        return render(request, self.template_name, context)
+    
+    def post(self, request, *args, **kwargs):
+        user = request.user.profile
+        office = Office.objects.filter(code_lf=user.office_id)  
+        companytemps = CompanyTemps.objects.filter(exclude=False)
+        for i in companytemps:
+            company = Company.objects.filter(ice =i.ice)
+            if company.exists():
+                pass
+            else:
+                Company.objects.create(name = i.name,    adresse = i.adresse,    code_postal = i.code_postal,    city = i.city,    country_id =i.country_id ,    nationality_id =i.nationality_id ,
+                                        currency_id=i.currency_id , national_law =i.national_law ,  ice =i.ice ,  identifiant_fiscal =i.identifiant_fiscal, cnss =i.cnss, rc =i.rc ,    tp =i.tp ,    activity =i.activity ,  fiscal_year =i.fiscal_year,
+                                        share_capital =i.share_capital ,    nominal_value =i.nominal_value , create_date = i.create_date)
+            
+            company=Company.objects.filter(ice =i.ice)
+            if company.exists():
+                if LettreMission.objects.filter(company=company[0].id).exists():
+                    pass
+                else:
+                    LettreMission.objects.create(reference='LDM/'+str(i.codedb), company_id=company[0].id, office_id=office[0].code_lf, moduleservice_id=2, db_office=i.codedb, entry_date=datetime.datetime.now() )
+                CompanyTemps.objects.filter(ice=i.ice).delete()         
+        return redirect('customers:CompanyTempsDelete')
+
+
+class CompanyTempsExcludeView(LoginRequiredMixin, UserAccessMixin, DeleteView):
+    raise_exception = True
+    permission_required = 'customers.change_company'
+    template_name = 'customers/companytemps_list.html'
+    
+    def post(self, request, pk=None, *args, **kwargs):
+        obj = CompanyTemps.objects.filter(pk=pk)
+        if obj is not None:
+            if obj[0].exclude==False:
+                obj.update(exclude=True)
+            else:
+                obj.update(exclude=False)
+            return redirect('customers:CompanyTempsDelete')

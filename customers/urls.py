@@ -1,6 +1,6 @@
 # custmers/urls.py
 from django.urls import path
-from .views import CompanyDeleteView, CompanyView, CompanyDetailView, CompanyCreateView, ContactCreateView, ContactDeleteView, ContactDetailView, ContactView, CreateBankAcountView, CreateLettreMissionLinkView, CreateRepresentativeCompanyView, CreateRepresentativeLinkView, CreateRepresentativeView, CreateShareholderCompanyView, CreateShareholderLinkView, CreateShareholderView, DeleteBankAcountView, DeleteLettreMissionLinkView, DeleteRepresentativeCompanyView, DeleteRepresentativeView, DeleteShareholderCompanyView, DeleteShareholderView, DeleteRepresentativelinkView, DeleteshareholderlinkView, IntegrationDataView, PersonCreateView, PersonDeleteView, PersonDetailView, PersonView, ProspectCreateView, ProspectDeleteView, ProspectDetailView, ProspectView, UpdateBankAcountView, UpdateLettreMissionLinkView, UpdateRepresentativeCompanyView, UpdateRepresentativeLinkView, UpdateRepresentativeView, UpdateShareholderCompanyView, UpdateShareholderLinkView, UpdateShareholderView
+from .views import CompanyDeleteView, CompanyTemps_view, CompanyTempsExcludeView, CompanyView, CompanyDetailView, CompanyCreateView, ContactCreateView, ContactDeleteView, ContactDetailView, ContactView, CreateBankAcountView, CreateLettreMissionLinkView, CreateRepresentativeCompanyView, CreateRepresentativeLinkView, CreateRepresentativeView, CreateShareholderCompanyView, CreateShareholderLinkView, CreateShareholderView, DeleteBankAcountView, DeleteLettreMissionLinkView, DeleteRepresentativeCompanyView, DeleteRepresentativeView, DeleteShareholderCompanyView, DeleteShareholderView, DeleteRepresentativelinkView, DeleteshareholderlinkView, InsertCompanyTempsView, IntegrationDataView, PersonCreateView, PersonDeleteView, PersonDetailView, PersonView, ProspectCreateView, ProspectDeleteView, ProspectDetailView, ProspectView, UpdateBankAcountView, UpdateLettreMissionLinkView, UpdateRepresentativeCompanyView, UpdateRepresentativeLinkView, UpdateRepresentativeView, UpdateShareholderCompanyView, UpdateShareholderLinkView, UpdateShareholderView
 
 
 app_name= 'customers'
@@ -59,5 +59,10 @@ urlpatterns = [
     path('create_lettremissionlink/<uuid:pk>/', CreateLettreMissionLinkView.as_view(), name='createLettreMissionLink'),
     path('update_lettremissionlink/<uuid:pk>/', UpdateLettreMissionLinkView.as_view(), name='updateLettreMissionLink'),
     path('delete_lettremissionlink/<uuid:pk>/', DeleteLettreMissionLinkView.as_view(), name='deleteLettreMissionLink'),
+    
+    path('company_temps_list/', InsertCompanyTempsView.as_view(), name='companyTempsList'),
+    path('delete/', CompanyTemps_view.as_view(), name='CompanyTempsDelete'),
+    path('exclude/<int:pk>', CompanyTempsExcludeView.as_view(), name='CompanyTempsExclude'),
+
  
 ]

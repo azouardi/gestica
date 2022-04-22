@@ -27,14 +27,16 @@
 			<a class="btn btn-secondary" href="{%url 'customers:createShareholder' company.id %}">Ajouter un Associé</a>
 			<br>
 			{% if shareholders %}
-			<table class="table table-sm">
+			<table class="table table-hover table-sm">
+			<thead>
 				<tr>
 					<th>Nom & Prénom</th>
 					<th>Nbre Actions</th>
 					<th>Editer</th>
 					<th>Supprimer</th>
 				</tr>
-			{% else %}
+			</thead>
+				{% else %}
 			{% endif %}
 				{% for shareholder in shareholders %}
 
@@ -53,13 +55,13 @@
 			{% if company.shareholderlink %}
 			<a class="btn btn-secondary disabled" href="{%url 'customers:createShareholderLink' company.id %}">Ajouter un Associé (Société)</a>
 			<br>
-			<table class="table table-sm">
-				<tr>
+			<table class="table table-hover table-sm">
+			<thead>	<tr>
 					<th>Lien</th>
 					<th>Editer</th>
 					<th>Supprimer</th>
 				</tr>
-
+			</thead>
 					<tr>
 						<td>{{company.shareholderlink}}</td>
 						<td><a class="btn btn-sm btn-outline-warning" href="{% url 'customers:updateShareholderLink' company.shareholderlink.id %}"><i class="fas fa-edit"></i> Edit</a></td>
@@ -79,13 +81,15 @@
 			<a class="btn btn-secondary" href="{%url 'customers:createRepresentative' company.id %}">Ajouter un Représentant</a>
 			<br>
 			{% if representatives %}
-			<table class="table table-sm">
+			<table class="table table-hover table-sm">
+			<thead>
 				<tr>
 					<th>Nom & Prénom</th>
 					<th>Fonction</th>
 					<th>Editer</th>
 					<th>Supprimer</th>
 				</tr>
+			</thead>
 			{% else %}
 			{% endif %}
 
@@ -106,12 +110,14 @@
 			{% if company.representativelink %}
 			<a class="btn btn-secondary disabled" href="{%url 'customers:createRepresentativeLink' company.id %}">Ajouter une Société Représentante</a>
 			<br>
-			<table class="table table-sm">
+			<table class="table table-hover table-sm">
+			<thead>
 				<tr>
 					<th>Lien</th>
 					<th>Editer</th>
 					<th>Supprimer</th>
 				</tr>
+			</thead>
 					<tr>
 						<td>{{company.representativelink}}</td>
 						<td><a class="btn btn-sm btn-outline-warning" href="{% url 'customers:updateRepresentativeLink' company.representativelink.id %}"><i class="fas fa-edit"></i> Edit</a></td>
@@ -129,14 +135,16 @@
 			<a class="btn btn-secondary" href="{%url 'customers:createBankAcount' company.id %}">Ajouter un RIB</a>
 			<br>
 			{% if bankacounts %}
-			<table class="table table-sm">
+			<table class="table table-hover table-sm">
+			<thead>
 				<tr>
 					<th>Banque</th>
 					<th>RIB</th>
 					<th>Editer</th>
 					<th>Supprimer</th>
 				</tr>
-			{% else %}
+			</thead>
+				{% else %}
 			{% endif %}
 				{% for bankacount in bankacounts %}
 					<tr>

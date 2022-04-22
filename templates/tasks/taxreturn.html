@@ -11,10 +11,10 @@
 <div class="row">
     <div class="col-md-6">
         <div class="card card-body">
-            <form action="{% url 'tasks:createTaxReturn' situation.id %}" enctype="multipart/form-data" method="POST">
+            <form action="" enctype="multipart/form-data" method="POST">
                 {% csrf_token %}
                 {{form|crispy}}
-                <a class="btn btn-warning" href="{% url 'tasks:situationDetail' situation.id %}">Retour</a>
+                <a class="btn btn-warning" href="{% url 'tasks:updateSituationColl' situation.id %}">Retour</a>
 
                 <input class="btn btn-primary" type="submit" name="Submit">
             </form>

@@ -28,13 +28,15 @@
         <div class="card card-body">
 			<a class="btn btn-secondary" href="{%url 'customers:createShareholderCompany' shareholderlink.id %}">Ajouter une Société Actionnaire</a>
 			<br>
-			<table class="table table-sm">
-				<tr>
+			<table class="table table-hover table-sm">
+			<thead>
+			<tr>
 					<th>Raison Sociale</th>
 					<th>Actions</th>
 					<th>Editer</th>
 					<th>Supprimer</th>
 				</tr>
+			</thead>
 
 				{% for shareholdercompany in shareholdercompanys %}
 					<tr>

@@ -1,6 +1,6 @@
 from bootstrap_datepicker_plus import DatePickerInput
 from django.forms import ModelForm
-from .models import BankAcount, Company, Contact, Person, Prospect, Representative, RepresentativeCompany, RepresentativeLink, Shareholder, ShareholderCompany, ShareholderLink
+from .models import BankAcount, Company, CompanyTemps, Contact, Office, Person, Prospect, Representative, RepresentativeCompany, RepresentativeLink, Shareholder, ShareholderCompany, ShareholderLink
 from ordres.models import LettreMissionLink
 
 
@@ -22,6 +22,11 @@ class CompanyForm(ModelForm):
             'terminate_date': DatePickerInput(format='%d/%m/%Y'), # default date-format %m/%d/%Y will be used
             'liquidation_date': DatePickerInput(format='%d/%m/%Y'), # default date-format %m/%d/%Y will be used
         }
+        
+class OfficeForm(ModelForm):
+    class Meta:
+        model = Office
+        fields = '__all__'
         
 
 class ShareholderForm(ModelForm):

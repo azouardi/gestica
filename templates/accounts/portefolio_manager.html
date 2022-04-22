@@ -1,0 +1,100 @@
+<!--templates/portefolio_situation.html-->
+{%  extends '_base.html' %}
+{% load static %}
+{% block title %}Portefeuille Situation{% endblock title %}
+
+{% block content %}
+
+<br>
+
+<div class="col-md-10 ">
+	<div class="row ">
+		<div class="col-xl-3 col-lg-6">
+			<div class="card l-bg-blue-dark">
+				<div class="card-statistic-3 p-4">
+					<div class="card-icon card-icon-large"><i class="fas fa-tasks"></i></div>
+					<div class="mb-4">
+						<h5 class="card-title mb-0">Supervision</h5>
+					</div>
+					<div class="row align-items-center mb-2 d-flex">
+						<div class="col-8">
+							<h2 class="d-flex align-items-center mb-0">
+							[ {{supervision.count}} ]
+							</h2>
+						</div>
+
+					</div>
+
+				</div>
+			</div>
+		</div>
+		<div class="col-xl-3 col-lg-6">
+			<div class="card l-bg-orange-dark">
+				<div class="card-statistic-3 p-4">
+					<div class="card-icon card-icon-large"><i class="fas fa-check-double"></i></div>
+					<div class="mb-4">
+						<h5 class="card-title mb-0">En Attente de Validation</h5>
+					</div>
+					<div class="row align-items-center mb-2 d-flex">
+						<div class="col-8">
+							<h2 class="d-flex align-items-center mb-0">
+							[ {{situations_1.count}} ]
+							</h2>
+						</div>
+
+					</div>
+
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="container-fluid">
+	<div class="px-0 py-2 pt-md-3 pb-md-2 mx-auto text-center">
+		<h1 class="display-4">Supervision des Situations</h1>
+		<p class="lead">Les sociétés qui composent mon portefeuille. Une gestion efficace au quotidien !</p>
+		<input class="form-control" id="myInput" type="text" placeholder="Recherche..">
+
+	</div>
+	<div id="myDIV" class="py-5">
+		<div class="row">
+			{% for item in supervision %}
+			<div class="col-md-2">
+				<a class="text-dark" href="{% url 'accounts:LdmSituation' item.lettremission.id %}">
+					<div class="card mb-4 box-shadow">
+						{% if item.lettremission.company.file %}
+						<br>
+						<div class="cover-image mx-auto">
+							<img src="{{item.lettremission.company.file.url}}" alt="..." cclass="mx-auto d-block" height="100px" width="100%">
+						</div>
+						<br>
+						{% else %}
+						{% endif %}
+						<div class="card-body">
+							<h3 style="font-size:18px;font-weight:bold;min-height:42px;">
+								{{item.lettremission.company.name}}</h3>
+							<h5 style="font-size:12px;font-weight:bold;min-height:30px;">
+								{{item.lettremission.moduleservice}}</h5>
+							<div class="d-flex justify-content-between align-items-center">
+								<small class="text-muted">Entrée le : {{item.lettremission.entry_date}}</small>
+								<small class="text-muted">BDD: {{item.lettremission.db_office}}</small>
+							</div>
+							<small class="text-muted">{{time}}</small>
+						</div>
+					</div>
+				</a>
+			</div>
+			{% endfor %}
+		</div>
+	</div>
+</div>
+
+
+
+
+
+
+
+
+{% endblock content %}

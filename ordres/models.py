@@ -47,7 +47,7 @@ class Outlay(models.Model):
 class LettreMission(models.Model):
     id = models.UUIDField(primary_key=True,default=uuid.uuid4,editable=False)
     reference = models.CharField(verbose_name="Référence de la LDM", max_length=50, null=False, unique=True)
-    company = models.ForeignKey(Company, on_delete=models.SET_NULL, verbose_name="Raison Sociale", null=True)
+    company = models.ForeignKey(Company, on_delete=models.CASCADE, verbose_name="Raison Sociale", null=True)
     office = models.ForeignKey(Office, on_delete=models.SET_NULL, verbose_name= "Cabinet", null=True)
     moduleservice = models.ForeignKey(ModuleService, on_delete=models.SET_NULL, verbose_name="Abonnée aux Services", null=True)
     db_office = models.CharField(max_length=10, verbose_name="Code Dossier", null=True)
@@ -70,7 +70,7 @@ class LettreMission(models.Model):
 
 class Ordre(models.Model):
     id = models.UUIDField(primary_key=True,default=uuid.uuid4,editable=False)
-    company = models.ForeignKey(Company, on_delete=models.SET_NULL, verbose_name="Raison Sociale", null=True)
+    company = models.ForeignKey(Company, on_delete=models.CASCADE, verbose_name="Raison Sociale", null=True)
     office = models.ForeignKey(Office, on_delete=models.SET_NULL, verbose_name= "Cabinet", null=True)
     ordre_date = models.DateField(verbose_name="Date de commande", null=False)
     comment = models.CharField(max_length=200, verbose_name="Commentaire", null=True)
@@ -83,6 +83,9 @@ class Ordre(models.Model):
     statut = models.IntegerField(verbose_name="Statut", choices=Statut.choices, default=0)
     file = models.FileField(verbose_name="Joindre Devis",upload_to='files/ordres/', blank=True) # new
 
+    def get_total_cost(self):
+        return sum(item.get_cost() for item in self.items.all())
+    
     def get_absolute_url(self):
         return reverse('ordres:ordreDetail', kwargs={'pk': str(self.pk)})
     
@@ -108,6 +111,8 @@ class ServiceItem(models.Model):
         (0/100,'0%'),
     ]
     taxe = models.FloatField(verbose_name="Taux TVA", choices=TAXE_CHOICES, default=20/100)
+    def get_cost(self):
+        return self.amount * self.quantity
     
     def get_absolute_url(self):
         return reverse('ordres:updateServiceItem', kwargs={'pk': str(self.pk)})
@@ -134,7 +139,7 @@ class OutlayItem(models.Model):
 class LettreMissionLink(models.Model):
     id = models.UUIDField(primary_key=True,default=uuid.uuid4,editable=False)
     prospect = models.ForeignKey(Prospect, on_delete=models.SET_NULL, verbose_name="Prospect", null=True)
-    lettremission = models.ForeignKey(LettreMission, on_delete=models.SET_NULL, verbose_name="Mission", null=True)
+    lettremission = models.ForeignKey(LettreMission, on_delete=models.CASCADE, verbose_name="Mission", null=True)
     date_recrutement = models.DateTimeField(verbose_name="Date", auto_now=True)
     
     class Meta:

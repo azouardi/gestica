@@ -1,0 +1,37 @@
+<!--templates/lead_update.html-->
+{%  extends '_base.html' %}
+{% load static %}
+{% block title %}Mise à Jour Lead{% endblock title %}
+
+
+{% load crispy_forms_tags %}
+{% block content %}
+<br>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card card-body">
+            <form action="" enctype="multipart/form-data" method="POST">
+                {% if lead.supervised == True or lead.statut == 2 and is_manager == False %}
+                <a class="btn btn-warning" href="{% url 'tasks:updateSituationColl' situation.id %}">Retour</a>
+                <fieldset disabled>
+                {% else %}
+                <fieldset>
+                {% endif%}
+
+                {% csrf_token %}
+
+                {{form|crispy}}
+                {% if is_val == True %}
+                <a class="btn btn-warning" href="{% url 'tasks:updateSituationColl' situation.id %}">Retour</a>
+                {% else %}
+                <a class="btn btn-warning" href="{% url 'accounts:companyTdb' lead.lettremission.company.id %}">Retour</a>
+                {% endif %}
+                <input class="btn btn-primary" type="submit" name="Submit">
+            </fieldset>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}

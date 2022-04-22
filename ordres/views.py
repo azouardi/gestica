@@ -4,7 +4,7 @@ from customers.models import Prospect
 from accounts.forms import PWSafeForm
 from tasks.models import BenefitItem, BenefitLink
 from django.db.models import Sum
-from accounts.models import PWSafe, Portefolio, Validator
+from accounts.models import Manager, PWSafe, Portefolio, Validator
 from accounts.views import UserAccessMixin
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import ListView, DetailView, CreateView, DeleteView
@@ -14,9 +14,10 @@ from django.conf import settings
 from django.http import HttpResponse
 from django.template.loader import render_to_string
 from django.views import View
-from .forms import BenefitItemForm, BenefitLinkForm, LettreMissionForm, OrdreForm, PortefolioForm, ServiceItemForm, OutlayItemForm, ValidatorForm
+from .forms import BenefitItemForm, BenefitLinkForm, LettreMissionForm, ManagerForm, OrdreForm, PortefolioForm, ServiceItemForm, OutlayItemForm, ValidatorForm
 from .models import Company, LettreMission, Ordre, ServiceItem, OutlayItem
 import weasyprint
+from django.db.models import Q
 
 
 #@staff_member_required
@@ -140,7 +141,16 @@ class OrdreView(LoginRequiredMixin, UserAccessMixin, View):
     def get(self, request, *args, **kwargs):
         context = {}
         ordres = Ordre.objects.all()
-        fees = ServiceItem.objects.filter(ordre__statut__in=[1,2]).aggregate(fees_sum=Sum('amount'))
+        fees = ServiceItem.objects.filter(ordre__statut__in=[1,2])
+        total_price = 0
+        for item in fees :
+            price = item.amount * item.quantity
+            total_price = total_price + price
+        debours = OutlayItem.objects.filter(ordre__statut__in=[1,2])
+        total_debours = 0
+        for item in debours :
+            price = item.amount * item.quantity
+            total_debours = total_debours + price
         ordres_statut0 = Ordre.objects.filter(statut=0)
         ordres_statut1 = Ordre.objects.filter(statut=1)
         ordres_statut2 = Ordre.objects.filter(statut=2)
@@ -155,7 +165,7 @@ class OrdreView(LoginRequiredMixin, UserAccessMixin, View):
         canceled = ordres.filter(statut=3).count()
         invoiced = ordres.filter(statut=4).count()
 
-        context = {'fees':fees,'ordres': ordres, 'ordres_statut0': ordres_statut0, 'ordres_statut1': ordres_statut1, 'ordres_statut2': ordres_statut2,
+        context = {'total_price':total_price, 'total_debours':total_debours, 'ordres': ordres, 'ordres_statut0': ordres_statut0, 'ordres_statut1': ordres_statut1, 'ordres_statut2': ordres_statut2,
                    'ordres_statut3': ordres_statut3, 'ordres_statut4': ordres_statut4,
                    'customers': customers, 'total_clients': total_clients, 'total_ordres': total_ordres,
                    'inapproval': inapproval, 'inprocess': inprocess, 'terminate': terminate, 'canceled': canceled, 'invoiced': invoiced
@@ -226,9 +236,9 @@ class CreateServiceItemView(LoginRequiredMixin, UserAccessMixin, OrdreObjectMixi
         elif "another" in request.POST:
             form = self.form_class(request.POST)
             if form.is_valid():
-                new_outlayeitem = form.save(commit=False)
-                new_outlayeitem.ordre = obj
-                new_outlayeitem.save()
+                new_servciceitem = form.save(commit=False)
+                new_servciceitem.ordre = obj
+                new_servciceitem.save()
                 return redirect('/create_serviceItem/'+str(pk)+'/')
         else:
             form = self.form_class(request.POST)
@@ -401,10 +411,10 @@ class LettreMissionView(LoginRequiredMixin, UserAccessMixin, View):
         context = {}
         prospects = Prospect.objects.filter(statut__in=[0,1,2]).count()
         lettremissions = LettreMission.objects.all().order_by('company__name')
-        lettremissions_orph = LettreMission.objects.filter(portefolio__isnull=True).count()
+        lettremissions_orph = LettreMission.objects.filter(Q(portefolio__isnull=True) | Q(validator__isnull=True) | Q(manager__isnull=True)).count()
         lettremissions_actif = LettreMission.objects.filter(terminate=False).count()
         lettremissions_inactif = LettreMission.objects.filter(terminate=True).count()
-        lettremissions_orph = LettreMission.objects.filter(terminate=False).filter(portefolio__isnull=True).count()
+        lettremissions_orph = LettreMission.objects.filter(terminate=False).filter(Q(portefolio__isnull=True) | Q(validator__isnull=True) | Q(manager__isnull=True)).count()
 
         context = {'prospects':prospects,'lettremissions': lettremissions, 'lettremissions_orph':lettremissions_orph, 'lettremissions_actif':lettremissions_actif, 'lettremissions_inactif':lettremissions_inactif}
         return render(request, self.template_name , context)
@@ -417,7 +427,7 @@ class LettreMissionOrphView(LoginRequiredMixin, UserAccessMixin, View):
     
     def get(self, request):
         context = {}
-        lettremissions = LettreMission.objects.filter(terminate=False).filter(portefolio__isnull=True).order_by('company__name')
+        lettremissions = LettreMission.objects.filter(terminate=False).filter(Q(portefolio__isnull=True) | Q(validator__isnull=True) | Q(manager__isnull=True)).order_by('company__name')
         context = {'lettremissions' :lettremissions}
         return render(request, self.template_name , context)
    
@@ -507,11 +517,12 @@ class LettreMissionDetailView(LoginRequiredMixin, UserAccessMixin, DetailView):
         obj = self.get_object()
         portefolios = obj.portefolio_set.all()
         validators = obj.validator_set.all()
+        managers = obj.manager_set.all()
         pwsafes = obj.pwsafe_set.all()
         
         if obj is not None:
             form = self.form_class(instance=obj)
-            context = {'lettremission': obj, 'form': form, 'portefolios': portefolios, 'validators': validators, 'pwsafes':pwsafes}
+            context = {'lettremission': obj, 'form': form, 'portefolios': portefolios, 'validators': validators, 'managers':managers, 'pwsafes':pwsafes}
         return render(request, self.template_name, context)
 
     def post(self, request, pk=None, *args, **kwargs):
@@ -519,6 +530,7 @@ class LettreMissionDetailView(LoginRequiredMixin, UserAccessMixin, DetailView):
         obj = self.get_object()
         portefolios = obj.portefolio_set.all()
         validators = obj.validator_set.all()
+        managers = obj.manager_set.all()
         pwsafes = obj.pwsafe_set.all()
 
         if obj is not None:
@@ -529,6 +541,7 @@ class LettreMissionDetailView(LoginRequiredMixin, UserAccessMixin, DetailView):
         context = {'lettremission': obj, 'form': form,
                    'portefolios': portefolios,
                    'validators': validators,
+                   'managers':managers,
                    'pwsafes':pwsafes}
         return render(request, self.template_name, context)
         
@@ -704,7 +717,92 @@ class DeleteValidatorView(LoginRequiredMixin, UserAccessMixin, View):
             
         context = {'validator': validator, 'lettremission': lettremission}
         return render(request, self.template_name, context)
-    
+
+class CreateManagerView(LoginRequiredMixin, UserAccessMixin, LettreMissionObjectMixin, View):
+    raise_exception = True
+    permission_required = 'ordres.change_lettremission'
+    form_class = ManagerForm
+    template_name = 'ordres/manager.html'
+
+    def get(self, request, pk=None, *args, **kwargs):
+        context = {}
+        obj = self.get_object()
+        form = self.form_class()
+        context = {'lettremission': obj, 'form': form}
+        return render(request, self.template_name, context)
+
+    def post(self, request, pk=None, *args, **kwargs):
+        context = {}
+        obj = self.get_object()
+        pk = obj.pk
+        if request.method != 'POST':
+            # No data submitted; create a blank form.
+            form = self.form_class()
+        else:
+            form = self.form_class(request.POST)
+            if form.is_valid():
+                new_item = form.save(commit=False)
+                new_item.lettremission = obj
+                new_item.save()
+                return redirect('/lettremission/'+str(pk)+'/')
+
+        context = {'lettremission': obj, 'form': form}
+        return render(request, self.template_name, context)
+
+
+class UpdateManagerView(LoginRequiredMixin, UserAccessMixin, View):
+    raise_exception = True
+    permission_required = 'ordres.change_lettremission'
+    form_class = ManagerForm
+    template_name = 'ordres/manager_update.html'
+
+    def get(self, request, pk=None, *args, **kwargs):
+        context = {}
+        manager = Manager.objects.get(pk=pk)
+        lettremission = manager.lettremission.id
+        if manager is not None:
+            form = self.form_class(instance=manager)
+            context = {'lettremission': lettremission,'manager': manager, 'form': form}
+        return render(request, self.template_name, context)
+
+    def post(self, request, pk=None, *args, **kwargs):
+        context = {}
+        manager = Manager.objects.get(pk=pk)
+        lettremission = manager.lettremission.id
+        if manager is not None:
+            form = self.form_class(request.POST, instance=manager)
+            if form.is_valid():
+                form.save()
+                return redirect('/lettremission/'+str(lettremission)+'/')
+                
+        context = {'lettremission': lettremission, 'manager': manager, 'form': form}
+        return render(request, self.template_name, context)
+
+
+class DeleteManagerView(LoginRequiredMixin, UserAccessMixin, View):
+    raise_exception = True
+    permission_required = 'ordres.change_lettremission'
+    template_name = 'ordres/manager_delete.html'
+
+    def get(self, request, pk=None, *args, **kwargs):
+        context = {}
+        manager = Manager.objects.get(pk=pk)
+        lettremission = manager.lettremission.id
+        if manager is not None:
+            context = {'manager': manager, 'lettremission': lettremission}
+        return render(request, self.template_name, context)
+
+    def post(self, request, pk=None, *args, **kwargs):
+        context = {}
+        manager = Manager.objects.get(pk=pk)
+        lettremission = manager.lettremission.id
+        if manager is not None:
+            manager.delete()
+            return redirect('/lettremission/'+str(lettremission)+'/')
+            
+        context = {'manager': manager, 'lettremission': lettremission}
+        return render(request, self.template_name, context)
+   
 class CreatePWSafeView(LoginRequiredMixin, UserAccessMixin, LettreMissionObjectMixin, View):
     raise_exception = True
     permission_required = 'ordres.change_lettremission'

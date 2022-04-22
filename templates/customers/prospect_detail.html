@@ -26,13 +26,15 @@
 			<a class="btn btn-secondary" href="{%url 'customers:createLettreMissionLink' prospect.id %}">Ajouter un lien vers LDM</a>
 			<br>
 			{% if lettremissionlinks %}
-			<table class="table table-sm">
-				<tr>
+			<table class="table table-hover table-sm">
+			<thead>
+			<tr>
 					<th>Nom & Prénom</th>
 					<th>Lettre de Mission</th>
 					<th>Editer</th>
 					<th>Supprimer</th>
 				</tr>
+			</thead>
 			{% else %}
 			{% endif %}
 				{% for lettremissionlink in lettremissionlinks %}

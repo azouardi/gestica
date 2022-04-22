@@ -4,7 +4,7 @@ from bootstrap_datepicker_plus import DatePickerInput
 from accounts.models import Portefolio
 from django import forms
 from django.db import models
-from tasks.models import Claim, Exercice, Period, Situation, Work, TaxReturn
+from tasks.models import DAS, Claim, Exercice, LiasseFiscale, Period, Situation, Work, TaxReturn
 from django.forms.models import ModelForm
 
 class AdvancedModelForm(ModelForm):
@@ -51,42 +51,61 @@ class ClaimForm(ModelForm):
             'date_end': DatePickerInput(format='%d/%m/%Y'), # default date-format %m/%d/%Y will be used
         }
 
-class ExerciceForm(ModelForm):
+class ExerciceForm(forms.ModelForm):
     class Meta:
         model = Exercice
         fields = '__all__'
-        widgets = {
-            'echeance': DatePickerInput(format='%d/%m/%Y'), # default date-format %m/%d/%Y will be used
-        }
 
-class SituationForm(AdvancedModelForm):
-    disabled_fields = ('exercice', 'lettremission', 'date_start','date_closing','numbre_month', 'date_declaration'  )
+class SituationForm(ModelForm):
     class Meta:
         model = Situation
         fields = '__all__'
-        exclude=['date_ago']
+        exclude=['exercice','supervised', 'statut']
 
 class SituationCollForm(AdvancedModelForm):
-    disabled_fields = ('exercice', 'lettremission', 'date_start','date_closing','numbre_month', 'date_declaration', 'supervised')
+    disabled_fields = ('exercice', 'lettremission', 'date_start','date_closing','numbre_month', 'date_ago','date_declaration',  'exempt_is' , 'date_exempt_is', 'exempt_cm' ,'date_exempt_cm','exempt_tp' , 'date_exempt_tp', 'supervised')  
     class Meta:
         model = Situation
         fields = '__all__'
-        exclude=['date_ago']
 
-class TaxReturnForm(AdvancedModelForm):
-    disabled_fields = ('period', 'lettremission','task')
+class TaxReturnForm(ModelForm):
     class Meta:
         model = TaxReturn
         fields = '__all__'
-        widgets = {
-            'date_limit': DatePickerInput(format='%d/%m/%Y'), # default date-format %m/%d/%Y will be used
-        }
-class TaxReturnCollForm(AdvancedModelForm):
+        exclude=['situation','auto_genre','code_account']
 
-    disabled_fields = ('period', 'lettremission','task','date_limit', 'supervised')
+class LiasseFiscaleForm(AdvancedModelForm):
+    disabled_fields = ('tableliassefiscale','amount_1','amount_2')
+    class Meta:
+        model = LiasseFiscale
+        fields = '__all__'
+        exclude=['situation','auto_genre','code_table', 'ordre']
+
+class TaxReturnCollForm(ModelForm):
     class Meta:
         model = TaxReturn
         fields = '__all__'
+        exclude=['situation', 'auto_genre','code_account']
+        
+class TaxReturnAmountForm(AdvancedModelForm):
+    disabled_fields = ('nature', 'rubrique', 'deduc_reint','taxreturn','ordre')
+    class Meta:
+        model = TaxReturn
+        fields = '__all__'
+        exclude=['situation', 'auto_genre','code_account']
+ 
+class DASForm(ModelForm):
+    class Meta:
+        model = DAS
+        fields = '__all__'
+        exclude=['exercice', 'month','intermediate', 'supervised', 'statut']
         widgets = {
-            'date_limit': DatePickerInput(format='%d/%m/%Y'), # default date-format %m/%d/%Y will be used
+            'date_start': DatePickerInput(format='%d/%m/%Y'), # default date-format %m/%d/%Y will be used
+            'date_closing': DatePickerInput(format='%d/%m/%Y'), # default date-format %m/%d/%Y will be used
+            'date_declaration': DatePickerInput(format='%d/%m/%Y'), # default date-format %m/%d/%Y will be used
         }
+class DASCollForm(AdvancedModelForm):
+    disabled_fields = ('exercice', 'month', 'lettremission', 'supervised','date_start', 'date_closing', 'date_declaration')  
+    class Meta:
+        model = DAS
+        fields = '__all__'

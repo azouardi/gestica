@@ -1,0 +1,76 @@
+<!--templates/das_update.html-->
+{%  extends '_base.html' %}
+{% load static %}
+
+{% block title %}Déclaration du résultat fiscal{% endblock title %}
+
+
+{% load crispy_forms_tags %}
+{% block content %}
+
+
+
+
+<br>
+
+<div class="row">
+	
+	<div class="col-xl-4 col-lg-6">
+		<div class="card l-bg-white-dark">
+			<div class="card-statistic-3 p-4">
+				<div class="card-icon card-icon-large"></div>
+				<div class="mb-4">
+					<h3 class="card-title mb-0">{{das.lettremission.company.name}} / {{das.exercice}}</h3>
+				</div>
+				<div class="row align-items-center mb-2 d-flex">
+					<div class="col-12">
+
+                        <form action="" enctype="multipart/form-data" method="POST">
+                            {% if das.supervised == True or das.statut == 2 and is_manager == False %}
+								{% if is_manager == True %}
+								<a class="btn btn-warning" href="{% url 'tasks:exerciceDASDetailManager' das.exercice.id %}">Retour</a>
+								{% else %}
+								<a class="btn btn-warning" href="{% url 'accounts:LdmDAS' das.lettremission.id %}">Retour</a>
+								{% endif %}
+
+                            <fieldset disabled>
+                            {% else %}
+                            <fieldset>
+                            {% endif%}
+
+                            
+                            {% csrf_token %}
+                            {{form|crispy}}
+
+							{% if is_manager == True %}
+							<a class="btn btn-warning" href="{% url 'tasks:exerciceDASDetailManager' das.exercice.id %}">Retour</a>
+							{% else %}
+							<a class="btn btn-warning" href="{% url 'accounts:LdmDAS' das.lettremission.id %}">Retour</a>
+							{% endif %}
+							<input class="btn btn-primary" type="submit" name="Submit">
+                        </fieldset>
+                        </form>
+
+
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+
+        
+	</div>
+
+</div>
+
+
+
+
+
+
+
+
+
+{% endblock content %}

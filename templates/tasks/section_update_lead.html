@@ -1,0 +1,309 @@
+<!--templates/situation_update.html-->
+{%  extends '_base.html' %}
+{% load static %}
+
+{% block title %}Révision des comptes{% endblock title %}
+{% load mytags %}
+
+{% load crispy_forms_tags %}
+{% block content %}
+
+<style>
+
+    
+    .danger {
+    margin-bottom: 15px;
+    padding: 4px 12px;
+      background-color: #ffdddd;
+      border-left: 6px solid #f44336;
+    }
+    
+    .success {
+        margin-bottom: 15px;
+        padding: 4px 12px;
+              background-color: #ddffdd;
+      border-left: 6px solid #04AA6D;
+    }
+    
+    .info {
+        margin-bottom: 15px;
+        padding: 4px 12px;
+      background-color: #e7f3fe;
+      border-left: 6px solid #2196F3;
+    }
+    
+    
+    .warning {
+        margin-bottom: 15px;
+        padding: 4px 12px;
+      background-color: #ffffcc;
+      border-left: 6px solid #ffeb3b;
+    }
+    </style>
+<br>
+
+<div class="row">
+    <div class="col-md-3">
+        <div class="card card-body">
+                    <div class="mb-4">
+                            <h3 class="card-title mb-0">{{section.situation.lettremission.company.name}} / {{section.situation.exercice}}</h3>
+                    </div>            
+                    <form action="" enctype="multipart/form-data" method="POST">
+                            {% if situation.supervised == True or situation.statut == 2 and is_manager == False %}
+                            <a class="btn btn-warning" href="{% url 'tasks:updateSituationSection' situation.id %}">Retour</a>
+           
+                            <fieldset disabled>
+                            {% else %}
+                            <fieldset>
+                            {% endif%}
+            
+                            {% csrf_token %}
+                            {{form|crispy}}
+                            {% if is_val == True %}
+                            <a class="btn btn-warning" href="{% url 'accounts:userPortefolioSituation' %}">Retour</a>
+                            {% else %}
+                            <a class="btn btn-warning" href="{% url 'tasks:updateSituationSection' situation.id %}">Retour</a>
+                            {% endif %}
+                            <button type="button" class="btn btn-success" data-toggle="modal" data-target="#myModal">
+                            Actualiser Données 
+                            </button>
+                            
+                            <input class="btn btn-primary" type="submit" name="Submit">
+                        </fieldset>
+                    </form>
+        </div>
+        
+    </div>
+            
+    <div class="col-md-9">
+        <!-- Button to Open the Modal -->
+        <div class="container-fluide">
+                    <!-- Button to Open the Modal -->
+                
+                    <!-- The Modal -->
+                    <div class="modal" id="myModal">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <!-- Modal Header -->
+                            <div class="modal-header">
+                                <h4 class="modal-title text-secondary">Confirmation</h4>
+                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            </div>
+                            <!-- Modal body -->
+                            <div  class="modal-body text-secondary">
+                                Confirmer la génération des données ?
+                            </div>
+                            <!-- Modal footer -->
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-danger" data-dismiss="modal">Fermer</button>
+                                <div class="spinner-grow text-warning"></div>
+
+                                <form action="{%url 'tasks:updateDataSection' situation.id %}" enctype="multipart/form-data" method="POST">
+                                    {% csrf_token %}
+                                    <input class="btn btn-warning" type="submit" name="OK">
+                                </form>
+                            </div>
+                        </div>
+                    </div>           
+                </div>
+
+
+           
+            {% if situation.supervised == True or situation.statut == 2 and is_manager == False %}
+            <fieldset disabled>
+            {% else %}
+            <fieldset>
+            {% endif%}
+
+                <div class="card card-body">
+                    <h3>{{section.section.code_section}} - {{section.section.name_section}}</h3>
+                    <!-- <h4>Filterable Table</h4> -->
+                    <input class="form-control" id="myInput" type="text" placeholder="Recherche..">
+                    <br>
+                    <table class="table table-hover table-sm">
+                        <thead>
+                        <tr>
+                            <th>XRéf</th>
+                            <th>Section</th>
+                            <th>Désignation</th>
+                            <th class="text-right">{{situation.date_closing}}</th>
+                            {% if section.section.type == 0 %}
+                            <th class="text-right">{{date_closing_n1}}</th>
+                            {% else %}
+                            <th class="text-right">{{date_closing_n1_end}}</th>
+                            {% endif %}
+                            <th class="text-right">Var</th>
+                            <th class="text-right">%</th>
+                            <th class="text-right"></th>
+                        </tr>
+                    </thead>
+                    
+                    {% for item in lead %}
+                    {% if item.data_n == 0 and item.data_n1 == 0 %}
+                    {% else %}
+                    <tbody id="myTable">
+
+                    {% if item.code_account.level == 3 %}
+
+                    <tr class="table-info">
+                        <th></th>
+                        <th>{{item}}</th>
+                        <th>{{item.code_account.name_account}}</th>
+                        <th class="text-right">{{item.data_n|floatformat:'2'}}</th>
+                        <th class="text-right">{{item.data_n1|floatformat:'2'}}</th>
+                        <th class="text-right">{{item.data_delta|floatformat:'2'}}</th>
+                        <th class="text-right">{{item.data_delta_pc|format_percent:"2,False"}}</th>
+                        {% if item.data_delta_pc < 0 %}
+                        <th class="text-danger"><i class="fas fa-arrow-down"></i></th>
+                        {% elif item.data_delta_pc > 0 %}
+                        <th class="text-success"><i class="fas fa-arrow-up"></i></th>
+                        {% else %}
+                        <th class="text-secondary"><i class="fas fa-sync"></i></th>
+                        {% endif %}
+                    </tr>
+                {% elif item.code_account.level == 4 %}
+                    <tr>
+                        <th></th>
+                        <th>{{item}}</th>
+                        <th>{{item.code_account.name_account}}</th>
+                        <th class="text-right">{{item.data_n|floatformat:'2'}}</th>
+                        <th class="text-right">{{item.data_n1|floatformat:'2'}}</th>
+                        <th class="text-right">{{item.data_delta|floatformat:'2'}}</th>
+                        <th class="text-right">{{item.data_delta_pc|format_percent:"2,False"}}</th>
+                        {% if item.data_delta_pc < 0 %}
+                        <th class="text-danger"><i class="fas fa-arrow-down"></i></th>
+                        {% elif item.data_delta_pc > 0 %}
+                        <th class="text-success"><i class="fas fa-arrow-up"></i></th>
+                        {% else %}
+                        <th class="text-secondary"><i class="fas fa-sync"></i></th>
+                        {% endif %}
+                    </tr>
+                {% else %}
+                    <tr style="font-size:13px;font-style:italic">
+                        <td></td>
+                        <td>{{item}}</td>
+                        <td>{{item.code_account.name_account}}</td>
+                        <td class="text-right">{{item.data_n|floatformat:'2'}}</td>
+                        <td class="text-right">{{item.data_n1|floatformat:'2'}}</td>
+                        <td class="text-right">{{item.data_delta|floatformat:'2'}}</td>
+                        <td class="text-right">{{item.data_delta_pc|format_percent:"2,False"}}</td>
+                        {% if item.data_delta_pc < 0 %}
+                        <td class="text-danger"><i class="fas fa-arrow-down"></i></td>
+                        {% elif item.data_delta_pc > 0 %}
+                        <td class="text-success"><i class="fas fa-arrow-up"></i></td>
+                        {% else %}
+                        <td class="text-secondary"><i class="fas fa-sync"></i></td>
+                        {% endif %}
+                    </tr>
+                 {% endif %}
+
+                    {% endif %}
+                    {% endfor %}
+                    </tbody>
+
+                    </table>
+
+                </div>
+
+                <div class="card card-body">
+                    <a class="btn btn-sm btn-outline-info" href="{%url 'tasks:createConclusion' section.id %}"><i class="fas fa-plus"></i> Ajouter</a>
+
+                    {% if revues_an %}
+                    <br>
+                    <h3>Revue Analytique</h3>
+                    {% for item in revues_an %}
+                            {% if item.statut == 0 %}
+                            <div class="info">
+                            {% elif item.statut == 1 %}
+                            <div class="warning">
+                                {% elif item.statut == 2 %}
+                            <div class="success">
+                                {% elif item.statut == 3 %}
+                            <div class="danger">
+                                {% else %}
+                            <div class="info">
+                                {% endif %}
+                                <p>{{item.conclusion}}</p>
+                                <a class="btn btn-sm btn-outline-warning" href="{%url 'tasks:updateConclusion' item.id %}"><i class="fas fa-edit"></i> Edit</a>
+                                <a class="btn btn-sm btn-outline-danger" href="{%url 'tasks:deleteConclusion' item.id %}"><i class="fas fa-trash"></i> Sup.</a>
+                            </div>
+                    {% endfor %}
+                    {% endif %}
+
+                    {% if risques %}
+                    <br>
+                    <h3>Risque - Point d'attention</h3>
+                    {% for item in risques %}
+                            {% if item.statut == 0 %}
+                            <div class="info">
+                            {% elif item.statut == 1 %}
+                            <div class="warning">
+                                {% elif item.statut == 2 %}
+                            <div class="success">
+                                {% elif item.statut == 3 %}
+                            <div class="danger">
+                                {% else %}
+                            <div class="info">
+                                {% endif %}
+                                <p>{{item.conclusion}}</p>
+                                <a class="btn btn-sm btn-outline-warning" href="{%url 'tasks:updateConclusion' item.id %}"><i class="fas fa-edit"></i> Edit</a>
+                                <a class="btn btn-sm btn-outline-danger" href="{%url 'tasks:deleteConclusion' item.id %}"><i class="fas fa-trash"></i> Sup.</a>
+                            </div>
+                    {% endfor %}
+                    {% endif %}
+
+                    {% if recoms %}
+                    <br>
+                    <h3>Recommandation</h3>
+                    {% for item in recoms %}
+                            {% if item.statut == 0 %}
+                            <div class="info">
+                            {% elif item.statut == 1 %}
+                            <div class="warning">
+                                {% elif item.statut == 2 %}
+                            <div class="success">
+                                {% elif item.statut == 3 %}
+                            <div class="danger">
+                                {% else %}
+                            <div class="info">
+                                {% endif %}
+                                <p>{{item.conclusion}}</p>
+                                <a class="btn btn-sm btn-outline-warning" href="{%url 'tasks:updateConclusion' item.id %}"><i class="fas fa-edit"></i> Edit</a>
+                                <a class="btn btn-sm btn-outline-danger" href="{%url 'tasks:deleteConclusion' item.id %}"><i class="fas fa-trash"></i> Sup.</a>
+                            </div>
+
+
+                    {% endfor %}
+                    {% endif %}
+
+                    {% if conclusions %}
+                    <br>
+                    <h3>Conclusion</h3>
+                    {% for item in conclusions %}
+                            {% if item.statut == 0 %}
+                            <div class="info">
+                            {% elif item.statut == 1 %}
+                            <div class="warning">
+                                {% elif item.statut == 2 %}
+                            <div class="success">
+                                {% elif item.statut == 3 %}
+                            <div class="danger">
+                                {% else %}
+                            <div class="info">
+                                {% endif %}
+                                <p>{{item.conclusion}}</p>
+                                <a class="btn btn-sm btn-outline-warning" href="{%url 'tasks:updateConclusion' item.id %}"><i class="fas fa-edit"></i> Edit</a>
+                                <a class="btn btn-sm btn-outline-danger" href="{%url 'tasks:deleteConclusion' item.id %}"><i class="fas fa-trash"></i> Sup.</a>
+                            </div>
+                    {% endfor %}
+                    {% endif %}
+            </fieldset>
+
+
+        </div>
+    </div>
+</div>
+
+
+
+{% endblock content %}

@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Situation, Task, Work, Benefit, BenefitLink,Claim,VATRequested,BenefitRequested, Period, BenefitItem, Account, Exercice,TaxReturn
+from .models import DASMatriculeExo, DASEXOModel, DASDetail, DASModel, DAS, Situation, TableLiasseFiscale, LiasseFiscale, Task, Work, Benefit, BenefitLink,Claim,VATRequested,BenefitRequested, Period, BenefitItem, Account, Exercice,TaxReturn, CotisationMinimal, AccountBis, ImpotSociete, BaremeImpot
 
 admin.site.register(Work)
 admin.site.register(Task)
@@ -12,8 +12,17 @@ admin.site.register(BenefitRequested)
 admin.site.register(Period)
 admin.site.register(BenefitItem)
 admin.site.register(Account)
+admin.site.register(AccountBis)
 admin.site.register(Exercice)
 admin.site.register(Situation)
 admin.site.register(TaxReturn)
-
-
+admin.site.register(CotisationMinimal)
+admin.site.register(ImpotSociete)
+admin.site.register(BaremeImpot)
+admin.site.register(TableLiasseFiscale)
+admin.site.register(LiasseFiscale)
+admin.site.register(DASDetail)
+admin.site.register(DASModel)
+admin.site.register(DAS)
+admin.site.register(DASEXOModel)
+admin.site.register(DASMatriculeExo)

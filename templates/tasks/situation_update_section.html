@@ -1,0 +1,163 @@
+<!--templates/portefolio_situation.html-->
+{%  extends '_base.html' %}
+{% load static %}
+{% block title %}Section{% endblock title %}
+
+{% block content %}
+
+<style>
+	img {
+	  border: 1px solid #ddd;
+	  border-radius: 4px;
+	  padding: 5px;
+	  width: 150px;
+	}
+	
+	img:hover {
+	  box-shadow: 0 0 2px 1px rgba(0, 140, 186, 0.5);
+	}
+</style>
+<br>
+
+<div class="col-md-10 ">
+	<div class="row ">
+		
+		<div class="col-xl-3 col-lg-6">
+			<div class="card l-bg-orange-dark">
+				<div class="card-statistic-3 p-4">
+					<div class="card-icon card-icon-large"><i class="fas fa-check-double"></i></div>
+					<div class="mb-4">
+						<h5 class="card-title mb-0">Sections en cours</h5>
+					</div>
+					<div class="row align-items-center mb-2 d-flex">
+						<div class="col-8">
+							<h2 class="d-flex align-items-center mb-0">
+							[ {{sections_enc.count}} ]
+							</h2>
+						</div>
+
+					</div>
+
+				</div>
+			</div>
+		</div>
+		<div class="col-xl-3 col-lg-6">
+			<div class="card l-bg-green-dark">
+				<div class="card-statistic-3 p-4">
+					<div class="card-icon card-icon-large"><i class="fas fa-check-double"></i></div>
+					<div class="mb-4">
+						<h5 class="card-title mb-0">Sections validées</h5>
+					</div>
+					<div class="row align-items-center mb-2 d-flex">
+						<div class="col-8">
+							<h2 class="d-flex align-items-center mb-0">
+							[ {{sections_val.count}} ]
+							</h2>
+						</div>
+
+					</div>
+
+				</div>
+			</div>
+		</div>
+	</div>
+	
+</div>
+
+<div class="container-fluid">
+	
+	
+	<div class="px-0 py-2 pt-md-3 pb-md-2 mx-auto text-center">
+		{% if is_manager == True %}
+		<a class="btn btn-warning btn-lg btn-block" href="{% url 'tasks:exerciceDetailManager' exercice %}">Retour</a>
+		{% else %}
+		<a class="btn btn-warning btn-lg btn-block" href="{% url 'accounts:LdmSituation' situation.lettremission.id %}">Retour</a>
+		{% endif%}
+
+		<button type="button" class="btn btn-secondary btn-lg btn-block" data-toggle="modal" data-target="#myModal">
+			{% if sections %}
+			Actualiser les Données 
+			{% else %}
+			Générer les Sections
+			{% endif %}
+		</button>
+
+		<a class="btn btn-success btn-lg btn-block" href="{% url 'editions:EditionNoteSynthese' situation.id %}">Générer la Note de Synthèse en Word</a>
+
+		<div class="modal" id="myModal">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<!-- Modal Header -->
+					<div class="modal-header">
+						<h4 class="modal-title text-secondary">Confirmation</h4>
+						<button type="button" class="close" data-dismiss="modal">&times;</button>
+					</div>
+					<!-- Modal body -->
+					<div  class="modal-body text-secondary">
+						Confirmer la génération des données ?
+					</div>
+					<!-- Modal footer -->
+					<div class="modal-footer">
+						<button type="button" class="btn btn-danger" data-dismiss="modal">Fermer</button>
+						<div class="spinner-grow text-warning"></div>
+
+						<form action="{%url 'tasks:updateDataSection' situation.id %}" enctype="multipart/form-data" method="POST">
+							{% csrf_token %}
+							<input class="btn btn-warning" type="submit" name="OK">
+						</form>
+					</div>
+				</div>
+			</div>           
+		</div>
+		<h1 class="display-4">Mes Sections : {{situation.lettremission.company.name}} / {{situation.exercice}}</h1>
+		<input class="form-control" id="myInput" type="text" placeholder="Recherche..">
+		</div>
+
+	</div>
+	<div class="py-5">
+		<div  class="row">
+			{% for item in sections %}
+			<div id="myDIV" class="col-md-2">
+				<a class="text-dark" href="{% url 'tasks:updateSectionLead' item.id %}">
+					<div class="card mb-4 box-shadow">
+						<div class="card-body">
+							<h3 style="font-size:32px;font-weight:bold;min-height:40px;">
+								{{item.section.code_section}}</h3>
+							<h4 style="font-size:14px;font-weight:bold;min-height:30px;">
+								{{item.section.name_section}}</h4>
+							<div class="d-flex justify-content-between align-items-center">
+								{% if item.statut == 0 %}
+								<small class="btn-sm btn-info"><i class="fas fa-window-close"></i> En Rédaction</small>
+								{% elif item.statut == 1 %}
+								<small class="btn-sm btn-warning"><i class="fas fa-step-forward"></i> Traitée</small>
+								{% elif item.statut == 2 %}
+								<small class="btn-sm btn-success"><i class="fas fa-check-double"></i> Validée</small>
+								{% elif item.statut == 3 %}
+								<small class="btn-sm btn-danger"><i class="fas fa-exclamation-triangle"></i> Non Validée</small>
+								{% else %}
+								<small class="btn-sm btn-dark"><i class="fab fa-slack-hash"></i> Non Applicable</small>
+								{% endif %}
+							</div>
+							<div class="d-flex justify-content-between align-items-center">
+								<small class="text-muted">Générée le : {{item.date_generation}}</small>
+							</div>
+
+							<div class="d-flex justify-content-between align-items-center">
+								<small class="text-muted">Supervisée: {{item.supervised}}</small>
+							</div>
+						</div>
+					</div>
+				</a>
+			</div>
+			{% endfor %}
+		</div>
+	</div>
+</div>
+
+
+
+
+
+
+
+{% endblock content %}

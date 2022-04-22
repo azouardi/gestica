@@ -65,32 +65,46 @@
 		<br>
 		<h1 class="display-4">Liste des Exercices</h1>
 		<p class="lead">A chacun son rôle dans l'édifice. Une gestion efficace au quotidien !</p>
+		<input class="form-control" id="myInput" type="text" placeholder="Recherche..">
+
 	</div>
+	<br>
 	
 	{% if exercices %}
 
 	<div class="col-md">
 
 		<div class="card card-body">
-			<table class="table table-sm">
-				<tr>
+			<table class="table table-hover table-sm">
+			<thead>
+			<tr>
 					<th></th>
 					<th>Exercice</th>
-					<th>Consulter</th>
+					<th>Intermédiaire</th>
+					<th>Mois</th>
 					<th>Editer</th>
 					<th>Supprimer</th>
 				</tr>
+			</thead>
+			<tbody id="myTable">
 
 				{% for exercice in exercices %}
 
-					<tr>
+				{% if exercice.intermediate == False %}
+				<tr class="table-success">
+				{% else %}
+				<tr class="table-warning">
+				{% endif %}
+										
 						<td></td>
 						<td>{{exercice.exercice}}</td>
-						<td><a class="btn btn-sm btn-outline-info" href="{% url 'tasks:exerciceDetail' exercice.id %}"><i class="fas fa-eye"></i> View</a></td>
+						<td>{{exercice.intermediate}}</td>
+						<td>{{exercice.month}}</td>
 						<td><a class="btn btn-sm btn-outline-warning" href="{% url 'tasks:exerciceUpdate' exercice.id %}"><i class="fas fa-edit"></i> Edit</a></td>
 						<td><a class="btn btn-sm btn-outline-danger" href="{% url 'tasks:exerciceDelete' exercice.id %}"><i class="fas fa-trash"></i> Sup.</a></td>
 					</tr>
 				{% endfor %}
+				</tbody>
 			</table>
 		</div>
 	</div>

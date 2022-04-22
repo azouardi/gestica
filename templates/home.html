@@ -3,17 +3,155 @@
 <!-- templates/home.html -->
 {% extends '_base.html' %}
 {% load static %}
-{% block title %}Home{% endblock title %}
+{% block title %}Dashboard{% endblock title %}
+
+
+
 {% block content %}
-<h1>Homepage</h1>
 <br>
-<img class="logo" src="{% static 'images/eurodefi.png' %}">
-{% if user.is_authenticated %}
-    <p>Hi {{ user.email }}!</p>
-    <p><a href="{% url 'account_logout' %}">Log Out</a></p>
+
+<div class="row">
+    {% if user.is_authenticated %}
+    <h3>Hi {{ user.first_name }} !</h3>
+    <p><a href="{% url 'account_logout' %}">Se Déconnecter</a></p>
+
+
+</div>
+
+
+
+
 {% else %}
-<p>You are not logged in</p>
-    <p><a href="{% url 'account_login' %}">Log In</a> |
-    <a href="{% url 'account_signup' %}">Sign Up</a></p>
+<p>Vous n'êtes pas connectés</p>
+    <p><a href="{% url 'account_login' %}">Se Connecter</a> |
+    <a href="{% url 'account_signup' %}">S'Inscrire</a></p>
 {% endif %}
+
+
+{% comment %} Dossiers et travaux du portefeuille {% endcomment %}
+
+<div class="row">
+
+	{% if portefeuil_coll_list %}
+
+	<div class="col-md-4">
+		<div class="card card-body">
+			<h3>Travaux par dossier</h3>
+			{% comment %} <input class="form-control" id="myInput" type="text" placeholder="Recherche.."> {% endcomment %}
+
+			<br>
+
+			<table class="table table-hover table-sm">
+			<thead>
+				<tr>
+					<th>Dossier</th>
+					<th>Tâches en cours</th>
+					<th>Rêquetes</th>
+				</tr>
+			</thead>
+			<tbody id="myTable">
+
+				{% for dossier in portefeuil_coll_list %}
+                        <tr>
+                            <td>{{dossier.Dossier}}</td>
+                            <td><a class="btn btn-sm btn-primary" href="{% url 'accounts:companyTdb' dossier.ID %}"><i class="fas fa-eye"></i> {{dossier.Tache}}</a></td>
+                            {% if dossier.Requete > 0 %}
+                            <td><a class="btn btn-sm btn-warning" href="{% url 'accounts:companyTdb' dossier.ID %}"><i class="fas fa-eye"></i> {{dossier.Requete}}</a></td>
+                            {% else %}
+                            <td></td>
+                            {% endif %}
+
+                        </tr>
+
+				{% endfor %}
+			</tbody>
+			</table>
+		</div>
+	</div>
+	{% else %}
+	{% endif %}
+
+    <div class="col-md-4">
+
+        {% comment %} validations en cours {% endcomment %}
+        {% if validations %}
+        <div class="col-md">
+            <div class="card card-body">
+                <a class="text-success" href="{% url 'accounts:userValidation' %}">							</a>
+
+                <h3 class=text-success>En Attente de Validations</h3>
+                <br>
+
+                <table class="table table-sm table-success">
+                    <tr>
+                        <th>Client</th>
+                        <th>Tâche</th>
+                        <th>Date Limite</th>
+                        <th></th>
+                    </tr>
+                    {% for validation in validations %}
+                    <tr>
+                        <td>{{validation.lettremission.company}}</td>
+                        <td>{{validation.task}}</td>
+                        <td>{{validation.date_limit}}</td>
+                        <td><a class="btn btn-sm btn-success" href="{% url 'tasks:updateWorkColl' validation.id %}"><i class="fas fa-eye"></i></a></td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            </div>
+        </div>
+        {% else %}
+        {% endif %}
+
+        {% comment %} bilan en cours  {% endcomment %}
+        {% if bilans %}
+        <div class="col-md">
+            <div class="card card-body">
+                <h3 class=text-primary>Bilan en Cours</h3>
+                <br>
+                <table class="table table-sm table-primary">
+                    <tr>
+                        <th>Client</th>
+                        <th>Objet</th>
+                        <th>Date Limite</th>
+                        <th></th>
+                    </tr>
+                    {% for bilan in bilans %}
+                    <tr>
+                        <td>{{bilan.lettremission.company}}</td>
+                        <td>{{bilan.task}}</td>
+                        <td>{{bilan.date_limit}}</td>
+                        <td><a class="btn btn-sm btn-primary" href="{% url 'tasks:updateWorkColl' bilan.id %}"><i class="fas fa-eye"></i></a></td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            </div>
+        </div>
+        {% else %}
+        {% endif %}
+    </div>
+
+</div>
+
+<div>
+    <img class="logo" src="{% static 'images/eurodefi.png' %}">
+</div>
+    
+    
+
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script> 
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.min.js"></script> 
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@0.4.0/dist/chartjs-plugin-datalabels.min.js"></script> 
+
+
+
 {% endblock content %}

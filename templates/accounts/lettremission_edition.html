@@ -5,6 +5,18 @@
 
 {% block content %}
 
+<style>
+	img {
+	  border: 1px solid #ddd;
+	  border-radius: 4px;
+	  padding: 5px;
+	  width: 150px;
+	}
+	
+	img:hover {
+	  box-shadow: 0 0 2px 1px rgba(0, 140, 186, 0.5);
+	}
+</style>
 
 <br>
 
@@ -43,15 +55,18 @@
 	<div class="col-sm-2">
 	  <div class="card">
 		{% if i.file.url %}
-		<img src="{{i.file.url}}" class="card-img-top"alt="..."  />
+		<p>Cliquer sur l'image pour l'élargir</p>
+		<a target="_blank" href="{{i.file.url}}">
+		<img src="{{i.file.url}}" class="card-img-top" height="300px"  alt="" >
+		</a>
 		{% else %}
-		<img src="{{lettremission.company.file.url}}" class="card-img-top"alt="..."  />
 		{% endif %}
+
+
 		
 		<div class="card-body">
 		  <h5 class="card-title">{{i.name}}</h5>
 		  <p class="card-text">
-			With supporting text below as a natural lead-in to additional content.
 		  </p>
 		  <a href="{% url 'editions:EditionCommun' lettremission.company.id i.code_docmodel %}" class="btn btn-primary">Générer</a>
 
@@ -77,5 +92,13 @@
 	  </div>
 	</div>
   </div>
+
+
+
+
+
+
+
+
 
 {% endblock content %}

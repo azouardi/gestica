@@ -65,21 +65,27 @@
 		<br>
 		<h1 class="display-4">Liste des Echéances</h1>
 		<p class="lead">A chacun son rôle dans l'édifice. Une gestion efficace au quotidien !</p>
+		<input class="form-control" id="myInput" type="text" placeholder="Recherche..">
+
 	</div>
-	
+	<br>
 	{% if periods %}
 
 	<div class="col-md">
 
 		<div class="card card-body">
-			<table class="table table-sm">
-				<tr>
+
+			<table class="table table-hover table-sm">
+			<thead>
+			<tr>
 					<th>Période</th>
 					<th>Date Echéance</th>
 					<th>Consulter</th>
 					<th>Editer</th>
 					<th>Supprimer</th>
 				</tr>
+			</thead>
+			<tbody id="myTable">
 
 				{% for period in periods %}
 
@@ -91,6 +97,7 @@
 						<td><a class="btn btn-sm btn-outline-danger" href="{% url 'tasks:periodDelete' period.id %}"><i class="fas fa-trash"></i> Sup.</a></td>
 					</tr>
 				{% endfor %}
+			</tbody>
 			</table>
 		</div>
 	</div>

@@ -50,7 +50,8 @@ INSTALLED_APPS = [
     'psycopg2',
     'bootstrap4',# new
     'bootstrap_datepicker_plus',
-    'django_extensions',
+    
+    # 'django_extensions',
     
     # Local
     'accounts.apps.AccountsConfig',
@@ -59,6 +60,7 @@ INSTALLED_APPS = [
     'ordres.apps.OrdresConfig',
     'tasks.apps.TasksConfig',
     'editions.apps.EditionsConfig',
+    'audits.apps.AuditsConfig',
     'csvs.apps.CsvsConfig',
 
 ]
@@ -87,7 +89,12 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'config.context_processors.user_groups_processor',
+
             ],
+            'libraries':{
+                'mytags': 'templatetags.mytags',
+                }
         },
     },
 ]
@@ -168,7 +175,7 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage' 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # django-allauth config
-SITE_ID = 1
+SITE_ID = 2
 LOGIN_REDIRECT_URL = 'home' # new
 LOGOUT_REDIRECT_URL = 'home'
 ACCOUNT_LOGOUT_REDIRECT = 'home' # new
@@ -176,7 +183,6 @@ AUTHENTICATION_BACKENDS = (
 'django.contrib.auth.backends.ModelBackend',
 'allauth.account.auth_backends.AuthenticationBackend', # new
 )
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 ACCOUNT_SESSION_REMEMBER = False # new
 ACCOUNT_SIGNUP_PASSWORD_ENTER_TWICE = True # new
 ACCOUNT_USERNAME_REQUIRED = True # new
@@ -188,16 +194,16 @@ ACCOUNT_UNIQUE_EMAIL = True # new
 CRISPY_TEMPLATE_PACK = 'bootstrap4' # new
 
 # config/settings.py
-DEFAULT_FROM_EMAIL = 'ouardi@eurodefis.com'
+DEFAULT_FROM_EMAIL = 'gestica@eurodefi-audit.com'
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST='ssl0.ovh.net'
-EMAIL_HOST_USER='ouardi@eurodefis.com'
-EMAIL_HOST_PASSWORD='*************'
-EMAIL_PORT='587'
-EMAIL_USE_TLS= False
+EMAIL_HOST='maryam.genious.net'
+EMAIL_HOST_USER='gestica@eurodefi-audit.com'
+EMAIL_HOST_PASSWORD='Q+RPBzp-za0*'
+EMAIL_PORT= 587
+EMAIL_USE_TLS= True
 
 # config/settings.py
 MEDIA_URL = '/media/' # new
 MEDIA_ROOT = str(BASE_DIR.joinpath('media')) # new
-
+# MEDIA_ROOT = str(BASE_DIR.joinpath('webproject', 'media/')) # new

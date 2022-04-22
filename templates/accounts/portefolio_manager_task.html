@@ -1,0 +1,259 @@
+<!--templates/client.html-->
+{%  extends '_base.html' %}
+{% load static %}
+{% block title %}Portefeuille{% endblock title %}
+
+{% block content %}
+
+
+<br>
+<div class="col-md-10 ">
+	<div class="row ">
+		<div class="col-xl-3 col-lg-6">
+			<div class="card l-bg-orange-dark">
+				<div class="card-statistic-3 p-4">
+					<div class="card-icon card-icon-large"><i class="fas fa-tasks"></i></div>
+					<div class="mb-4">
+						<h5 class="card-title mb-0">Tâches en cours</h5>
+					</div>
+					<div class="row align-items-center mb-2 d-flex">
+						<div class="col-8">
+							<h2 class="d-flex align-items-center mb-0">
+							[ {{works.count}} ]
+							</h2>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="col-xl-3 col-lg-6">
+			<div class="card l-bg-orange-dark">
+				<div class="card-statistic-3 p-4">
+					<div class="card-icon card-icon-large"><i class="fas fa-check-double"></i></div>
+					<div class="mb-4">
+						<h5 class="card-title mb-0">Validation en attente</h5>
+					</div>
+					<div class="row align-items-center mb-2 d-flex">
+						<div class="col-8">
+							<h2 class="d-flex align-items-center mb-0">
+							[ {{validations.count}} ]
+							</h2>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="col-xl-3 col-lg-6">
+			<div class="card l-bg-orange-dark">
+				<div class="card-statistic-3 p-4">
+					<div class="card-icon card-icon-large"><i class="fas fa-thumbtack"></i></div>
+					<div class="mb-4">
+						<h5 class="card-title mb-0">Réclamations à suivre</h5>
+					</div>
+					<div class="row align-items-center mb-2 d-flex">
+						<div class="col-8">
+							<h2 class="d-flex align-items-center mb-0">
+							[ {{claims.count}} ]
+							</h2>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="col-xl-3 col-lg-6">
+			<div class="card l-bg-orange-dark">
+				<div class="card-statistic-3 p-4">
+					<div class="card-icon card-icon-large"><i class="fas fa-file-invoice"></i></div>
+					<div class="mb-4">
+						<h5 class="card-title mb-0">Bilans en cours</h5>
+					</div>
+					<div class="row align-items-center mb-2 d-flex">
+						<div class="col-8">
+							<h2 class="d-flex align-items-center mb-0">
+							[ {{bilans.count}} ]
+							</h2>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+<div class="container-fluid">
+	<div class="px-0 py-2 pt-md-3 pb-md-2 mx-auto text-center">
+		<h1 class="display-4">Supervision des Tâches</h1>
+		<p class="lead">Les sociétés qui composent mon portefeuille. Une gestion efficace au quotidien !</p>
+		<input class="form-control" id="myInput" type="text" placeholder="Recherche..">
+
+	</div>
+	<div id="myDIV" class="py-5">
+		<div class="row">
+			<div class="col-md">
+				<div class="row">
+					{% for item in portefolio %}
+					{% if request.user.is_staff %}
+					<div class="col-md-3">
+						<a class="btn btn-sm btn-warning" href="{% url 'tasks:createClaim' item.id %}"><i class="fas fa-plus-circle"></i> Réclamation</a>
+							<!-- {% if item.work_set.all.count != 0  %}
+							<button type="button" href="{% url 'accounts:companyTdb' item.company.id %}"  class="btn btn-sm btn-secondary"><i class="fas fa-clipboard-list"></i> W
+								<span class="badge badge-warning">{{item.work_set.all.count}}</span>
+							  </button>
+							{% endif %}
+							{% if item.claim_set.all.count != 0  %}
+							<button type="button" href="{% url 'accounts:companyTdb' item.company.id %}"  class="btn btn-sm btn-danger"><i class="fas fa-exclamation-triangle"></i> R
+								<span class="badge badge-warning">{{item.claim_set.all.count}}</span>
+							  </button>
+							{% endif %} -->
+						  </a>				  
+						<hr>
+						<a class="text-dark" href="{% url 'accounts:companyTdb' item.company.id %}">
+							<div class="card mb-4 box-shadow">
+								{% if item.company.file %}
+								<br>
+								<div class="cover-image mx-auto">
+									<img src="{{item.company.file.url}}" alt="..." class="mx-auto d-block" height="100px" width="100%">
+								</div>
+								<br>
+								{% else %}
+								{% endif %}
+								<div class="card-body">
+									<h3 style="font-size:18px;font-weight:bold;min-height:42px;">
+										{{item.company.name}} </h3>
+									<h5 style="font-size:12px;font-weight:bold;min-height:30px;">
+										{{item.moduleservice}}</h5>
+									<div class="d-flex justify-content-between align-items-center">
+										<small class="text-muted">Entrée le : {{item.entry_date}}</small>
+										<small class="text-muted">BDD: {{item.db_office}}</small>								
+									</div>
+									<small class="text-muted">{{time}}</small>
+								</div>
+							</div>
+						</a>
+
+					</div>
+					{% else %}
+					<div class="col-md-3">
+						<a class="btn btn-sm btn-warning" href="{% url 'tasks:createClaim' item.lettremission.id %}"><i class="fas fa-exclamation-triangle"></i> Réclamation</a>
+						<hr>
+						<a class="text-dark" href="{% url 'accounts:companyTdb' item.lettremission.company.id %}">
+							<div class="card mb-4 box-shadow">
+								{% if item.lettremission.company.file %}
+								<br>
+								<div class="cover-image mx-auto">
+									<img src="{{item.lettremission.company.file.url}}" alt="..." class="mx-auto d-block" height="100px" width="100%">
+								</div>
+								<br>
+								{% else %}
+								{% endif %}
+								<div class="card-body">
+									<h3 style="font-size:18px;font-weight:bold;min-height:42px;">
+										{{item.lettremission.company.name}}</h3>
+									<h5 style="font-size:12px;font-weight:bold;min-height:30px;">
+										{{item.lettremission.moduleservice}}</h5>
+									<div class="d-flex justify-content-between align-items-center">
+										<small class="text-muted">Entrée le : {{item.lettremission.entry_date}}</small>
+										<small class="text-muted">BDD: {{item.lettremission.db_office}}</small>
+									</div>
+									<small class="text-muted">{{time}}</small>
+								</div>
+							</div>
+						</a>
+					</div>
+					{% endif %}
+
+					{% endfor %}
+				</div>	
+			</div>
+				<div class="col-md-4">
+					{% if validations %}
+					<div class="col-md">
+						<div class="card card-body">
+							<a class="text-success" href="{% url 'accounts:userValidation' %}">							</a>
+
+
+							<h3 class=text-success>En Attente de Validations</h3>
+							<br>
+
+							<table class="table table-sm table-success">
+								<tr>
+									<th>Client</th>
+									<th>Tâche</th>
+									<th>Date Limite</th>
+									<th></th>
+								</tr>
+								{% for validation in validations %}
+								<tr>
+									<td>{{validation.lettremission.company}}</td>
+									<td>{{validation.task}}</td>
+									<td>{{validation.date_limit}}</td>
+									<td><a class="btn btn-sm btn-success" href="{% url 'tasks:updateWorkColl' validation.id %}"><i class="fas fa-eye"></i></a></td>
+								</tr>
+								{% endfor %}
+							</table>
+						</div>
+					</div>
+					{% else %}
+					{% endif %}
+			
+					{% if claims %}
+					<div class="col-md">
+						<div class="card card-body">
+							<h3 class=text-warning>Réclamations en Cours</h3>
+							<br>
+							<table class="table table-sm table-warning">
+								<tr>
+									<th>Client</th>
+									<th>Objet</th>
+									<th>Date Réclamation</th>
+									<th></th>
+								</tr>
+								{% for claim in claims %}
+								<tr>
+									<td>{{claim.lettremission.company}}</td>
+									<td>{{claim.objet}}</td>
+									<td>{{claim.date_start}}</td>
+									<td><a class="btn btn-sm btn-warning" href="{% url 'tasks:updateClaim' claim.id %}"><i class="fas fa-eye"></i></a></td>
+								</tr>
+								{% endfor %}
+							</table>
+						</div>
+					</div>
+					{% else %}
+					{% endif %}
+
+					{% if bilans %}
+					<div class="col-md">
+						<div class="card card-body">
+							<h3 class=text-primary>Bilan en Cours</h3>
+							<br>
+							<table class="table table-sm table-primary">
+								<tr>
+									<th>Client</th>
+									<th>Objet</th>
+									<th>Date Limite</th>
+									<th></th>
+								</tr>
+								{% for bilan in bilans %}
+								<tr>
+									<td>{{bilan.lettremission.company}}</td>
+									<td>{{bilan.task}}</td>
+									<td>{{bilan.date_limit}}</td>
+									<td><a class="btn btn-sm btn-primary" href="{% url 'tasks:updateWorkColl' bilan.id %}"><i class="fas fa-eye"></i></a></td>
+								</tr>
+								{% endfor %}
+							</table>
+						</div>
+					</div>
+					{% else %}
+					{% endif %}
+				</div>
+		</div>
+	</div>
+</div>
+
+
+
+
+{% endblock content %}

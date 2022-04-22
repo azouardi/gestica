@@ -9,8 +9,10 @@
 	<div class="px-0 py-2 pt-md-3 pb-md-2 mx-auto text-center">
 		<h1 class="display-4">Mes Editions</h1>
 		<p class="lead">Les sociétés qui composent mon portefeuille. Une gestion efficace au quotidien !</p>
+		<input class="form-control" id="myInput" type="text" placeholder="Recherche..">
+
 	</div>
-	<div class="py-5">
+	<div id="myDIV" class="py-5">
 		<div class="row">
 			{% for item in portefolio %}
 			<div class="col-md-2">
@@ -19,7 +21,7 @@
 						{% if item.lettremission.company.file %}
 						<br>
 						<div class="cover-image mx-auto">
-							<img src="{{item.lettremission.company.file.url}}" alt="..." class="mx-auto d-block" width="120">
+							<img src="{{item.lettremission.company.file.url}}" alt="..." class="mx-auto d-block" height="100px" width="100%">
 						</div>
 						<br>
 						{% else %}

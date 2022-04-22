@@ -1,46 +1,629 @@
 <!--templates/situation_update.html-->
 {%  extends '_base.html' %}
 {% load static %}
-{% block title %}Mise à Jour Service{% endblock title %}
 
+{% block title %}Déclaration du résultat fiscal{% endblock title %}
+{% load mytags %}
 
 {% load crispy_forms_tags %}
 {% block content %}
+
+
+
+    <style>
+        * {box-sizing: border-box}
+        
+        /* Set height of body and the document to 100% */
+        body, html {
+          height: 100%;
+          margin: 0;
+          font-family: Arial;
+        }
+        
+        /* Style tab links */
+        .tablink {
+          background-color: #ffddc6;
+          color: rgb(36, 36, 36);
+          float: left;
+          border: none;
+          outline: none;
+          cursor: pointer;
+          padding: 14px 16px;
+          font-size: 17px;
+          width: 25%;
+        }
+        
+        .tablink:hover {
+          background-color: #ffddc6;
+          font-weight: bold;
+          color: #fff;
+        }
+        
+        /* Style the tab content (and add height:100% for full page content) */
+        .tabcontent {
+          color: white;
+          display: none;
+          padding: 100px 20px;
+          height: 100%;
+        }
+        
+        #RF {background-color: #f7f7f7;}
+        #calcul_is {background-color: #f7f7f7;}
+        #declaration {background-color: #f7f7f7;}
+        #acomptes {background-color: #f7f7f7;}
+        </style>
+
+        <style>
+            .alert {
+              padding: 20px;
+              background-color: #f44336;
+              color: white;
+            }
+            
+            .closebtn {
+              margin-left: 15px;
+              color: white;
+              font-weight: bold;
+              float: right;
+              font-size: 22px;
+              line-height: 20px;
+              cursor: pointer;
+              transition: 0.3s;
+            }
+            
+            .closebtn:hover {
+              color: black;
+            }
+        </style>
+                    
+
+
+
+
 <br>
 
-<div class="row">
-    <div class="col-md-6">
-        <div class="card card-body">
-            <form action="" enctype="multipart/form-data" method="POST">
-                {% if situation.supervised == True or situation.statut == 2 %}
-                <a class="btn btn-warning" href="{% url 'accounts:companyTdb' situation.lettremission.company.id %}">Retour</a>
-
-                <fieldset disabled>
-                {% else %}
-                <fieldset>
-                {% endif%}
-
-                {% csrf_token %}
-                <!-- <br>
-                <input class="form-control" id="disabledInput" type="text" placeholder="{{situation.lettremission.company}}" disabled>
-                <br>
-                <input class="form-control" id="disabledInput" type="text" placeholder="{{situation.task.name}}" disabled>
-                <br>
-                <input class="form-control" id="disabledInput" type="text" placeholder="Echéance du : {{situation.exercice.echeance}}" disabled>
-                <br>
-                <input class="form-control is-invalid" id="disabledInput" type="text" placeholder="Date Limite du : {{situation.date_limit}}" disabled>
-                <br> -->
-                {{form|crispy}}
-                {% if is_val == True %}
-                <a class="btn btn-warning" href="{% url 'accounts:userPortefolio' %}">Retour</a>
-                {% else %}
-                <a class="btn btn-warning" href="{% url 'accounts:companyTdb' situation.lettremission.company.id %}">Retour</a>
-                {% endif %}
-                <input class="btn btn-primary" type="submit" name="Submit">
-            </fieldset>
-            </form>
+    <div class="col-md">
+        <div class="col-md">
+            <div class="card card-body">
+                <div class="mb-4">
+                    <h3 class="card-title mb-0">{{situation.lettremission.company.name}} / {{situation.exercice}}</h3>
+                </div>            
+                    {% if situation.supervised == True or situation.statut == 2 and is_manager == False %}
+                    {% if is_manager == True %}
+                    <a class="btn btn-warning" href="{% url 'tasks:exerciceDetailManager' exercice %}">Retour</a>
+                    {% else %}
+                    <a class="btn btn-warning" href="{% url 'accounts:LdmSituation' situation.lettremission.id %}">Retour</a>
+                    {% endif%}    
+                    <fieldset disabled>
+                        <br>
+                    {% else %}
+                    <fieldset>
+                    {% endif%}
+                    {% if is_val == True %}
+                    <a class="btn btn-warning" href="{% url 'accounts:userPortefolioSituation' %}">Retour</a>
+                    {% else %}
+                    {% if is_manager == True %}
+                    <a class="btn btn-warning" href="{% url 'tasks:exerciceDetailManager' exercice %}">Retour</a>
+                    {% else %}
+                    <a class="btn btn-warning" href="{% url 'accounts:LdmSituation' situation.lettremission.id %}">Retour</a>
+                    {% endif%}
+                    {% endif %}
+                    <button type="button" class="btn btn-success" data-toggle="modal" data-target="#myModal">
+                        Actualiser les données 
+                      </button>
+                    
+                </fieldset>
+            </div>
         </div>
-    </div>
-</div>
+        <div class="alert">
+            <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span> 
+            <strong>Info!</strong> Le résultat fiscal est simulé sur la base du régime de : 
+            {% if cfc2020 == True %}
+            <strong>Statut CFC 2020</strong>
+            {% elif cfc == True %}
+            <strong>Statut CFC 2019 et antérieur</strong>
+            {% elif export == True %}
+            <strong>Exportateur / externalisation de service</strong>
+            {% else %}
+            <strong>Droit commun</strong>
+            {%endif%}
+          </div>
+            <!-- Button to Open the Modal -->
+            <div class="container-fluide">
+            <!-- The Modal -->
+            <div class="modal" id="myModal">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                    <!-- Modal Header -->
+                    <div class="modal-header">
+                        <h4 class="modal-title text-secondary">Confirmation</h4>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>
+                    <!-- Modal body -->
+                    <div  class="modal-body text-secondary">
+                        Confirmer la génération des données ?
+                    </div>
+                    <!-- Modal footer -->
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">Fermer</button>
+                        <div class="spinner-grow text-warning"></div>
 
+                        <form action="{%url 'tasks:updateDataOneSituation' situation.id %}" enctype="multipart/form-data" method="POST">
+                            {% csrf_token %}
+                            <!-- {{form|crispy}} -->
+                            <input class="btn btn-warning" type="submit" name="OK">
+                        </form>
+                    </div>
+              </div>
+            </div>           
+        </div>
+
+
+        <button class="tablink" onclick="openPage('RF', this, '#ff6600')" id="defaultOpen">Résultat Fiscal</button>
+        <button class="tablink" onclick="openPage('calcul_is', this, '#ff6600')">Calcul de l'impôt</button>
+        <button class="tablink" onclick="openPage('declaration', this, '#ff6600')">Déclaration</button>
+        <button class="tablink" onclick="openPage('acomptes', this, '#ff6600')">Acomptes</button>
+
+        <div id="RF" class="tabcontent">
+            {% if situation.supervised == True or situation.statut == 2 and is_manager == False %}
+            <fieldset disabled>
+            {% else %}
+            <fieldset>
+            {% endif%}          
+            
+            <div class="card card-body">
+                <a class="btn btn-secondary" href="{%url 'tasks:createTaxReturn' situation.id %}">Ajouter un élément au résultat fiscal</a>
+                <br>
+                <br>
+                <table class="table table-hover table-sm">
+                <thead>
+                <tr>
+                    <th>Rubrique</th>
+                    <th class="text-right">Réintégrations</th>
+                    <th class="text-right">Déductions</th>
+                    <th class="text-right"></th>
+                    <th class="text-right"></th>
+                </tr>
+            </thead>
+            <tr class="table-info">
+                    <th colspan="1">Résultat Net</th>
+                    {% if resultat.sum > 0 %}
+                    <th class="text-right">{{resultat.sum|floatformat:'2'}}</th>
+                    <th></th>
+                    {% else%}
+                    <th></th>
+                    <th class="text-right text-danger">{{resultat.sum|floatformat:'2'}}</th>
+                    {% endif %}
+                    <th></th>
+                    <th></th>                </tr>
+                    <tr class="table-warning">
+                        <th colspan="1">Réintégrations - Courantes</th>
+                        <th class="text-right">{{sum11.sum|floatformat:'2'}}</th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+
+                {% for taxreturn in taxreturns11 %}
+                    <tr>
+                        <td> - {{taxreturn.rubrique}}</td>
+                        <td class="text-right">{{taxreturn.amount|floatformat:'2'}}</td>
+                        <td class="table-secondary"></td>
+                        {% if taxreturn.auto_genre == True %}
+                        <td></td>
+                        <td></td>
+                        {% else %}
+                        <td class="text-right"><a class="btn btn-sm btn-outline-warning" href="{% url 'tasks:updateTaxReturn' taxreturn.id %}"><i class="fas fa-edit"></i></a></td>
+                        <td class="text-right"><a class="btn btn-sm btn-outline-danger" href="{% url 'tasks:deleteTaxReturn' taxreturn.id %}"><i class="fas fa-trash"></i></a></td>
+                        {% endif %}
+                    </tr>
+                {% endfor %}
+
+
+                <tr class="table-warning">
+                    <th colspan="1">Réintégrations - Non Courantes</th>
+                    <th class="text-right">{{sum12.sum|floatformat:'2'}}</th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                </tr>
+
+            {% for taxreturn in taxreturns12 %}
+                <tr>
+                    <td> - {{taxreturn.rubrique}}</td>
+                    <td class="text-right">{{taxreturn.amount|floatformat:'2'}}</td>
+                    <td class="table-secondary"></td>
+                    {% if taxreturn.auto_genre == True %}
+                    <td></td>
+                    <td></td>
+                    {% else %}
+                    <td class="text-right"><a class="btn btn-sm btn-outline-warning" href="{% url 'tasks:updateTaxReturn' taxreturn.id %}"><i class="fas fa-edit"></i></a></td>
+                    <td class="text-right"><a class="btn btn-sm btn-outline-danger" href="{% url 'tasks:deleteTaxReturn' taxreturn.id %}"><i class="fas fa-trash"></i></a></td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+
+
+            <tr class="table-warning">
+                <th colspan="1">Déductions - Courantes</th>
+                <th></th>
+                <th class="text-right">{{sum21.sum|floatformat:'2'}}</th>
+                <th></th>
+                <th></th>
+            </tr>
+
+        {% for taxreturn in taxreturns21 %}
+            <tr>
+                <td> - {{taxreturn.rubrique}}</td>
+                <td class="table-secondary"></td>
+                <td class="text-right">{{taxreturn.amount|floatformat:'2'}}</td>
+                {% if taxreturn.auto_genre == True %}
+                <td></td>
+                <td></td>
+                {% else %}
+                <td class="text-right"><a class="btn btn-sm btn-outline-warning" href="{% url 'tasks:updateTaxReturn' taxreturn.id %}"><i class="fas fa-edit"></i></a></td>
+                <td class="text-right"><a class="btn btn-sm btn-outline-danger" href="{% url 'tasks:deleteTaxReturn' taxreturn.id %}"><i class="fas fa-trash"></i></a></td>
+                {% endif %}
+            </tr>
+        {% endfor %}
+
+
+        <tr class="table-warning">
+            <th colspan="1">Déductions - Non Courantes</th>
+            <th></th>
+            <th class="text-right">{{sum22.sum|floatformat:'2'}}</th>
+            <th></th>
+            <th></th>
+        </tr>
+
+        {% for taxreturn in taxreturns22 %}
+            <tr>
+                <td> - {{taxreturn.rubrique}}</td>
+                <td class="table-secondary"></td>
+                <td class="text-right">{{taxreturn.amount|floatformat:'2'}}</td>
+                {% if taxreturn.auto_genre == True %}
+                <td></td>
+                <td></td>
+                {% else %}
+                <td class="text-right"><a class="btn btn-sm btn-outline-warning" href="{% url 'tasks:updateTaxReturn' taxreturn.id %}"><i class="fas fa-edit"></i></a></td>
+                <td class="text-right"><a class="btn btn-sm btn-outline-danger" href="{% url 'tasks:deleteTaxReturn' taxreturn.id %}"><i class="fas fa-trash"></i></a></td>
+                {% endif %}
+            </tr>
+        {% endfor %}
+
+        <tr class="table-info">
+            <th colspan="1">Résultat Fiscal Brut</th>
+            {% if rfbrut_sum >= 0 %}
+            <th class="text-right">{{rfbrut_sum|floatformat:'2'}}</th>
+            <th></th>
+            {% else %}
+            <th></th>
+            <th class="text-right text-danger">{{rfbrut_sum|floatformat:'2'}}</th>
+            {% endif %}
+            <th></th>
+            <th></th>
+        </tr>
+        <tr class="table-warning">
+            <th colspan="1">Imputation des Reports déficitaires</th>
+            <th></th>
+            <th class="text-right">{{imputdeficitsum.sum|floatformat:'2'}}</th>
+            <th></th>
+            <th></th>
+        </tr>
+        {% for taxreturn in imputdeficit2 %}
+        <tr>
+            <td> - {{taxreturn.rubrique}}</td>
+            <td class="table-secondary"></td>
+            <td class="text-right">{{taxreturn.amount|floatformat:'2'}}</td>
+            <td class="text-right"><a class="btn btn-sm btn-outline-warning" href="{% url 'tasks:updateTaxReturnAmount' taxreturn.id %}"><i class="fas fa-edit"></i></a></td>
+            <td></td>
+        </tr>
+        {% endfor %}
+
+        <tr class="table-info">
+            <th colspan="1">Résultat Fiscal Net</th>
+            {% if rfnet_sum >= 0 %}
+            <th class="text-right">{{rfnet_sum|floatformat:'2'}}</th>
+            <th></th>
+            {% else %}
+            <th></th>
+            <th class="text-right text-danger">{{rfnet_sum|floatformat:'2'}}</th>
+            {% endif %}
+            <th></th>
+            <th></th>
+        </tr>
+
+        <tr class="table-warning">
+            <th colspan="1">Déficits Reportables</th>
+            <th></th>
+            <th class="text-right">{{repordeficitsum.sum|floatformat:'2'}}</th>
+            <th></th>
+            <th></th>
+        </tr>
+        {% for taxreturn in repordeficit3 %}
+        <tr>
+            <td> - {{taxreturn.rubrique}}</td>
+            <td class="table-secondary"></td>
+            <td class="text-right">{{taxreturn.amount|floatformat:'2'}}</td>
+            <td class="text-right"><a class="btn btn-sm btn-outline-warning" href="{% url 'tasks:updateTaxReturnAmount' taxreturn.id %}"><i class="fas fa-edit"></i></a></td>
+            <td></td>
+
+        </tr>
+        {% endfor %}
+        </table>
+        </fieldset>
+
+    </div>
+
+        <div id="calcul_is" class="tabcontent">
+                <div class="card card-body">
+                    <h5 class="text-secondary">Résultat Courant hors Amortissements</h5>
+                    <table class="table table-hover table-sm">
+                        <thead>   
+                        <tr>
+                            <th class="text-left">Résultat</th>
+                            <th class="text-right">Montant</th>
+                        </tr>
+                    </thead>
+                        {% for item in rescour_ha4 %}
+                        <tr>
+                            <td> - {{item.rubrique}}</td>
+                            {% if item.amount < 0 %}
+                            <td class="text-right text-danger">{{item.amount|floatformat:'2'}}</td>
+                            {% else %}
+                            <td class="text-right">{{item.amount|floatformat:'2'}}</td>
+                            {% endif %}
+                        </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+
+
+
+            {% if situation.supervised == True or situation.statut == 2 and is_manager == False %}
+            <fieldset disabled>
+            {% else %}
+            <fieldset>
+            {% endif%}
+
+            <div class="card card-body">
+                    <h5 class="text-secondary">Cotisation Minimale</h5>                    
+                    <table class="table table-hover table-sm">
+                    <thead>
+                        <tr>
+                            <th>Rubrique</th>
+                            <th>Régime</th>
+                            <th class="text-right">Base CM</th>
+                            <th class="text-right">Taux</th>
+                            <th class="text-right">Montant CM</th>
+                            <th class="text-right"></th>
+                        </tr>
+                    </thead>
+                    {% for item in cotisation_min %}
+                        <tr>
+                            <td>{{item.rubrique}}</td>
+                            {% if item.regime == 0 %}
+                            <td>Imposition 100%</td>
+                            {% else %}
+                            <td>Exonération 100%</td>
+                            {% endif %}
+                            <td class="text-right">{{item.base|floatformat:'2'}}</td>
+                            <td class="text-right">{{item.taux|format_percent:"2,False"}} </td>
+                            <td class="text-right">{{item.amount|floatformat:'2'}}</td>
+                            <td class="text-right"><a class="btn btn-sm btn-outline-warning" href=""><i class="fas fa-edit"></i></a></td>
+                        </tr>
+                        {% endfor %}
+                        <tr class="table-info">
+                            <th colspan="4">Montant de la Cotisation Minimale</th>
+                            <th class="text-right">{{cotisation_minsum|floatformat:'2'}}</th>
+                            <th></th>
+                        </tr>
+                </table>
+            </div>
+
+            <div class="card card-body">
+                    <h5 class="text-secondary">Impôt sur les Société</h5>
+                    {% if impotsociete %}
+                <table class="table table-hover table-sm">
+                    <thead>
+                    <tr>
+                        <th class="text-left">Type Bénéfice</th>
+                        <th class="text-right">Pourcentage</th>
+                        <th class="text-right">Base Impôt</th>
+                        <th class="text-right">Taux</th>
+                        <th class="text-right">Montant Impôt</th>
+                        <th class="text-right"></th>
+                    </tr>
+                    </thead>
+                    {% for item in impotsociete %}
+                    <tr>
+                        {% if item.benefice == 0 %}
+                        <td>Progressif Normal</td>
+                        {% elif item.benefice == 1 %}
+                        <td>Progressif Plafoné</td>
+                        {% elif item.benefice == 2 %}
+                        <td>Proportionnel</td>
+                        {% elif item.benefice == 3 %}
+                        <td>Exonéré</td>
+                        {% endif %}
+                        <td class="text-right">{{item.pourcentage|format_percent:"2,False"}}</td>
+                        <td class="text-right">{{item.base|floatformat:'2'}}</td>
+                        <td class="text-right">{{item.taux|format_percent:"2,False"}}</td>
+                        <td class="text-right">{{item.amount|floatformat:'2'}}</td>
+                        <td class="text-right"><a class="btn btn-sm btn-outline-warning" href=""><i class="fas fa-edit"></i></a></td>
+                    </tr>
+                    {% endfor %}
+                    <tr class="table-info">
+                        <th colspan="4">Montant de l'IS</th>
+                        <th class="text-right">{{impotsociete_sum|floatformat:'2'}}</th>
+                        <th></th>
+                    </tr>
+                </table>
+                {% else %}
+                <h3>Pas de bénéfice!</h3>
+                {% endif %}
+            </div>
+        </div>            
+
+        <div id="declaration" class="tabcontent">
+            <div class="card card-body">
+                <h5 class="text-secondary">Résultat fiscal</h5>
+                <table class="table table-hover table-sm">
+                    <thead>   
+                        <tr>
+                            <th class="text-left">Résultat</th>
+                            <th class="text-right">Montant</th>
+                        </tr>
+                    </thead>
+
+                    {% for item in ventilrf6 %}
+                    <tr>
+                        <td> - {{item.rubrique}}</td>
+                        {% if item.amount < 0 %}
+                        <td class="text-right text-danger">{{item.base|floatformat:'2'}}</td>
+                        {% else %}
+                        <td class="text-right">{{item.amount|floatformat:'2'}}</td>
+                        {% endif %}
+                    </tr>
+                    {% endfor %}
+                </table>
+            </div>
+
+            <div class="card card-body">
+                    <h5 class="text-secondary">Ventilation du bénéfice net fiscal</h5>
+                {% if impotsociete %}
+                <table class="table table-hover table-sm">
+                    <thead>
+                        <tr>
+                            <th class="text-left">Type Bénéfice</th>
+                            <th class="text-right">Base de calcul d'IS au prorata</th>
+                            <th class="text-right">Pourcentage</th>
+                            <th class="text-right">Taux d'IS</th>
+                            <th class="text-right">Montant Impôt Correspondant</th>
+                        </tr>
+                    </thead>
+
+                    {% for item in impotsociete %}
+                    <tr>
+                        {% if item.benefice == 0 %}
+                        <td>Progressif Normal</td>
+                        {% elif item.benefice == 1 %}
+                        <td>Progressif Plafoné</td>
+                        {% elif item.benefice == 2 %}
+                        <td>Proportionnel</td>
+                        {% elif item.benefice == 3 %}
+                        <td>Exonéré</td>
+                        {% endif %}
+                        <td class="text-right">{{item.base|floatformat:'2'}}</td>
+                        <td class="text-right">{{item.pourcentage|format_percent:"2,False"}}</td>
+                        <td class="text-right">{{item.taux|format_percent:"2,False"}}</td>
+                        <td class="text-right">{{item.amount|floatformat:'2'}}</td>
+                    </tr>
+                    {% endfor %}
+                    <tr class="table-info">
+                        <th colspan="4">Montant de l'IS</th>
+                        <th class="text-right">{{impotsociete_sum|floatformat:'2'}}</th>
+                        <th></th>
+                    </tr>
+                </table>
+                {% else %}
+                <h3>Pas de bénéfice!</h3>
+                {% endif %}
+            </div>
+
+            <div class="card card-body">
+                <h5 class="text-secondary">Acomptes déjà versés</h5>
+                <table class="table table-hover table-sm">
+                    <thead>   
+                        <tr>
+                            <th class="text-left">Acompte</th>
+                            <th class="text-right">Montant</th>
+                        </tr>
+                    </thead>
+                    {% for item in acompt7 %}
+                    <tr>
+                        <td> - {{item.rubrique}}</td>
+                        {% if item.amount < 0 %}
+                        <td class="text-right text-danger">{{item.base|floatformat:'2'}}</td>
+                        {% else %}
+                        <td class="text-right">{{item.amount|floatformat:'2'}}</td>
+                        {% endif %}
+                    </tr>
+                    {% endfor %}
+                </table>
+            </div>
+
+            <div class="card card-body">
+                <h5 class="text-secondary">Calcul du reliquat d'impôt à verser ou d'excédent à imputer</h5>
+                <table class="table table-hover table-sm">
+                    <thead>   
+                    <tr>
+                        <th class="text-left">Eléments</th>
+                        <th class="text-right">Montant</th>
+                    </tr>
+                </thead>
+                    {% for item in rel_exc8 %}
+                    <tr>
+                        <td> - {{item.rubrique}}</td>
+                        {% if item.amount < 0 %}
+                        <td class="text-right text-danger">{{item.base|floatformat:'2'}}</td>
+                        {% else %}
+                        <td class="text-right">{{item.amount|floatformat:'2'}}</td>
+                        {% endif %}
+                    </tr>
+                    {% endfor %}
+                </table>
+            </div>
+    </div>
+
+    <div id="acomptes" class="tabcontent">
+        {% if acomptesn19 %}
+        <div class="card card-body">
+            <h5 class="text-secondary">Acomptes provisionnels</h5>           
+            <table class="table table-hover table-sm">
+                <thead>   
+                    <tr>
+                        <th class="text-left">Acompte</th>
+                        <th class="text-right">Montant</th>
+                    </tr>
+                </thead>
+                {% for item in acomptesn19 %}
+                <tr>
+                    <td> - {{item.rubrique}}</td>
+                    {% if item.amount < 0 %}
+                    <td class="text-right text-danger">{{item.base|floatformat:'2'}}</td>
+                    {% else %}
+                    <td class="text-right">{{item.amount|floatformat:'2'}}</td>
+                    {% endif %}
+                </tr>
+                {% endfor %}
+            {% endif %}
+            </table>
+        </div>
+    </fieldset>
+    </div>
+
+    
+<script>
+    function openPage(pageName,elmnt,color) {
+      var i, tabcontent, tablinks;
+      tabcontent = document.getElementsByClassName("tabcontent");
+      for (i = 0; i < tabcontent.length; i++) {
+        tabcontent[i].style.display = "none";
+      }
+      tablinks = document.getElementsByClassName("tablink");
+      for (i = 0; i < tablinks.length; i++) {
+        tablinks[i].style.backgroundColor = "";
+      }
+      document.getElementById(pageName).style.display = "block";
+      elmnt.style.backgroundColor = color;
+    }
+    
+    // Get the element with id="defaultOpen" and click on it
+    document.getElementById("defaultOpen").click();
+
+
+    </script>
+
+    
 {% endblock content %}

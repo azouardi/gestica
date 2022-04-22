@@ -1,6 +1,6 @@
 from bootstrap_datepicker_plus import DatePickerInput
 from tasks.models import BenefitItem, BenefitLink
-from accounts.models import Portefolio, Validator
+from accounts.models import Portefolio, Validator, Manager
 from django.forms import ModelForm
 from .models import Ordre, ServiceItem, OutlayItem, LettreMission
 
@@ -46,7 +46,14 @@ class ValidatorForm(ModelForm):
         model = Validator
         fields = '__all__'
         exclude = ['lettremission']
-        
+
+
+
+class ManagerForm(ModelForm):
+    class Meta:
+        model = Manager
+        fields = '__all__'
+        exclude = ['lettremission']        
 class BenefitLinkForm(ModelForm):
     class Meta:
         model = BenefitLink

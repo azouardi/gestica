@@ -1,0 +1,139 @@
+<!--templates/das_update.html-->
+{%  extends '_base.html' %}
+{% load static %}
+
+{% block title %}Eléments Exonérés DAS par Salarié{% endblock title %}
+
+
+{% load crispy_forms_tags %}
+{% block content %}
+
+
+<br>
+	
+	<div class="col-xl-3 col-lg-6">
+		<div class="card l-bg-white-dark">
+			<div class="card-statistic-3 p-4">
+				<div class="card-icon card-icon-large"></div>
+				<div class="mb-4">
+					<h3 class="card-title mb-0">{{das.lettremission.company.name}} / {{das.exercice}}</h3>
+				</div>
+				<div class="row align-items-center mb-2 d-flex">
+					<div class="col-12">
+
+                            {% if das.supervised == True or das.statut == 2 and is_manager == False%}
+
+                            {% if is_manager == True %}
+                            <a class="btn btn-warning" href="{% url 'tasks:exerciceDASDetailManager' das.exercice.id %}">Retour</a>
+                            {% else %}
+                            <a class="btn btn-warning" href="{% url 'accounts:LdmDAS' das.lettremission.id %}">Retour</a>
+                            {% endif %}            
+                            <fieldset disabled>
+                            {% else %}
+                            <fieldset>
+                            {% endif%}
+                            <br>
+                            <button type="button" class="btn btn-success btn-lg btn-block" data-toggle="modal" data-target="#myModal">
+                                {% if dasexodetails %}
+                                Actualiser les Données 
+                                {% else %}
+                                Générer les Elements DAS
+                                {% endif %}
+                            </button>
+                            <br>
+                            {% if is_manager == True %}
+                            <a class="btn btn-warning" href="{% url 'tasks:exerciceDASDetailManager' das.exercice.id %}">Retour</a>
+                            {% else %}
+                            <a class="btn btn-warning" href="{% url 'accounts:LdmDAS' das.lettremission.id %}">Retour</a>
+                            {% endif %}
+                        
+                        </fieldset>
+
+
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="col-xl-12 col-lg-6">
+		<div class="card l-bg-white-dark">
+			<div class="card-statistic-3 p-4">
+				<div class="card-icon card-icon-large"></div>
+				<div class="mb-4">
+
+                    <div class="modal" id="myModal">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <!-- Modal Header -->
+                                <div class="modal-header">
+                                    <h4 class="modal-title text-secondary">Confirmation</h4>
+                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                </div>
+                                <!-- Modal body -->
+                                <div  class="modal-body text-secondary">
+                                    Confirmer la génération des données ?
+                                </div>
+                                <!-- Modal footer -->
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-danger" data-dismiss="modal">Fermer</button>
+                                    <div class="spinner-grow text-warning"></div>
+            
+                                    <form action="{%url 'tasks:updateDataOneDASExo' das.id %}" enctype="multipart/form-data" method="POST">
+                                        {% csrf_token %}
+                                        <input class="btn btn-warning" type="submit" name="OK">
+                                    </form>
+                                </div>
+                            </div>
+                        </div>           
+                    </div>
+					<h3 class="card-title mb-0">Elements Exonérés DAS / Matricule</h3>
+				</div> 
+				<div class="row align-items-center mb-2 d-flex">
+					<div class="col-12">
+
+    
+
+                        
+                        {% if dasexodetails %}
+                        <br>
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Matricule</th>
+                                            <th>Rubrique</th>
+                                            <th class = "text-right">Montant</th>
+                                            <th>Commentaire</th>
+                                            <th class = "text-right">Cohérence</th>
+    
+                                        </tr>
+                                    </thead>
+                        {% for item in dasexodetails %}
+                                        <tbody>
+                                        {% if item.coherence == True %}
+                                        <tr class="table-success">
+
+                                        {% else %}
+                                        <tr class="table-danger">
+
+                                        {% endif %}
+
+                                                <td>{{item.matricule}}</td>
+                                                <td> {{item.code_rubrique}} </td>
+                                                <td class = "text-right"> {{item.amount|floatformat:'2'}} </td>
+                                                <td> {{item.comment}}</td>
+                                                <td class = "text-right"> {{item.coherence}}</td>
+                                                
+                                            </tr>
+                                        </tbody>
+                        {% endfor %}
+                                </table>
+                        {% endif %} 
+
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+{% endblock content %}

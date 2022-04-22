@@ -49,22 +49,85 @@
 
 <br>
 
-<div class="col-md-12">
+<div class="col-md-6">
 	<div class="card card-body">
-	<h3>Période : <b>{{period}}</b></h3>
-	<br>
-	<a type="button" class="btn btn-primary btn-lg btn-block" href="{% url 'tasks:createWork' period.id %}">Ajouter une Tâche</a>
-	<br>
-	<form action="" enctype="multipart/form-data" method="POST">
-		{% csrf_token %}
-		<!-- {{form|crispy}} -->
-		<a class="btn btn-warning" href="{% url 'tasks:periodList' %}">Retour</a>
-		<a class="btn btn-secondary" href="{%url 'tasks:insertWork' period.id %}">Générer les Tâches</a>
-		<a class="btn btn-secondary" href="{%url 'tasks:ExtraDataUpdate' period.id %}">Générer les Valeurs</a>
-		<input class="btn btn-primary" type="submit" name="OK">
-		
-	</form>
 
+		<div class="row">
+			<div class="col">
+				<h3>Période : <b>{{period}}</b></h3>
+				<br>
+				<a type="button" class="btn btn-primary btn-lg btn-block" href="{% url 'tasks:createWork' period.id %}">Ajouter une Tâche</a>
+				<br>		
+					<!-- Button to Open the Modal -->
+					<button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#myModal1">
+						Générer les tâches
+					</button>	  
+					<!-- The Modal -->
+					<div class="modal fade" id="myModal1">
+						<div class="modal-dialog">
+							<div class="modal-content">			
+								<!-- Modal Header -->
+								<div class="modal-header">
+									<h4 class="modal-title">Confirmation</h4>
+									<button type="button" class="close" data-dismiss="modal">&times;</button>
+								</div>			  
+								<!-- Modal body -->
+								<div class="modal-body">
+									Confirmer l'insertion des tâches ?
+					
+								</div>			  
+								<!-- Modal footer -->
+								<div class="modal-footer">
+									<button type="button" class="btn btn-danger" data-dismiss="modal">Fermer</button>
+									<div class="spinner-grow text-warning"></div>
+
+									<form action="{%url 'tasks:insertWork' period.id %}" enctype="multipart/form-data" method="POST">
+										{% csrf_token %}
+										<!-- {{form|crispy}} -->
+										<input class="btn btn-warning" type="submit" name="OK">					
+									</form>
+								</div>	  
+							</div>
+						</div>
+					</div>
+
+					<button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#myModal">
+						Générer les Valeurs
+					</button>
+					<!-- The Modal -->
+					<div class="modal fade" id="myModal">
+					<div class="modal-dialog">
+						<div class="modal-content">
+							<!-- Modal Header -->
+							<div class="modal-header">
+								<h4 class="modal-title">Confirmation</h4>
+								<button type="button" class="close" data-dismiss="modal">&times;</button>
+							</div>
+							<!-- Modal body -->
+							<div class="modal-body">
+								Confirmer la génération des données ?
+
+							</div>
+							<!-- Modal footer -->
+							<div class="modal-footer">
+								<button type="button" class="btn btn-danger" data-dismiss="modal">Fermer</button>
+								<div class="spinner-grow text-warning"></div>
+
+								<form action="{%url 'tasks:ExtraDataUpdate' period.id %}" enctype="multipart/form-data" method="POST">
+									{% csrf_token %}
+									<!-- {{form|crispy}} -->
+									<input class="btn btn-warning" type="submit" name="OK">
+
+								</form>
+							</div>
+						</div>
+					</div>
+				</div>
+				<a class="btn btn-warning" href="{% url 'tasks:periodList' %}">Retour</a>
+				
+			</div>
+
+		</div>
 	</div>
 </div>
 
@@ -77,9 +140,11 @@
 				<button class="accordion">{{lettremission}}</button>
 				<div class="panel">
 					<div class="card-body">
+
 						{% if lettremission %}
-						<table class="table table-sm">
-							<tr>
+						<table class="table table-hover table-sm">
+						<thead>
+						<tr>
 								<th>Dossier</th>
 								<th>Tâche</th>
 								<th>Date Limite</th>
@@ -89,11 +154,12 @@
 								<th>Document</th>
 								<th>Supprimer</th>
 							</tr>
+						</thead>
 						{% else %}
 						{% endif %}
-
+						
 						{% for work in works %}
-		
+
 								<tr>
 									<td>{{work.lettremission.company|truncatechars:25}}</td>
 									<td>{{work.task}}</td>
@@ -114,6 +180,8 @@
 									<td ><a class="btn btn-sm btn-warning" href="{% url 'tasks:updateWork' work.id %}"><i class="fas fa-step-forward"></i> Préparé</a></td>
 									{% elif work.statut == 2 %}
 									<td ><a class="btn btn-sm btn-success" href="{% url 'tasks:updateWork' work.id %}"><i class="fas fa-check-double"></i> Validé</a></td>
+									{% elif das.statut == 3 %}
+									<td ><a class="btn btn-sm btn-danger" href="{% url 'tasks:updateWork' das.id %}"><i class="fas fa-window-close"></i> Non Validé</a></td>
 									{% else %}
 									<td ><a class="btn btn-sm btn-dark" href="{% url 'tasks:updateWork' work.id %}"><i class="fab fa-slack-hash"></i> Non Applicable</a></td>
 									{% endif %}

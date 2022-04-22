@@ -48,13 +48,15 @@
 			<a class="btn btn-secondary" href="{%url 'ordres:createPortefolio' lettremission.id %}">Ajouter à un Responsable</a>
 			<br>
 			{% if portefolios %}
-			<table class="table table-sm">
-				<tr>
+			<table class="table table-hover table-sm">
+			<thead>
+			<tr>
 					<th>Responsable</th>
 					<th>Rôle</th>
 					<th>Editer</th>
 					<th>Supprimer</th>
 				</tr>
+			</thead>
 			{% else %}
 			{% endif %}
 				{% for portefolio in portefolios %}
@@ -74,12 +76,14 @@
 			<a class="btn btn-secondary" href="{%url 'ordres:createValidator' lettremission.id %}">Ajouter à un Validateur</a>
 			<br>
 			{% if validators %}
-			<table class="table table-sm">
-				<tr>
+			<table class="table table-hover table-sm">
+			<thead>
+			<tr>
 					<th>Validateur</th>
 					<th>Editer</th>
 					<th>Supprimer</th>
 				</tr>
+			</thead>
 			{% else %}
 			{% endif %}
 				{% for validator in validators %}
@@ -95,16 +99,43 @@
 		<hr>
 
 		<div class="card card-body">
+			<a class="btn btn-secondary" href="{%url 'ordres:createManager' lettremission.id %}">Ajouter à un Manager</a>
+			<br>
+			{% if managers %}
+			<table class="table table-hover table-sm">
+			<thead>
+			<tr>
+					<th>Validateur</th>
+					<th>Editer</th>
+					<th>Supprimer</th>
+				</tr>
+			</thead>
+			{% else %}
+			{% endif %}
+				{% for manager in managers %}
+
+					<tr>
+						<td>{{manager.user}}</td>
+						<td><a class="btn btn-sm btn-outline-warning" href="{%url 'ordres:updateManager' manager.id %}"><i class="fas fa-edit"></i> Edit</a></td>
+						<td><a class="btn btn-sm btn-outline-danger" href="{%url 'ordres:deleteManager' manager.id %}"><i class="fas fa-trash"></i> Sup.</a></td>
+					</tr>
+				{% endfor %}
+			</table>
+		</div>
+		<hr>
+		<div class="card card-body">
 			<a class="btn btn-secondary" href="{%url 'ordres:createPWSafe' lettremission.id %}">Ajouter un Accès</a>
 			<br>
 			{% if pwsafes %}
-			<table class="table table-sm">
-				<tr>
+			<table class="table table-hover table-sm">
+			<thead>
+			<tr>
 					<th>Collaborateur</th>
 					<th>Responsable</th>
 					<th>Editer</th>
 					<th>Supprimer</th>
 				</tr>
+			</thead>
 			{% else %}
 			{% endif %}
 				{% for pwsafe in pwsafes %}
@@ -124,14 +155,16 @@
 			{% if lettremission.benefitlink %}
 			<a class="btn btn-secondary disabled" href="{%url 'ordres:createBenefitLink' lettremission.id %}">Ajouter une Particularité</a>
 			<br>
-			<table class="table table-sm">
-				<tr>
+			<table class="table table-hover table-sm">
+			<thead>
+			<tr>
 					<th>Lien</th>
 					<th>Editer</th>
 					<th>Supprimer</th>
 				</tr>
 
-					<tr>
+			</thead>
+			<tr>
 						<td>{{lettremission.benefitlink}}</td>
 						<td><a class="btn btn-sm btn-outline-warning" href="{% url 'ordres:updateBenefitLink' lettremission.benefitlink.id %}"><i class="fas fa-edit"></i> Edit</a></td>
 						<td><a class="btn btn-sm btn-outline-danger" href="{% url 'ordres:deleteBenefitLink' lettremission.benefitlink.id %}"><i class="fas fa-trash"></i> Sup.</a></td>

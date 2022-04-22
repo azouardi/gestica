@@ -48,7 +48,7 @@ class DocModelWord(models.Model):
 
 class SocialDoc(models.Model):
     id = models.UUIDField(primary_key=True,default=uuid.uuid4,editable=False)
-    lettremission = models.ForeignKey(LettreMission, on_delete=models.SET_NULL, verbose_name="Lettre de Mission", null=True)
+    lettremission = models.ForeignKey(LettreMission, on_delete=models.CASCADE, verbose_name="Lettre de Mission", null=True)
     date_doc = models.DateTimeField(auto_now_add=True,verbose_name="Date Document")
     
     def __str__(self):

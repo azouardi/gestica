@@ -1,5 +1,6 @@
 
 from decimal import Decimal
+from audits.models import Conclusion, Lead, Section
 from ordres.models import Ordre
 import ordres
 import docx
@@ -16,10 +17,13 @@ from docx.shared import Inches, Pt, Cm, RGBColor
 from docx.oxml.ns import nsdecls
 from docx.oxml import parse_xml
 # Create your views here.
+from dateutil.relativedelta import relativedelta
 
-from docx.enum.text import WD_PARAGRAPH_ALIGNMENT, WD_ALIGN_PARAGRAPH
+from docx.enum.text import WD_BREAK, WD_PARAGRAPH_ALIGNMENT, WD_ALIGN_PARAGRAPH
 from docx.enum.section import WD_ORIENTATION
 from docx.enum.style import WD_STYLE_TYPE
+
+from tasks.models import Situation
 
 # import locale
 # locale.setlocale(locale.LC_NUMERIC, 'de_DE.utf-8')
@@ -506,4 +510,246 @@ def writingdevis(request, pk):
 
 def modelDevis(request, pk):
     redaction = writingdevis(request=request, pk=pk)
+    return redaction
+
+
+
+#-----------------NOTE SYNTHESE-----------------
+def writingnotesynthese(request, pk):
+    s=Situation.objects.get(pk=pk)
+    sections = s.section_set.all()
+    document = Document()
+
+    alignment_dict = {'justify': WD_PARAGRAPH_ALIGNMENT.JUSTIFY,
+                  'center': WD_PARAGRAPH_ALIGNMENT.CENTER,
+                  'right': WD_PARAGRAPH_ALIGNMENT.RIGHT,
+                  'left': WD_PARAGRAPH_ALIGNMENT.LEFT}
+
+    orientation_dict = {'portrait': WD_ORIENTATION.PORTRAIT,
+                    'landscape': WD_ORIENTATION.LANDSCAPE}
+  
+    def add_logo(path, align):
+        document.add_picture(path, width=Inches(4.5), height=Inches(1.5))
+        last_paragraph = document.paragraphs[-1]
+        last_paragraph.alignment = alignment_dict[align]
+        
+    def add_content(content, space_after=6, font_name='Arial', font_size=12, line_spacing=1.5, space_before=6,
+                align='justify', keep_together=False, keep_with_next=False, page_break_before=False,
+                widow_control=False, set_bold=False, set_italic=False, set_underline=False, set_all_caps=False):
+        paragraph = document.add_paragraph(content)
+        run = paragraph.runs
+        font = run[0].font
+        font.name = font_name
+        font.size = Pt(font_size)
+        font.bold = set_bold
+        font.italic = set_italic
+        font.all_caps = set_all_caps
+        font.underline = set_underline
+        paragraph_format = paragraph.paragraph_format
+        paragraph_format.alignment = alignment_dict.get(align.lower())
+        paragraph_format.space_before = Pt(space_before)
+        paragraph_format.space_after = Pt(space_after)
+        paragraph_format.line_spacing = line_spacing
+        paragraph_format.keep_together = keep_together
+        paragraph_format.keep_with_next = keep_with_next
+        paragraph_format.page_break_before = page_break_before
+        paragraph_format.widow_control = widow_control
+
+    def add_content_cell(htab_cells, content, space_after=2, font_name='Arial', font_size=9, line_spacing=1, space_before=0,
+                align='left', keep_together=True, keep_with_next=False, page_break_before=False,
+                widow_control=False, set_bold=False, set_italic=False, set_underline=False, set_all_caps=False):
+        hp=htab_cells.add_paragraph(content)
+        run = hp.runs
+        font = run[0].font
+        font.name = font_name
+        font.size = Pt(font_size)
+        font.bold = set_bold
+        font.italic = set_italic
+        font.all_caps = set_all_caps
+        font.underline = set_underline
+        paragraph_format = hp.paragraph_format
+        paragraph_format.alignment = alignment_dict.get(align.lower())
+        paragraph_format.space_before = Pt(space_before)
+        paragraph_format.space_after = Pt(space_after)
+        paragraph_format.line_spacing = line_spacing
+        paragraph_format.keep_together = keep_together
+        paragraph_format.keep_with_next = keep_with_next
+        paragraph_format.page_break_before = page_break_before
+        paragraph_format.widow_control = widow_control
+
+
+    def add_content_cell_bis(htable, row, cell, content, space_after=2, font_name='Arial', font_size=9, line_spacing=1, space_before=0,
+                align='left', keep_together=True, keep_with_next=False, page_break_before=False,
+                widow_control=False, set_bold=False, set_italic=False, set_underline=False, set_all_caps=False):
+        
+        htab_cells=htable.rows[row].cells
+        ht0=htab_cells[cell]
+        ht0.text = content
+        paragraph = ht0.paragraphs[0]
+        run = paragraph.runs
+        font = run[0].font
+        font.name = font_name
+        font.size = Pt(font_size)
+        font.bold = set_bold
+        font.italic = set_italic
+        font.all_caps = set_all_caps
+        font.underline = set_underline
+        paragraph_format = paragraph.paragraph_format
+        paragraph_format.alignment = alignment_dict.get(align.lower())
+        paragraph_format.space_before = Pt(space_before)
+        paragraph_format.space_after = Pt(space_after)
+        paragraph_format.line_spacing = line_spacing
+        paragraph_format.keep_together = keep_together
+        paragraph_format.keep_with_next = keep_with_next
+        paragraph_format.page_break_before = page_break_before
+        paragraph_format.widow_control = widow_control
+
+    def add_run(content, font_name='Arial', set_bold=True, set_italic=False, set_underline=False, set_all_caps=False):
+        paragraph = document.paragraphs[-1]
+        paragraph.add_run(content)
+        run = paragraph.runs[-1]
+        font = run.font
+        font.name = font_name
+        font.bold = set_bold
+        font.italic = set_italic
+        font.all_caps = set_all_caps
+        font.underline = set_underline
+
+
+    def add_subheading(subheading, level):
+        document.add_heading(subheading, level)
+
+    def entetepage():
+        header = document.sections[0].header
+        htable=header.add_table(5, 2, Inches(12))
+        a = htable.cell(0,0)
+        b = htable.cell(4,0)
+        A = a.merge(b)
+        ht0=A.add_paragraph()
+        kh=ht0.add_run()
+        kh.add_picture('media/'+str(s.lettremission.office.company.file), width=Inches(3))
+        for cell in htable.columns[0].cells:
+            cell.width = Inches(8)
+        add_content_cell_bis(htable=htable, row=0,cell=1, content='EXPERTISE COMPTABLE, AUDIT', space_before=0, space_after=3, set_bold=True)
+        add_content_cell_bis(htable=htable, row=1,cell=1, content='COMMISSARIAT AUX COMPTES', space_after=3, set_bold=True)
+        add_content_cell_bis(htable=htable, row=2,cell=1, content='CONSEIL JURIDIQUE ET FISCAL', space_after=3, set_bold=True)
+        add_content_cell_bis(htable=htable, row=3,cell=1, content='DROIT DU TRAVAIL ET PAIE', space_after=3, set_bold=True)
+        add_content_cell_bis(htable=htable, row=4,cell=1, content='TRANSMISSION D’ENTREPRISES', space_after=3, set_bold=True)
+
+
+
+        
+    def piedpage():
+        footer = document.sections[0].footer
+        fp1 =footer.paragraphs[-1]
+        fp1.add_run("______________________________________________________________________________________________")
+        run =fp1.runs
+        run[0].font.size = Pt(14)
+        run[0].font.bold = True
+        run[0].font.color.rgb = RGBColor(255, 102, 0)
+        ftable=footer.add_table(4, 3, Inches(15))
+        a = ftable.cell(0,0)
+        b = ftable.cell(1,0)
+        A = a.merge(b)
+        for cell in ftable.columns[0].cells:
+            cell.width = Inches(6)  
+        for cell in ftable.columns[1].cells:
+            cell.width = Inches(8) 
+        add_content_cell_bis(htable=ftable, row=0,cell=0,content=str(s.lettremission.office.company.adresse)+ ' - '+str(s.lettremission.office.company.city))
+        add_content_cell_bis(htable=ftable, row=0,cell=1,content=str(s.lettremission.office.company.name))
+        add_content_cell_bis(htable=ftable, row=0,cell=2,content='ouardi@eurodefis.com')
+        
+        add_content_cell_bis(htable=ftable, row=1,cell=1,content='RC: '+str(s.lettremission.office.company.rc)+ ' - CNSS:'+str(s.lettremission.office.company.cnss))
+        add_content_cell_bis(htable=ftable, row=1,cell=2,content='arji@eurodefis.com')
+        
+        add_content_cell_bis(htable=ftable, row=2,cell=0,content='Tél  : +212 522 58 48 69')
+        add_content_cell_bis(htable=ftable, row=2,cell=1,content='TP: '+str(s.lettremission.office.company.tp)+ ' - IF:'+str(s.lettremission.office.company.identifiant_fiscal))
+        add_content_cell_bis(htable=ftable, row=2,cell=2,content=' ')
+
+        add_content_cell_bis(htable=ftable, row=3,cell=0,content='Fax : +212 522 33 51 70')
+        add_content_cell_bis(htable=ftable, row=3,cell=1,content='ICE: '+str(s.lettremission.office.company.ice))
+        add_content_cell_bis(htable=ftable, row=3,cell=2,content='www.eurodefis.com')        
+
+# début de la rédaction
+
+
+    def modelword(request):
+
+        sections = document.sections
+        for section in sections:
+            section.header_distance = Cm(0.5)
+            section.footer_distance = Cm(0.5)
+            section.top_margin = Cm(1.5)
+            section.bottom_margin = Cm(1.5)
+            section.left_margin = Cm(1.5)
+            section.right_margin = Cm(1.5)
+            
+        entetepage()
+        piedpage()
+        
+        #-------------page de garde--------------
+        add_content(content='Note de synthèse', font_size=24, set_bold=True, align='center',set_underline=False, space_after=32, space_before=64, set_all_caps=True) 
+        add_content(content='Au titre de la période cloturée au :'+str(s.date_closing), font_size=14, set_bold=True, align='center',set_underline=False, space_after=32, space_before=32) 
+        add_content(content=str(s.lettremission.company.name), font_size=18, set_bold=True, align='center',set_underline=False, space_after=6, space_before=32, set_all_caps=True) 
+        add_logo(path='media/'+str(s.lettremission.company.file),align='center')
+        document.add_picture('media/'+str(s.lettremission.company.file), width=Inches(3))
+        last_paragraph = document.paragraphs[-1]
+        last_paragraph.alignment = alignment_dict['center']
+
+        # -------------saut de page--------------------
+        document.add_paragraph()
+        last_paragraph = document.paragraphs[-1]
+        run = last_paragraph.add_run()
+        run.add_break(WD_BREAK.PAGE)
+        
+        #-----------------CONTENU-------------------
+        
+        sections= Section.objects.filter(situation=s).filter(statut__in=[1,2]).order_by('section')
+        if sections:
+            date_closing_n1=s.date_closing+relativedelta(years=-1)
+
+                   #Tableau ESG-----------
+            
+            tableESG = document.add_table(rows=34, cols=6, style='Table Grid')
+            for cell in tableESG.columns[0].cells:
+                cell.width = Inches(5)
+            for cell in tableESG.columns[2].cells:
+                cell.width = Inches(2) 
+            tab_cells=tableESG.rows[0].cells
+
+            add_content_cell_bis(htable=tableESG, row=0, cell=0,content='Rubrique', font_size=12, set_all_caps=True, set_bold=True)
+            add_content_cell_bis(htable=tableESG, row=0, cell=1,content='Note', font_size=12, set_all_caps=True, set_bold=True)
+            add_content_cell_bis(htable=tableESG, row=0, cell=2,content=str(s.date_closing), font_size=12, set_all_caps=True, set_bold=True)
+            add_content_cell_bis(htable=tableESG, row=0, cell=3,content=str(date_closing_n1), font_size=12, set_all_caps=True, set_bold=True)
+            add_content_cell_bis(htable=tableESG, row=0, cell=4,content='Var.', font_size=12, set_all_caps=True, set_bold=True)      
+            add_content_cell_bis(htable=tableESG, row=0, cell=5,content='%', font_size=12, set_all_caps=True, set_bold=True)      
+            
+            tab_cells=tableESG.rows[1].cells
+            lead = Lead.objects.filter(code_account_id='711').filter(section__in=[sections[0].id])
+            if lead:
+                add_content_cell_bis(htable=tableESG, row=1, cell=0,content=str(lead[0].code_account.name_account), font_size=12, set_all_caps=False)
+                add_content_cell_bis(htable=tableESG, row=1, cell=1,content='-', font_size=9, set_all_caps=False)
+                add_content_cell_bis(htable=tableESG, row=1, cell=2,content=str('{:8,.2f}'.format(lead[0].data_n)), font_size=12,  set_all_caps=False)
+                add_content_cell_bis(htable=tableESG, row=1, cell=3,content=str('{:8,.2f}'.format(lead[0].data_n1)), font_size=12, set_all_caps=False)
+                add_content_cell_bis(htable=tableESG, row=1, cell=4,content=str('{:8,.2f}'.format(lead[0].data_delta)), font_size=12, set_all_caps=False)      
+                add_content_cell_bis(htable=tableESG, row=1, cell=5,content=str('{:8,.2f}'.format(lead[0].data_delta_pc)), font_size=12, set_all_caps=False)               
+            
+            #-----------------REVUE ANALYTIQUE-------------------
+            for sect in sections:
+                revues = Conclusion.objects.filter(section=sect).filter(statut__in=[1,2])
+                if revues:
+                    add_subheading(str(sect.section.name_section),2)
+                    for rev in revues:
+                        add_content(content=str(rev.conclusion))
+
+        
+        
+    modelword(request)
+    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document')
+    response['Content-Disposition'] = 'attachment; filename=Devis.docx'
+    document.save(response)
+    return response
+
+def modelNoteSynthese(request, pk):
+    redaction = writingnotesynthese(request=request, pk=pk)
     return redaction

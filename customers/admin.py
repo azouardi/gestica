@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import BankAcount, Company, Office, BankAcount, LegalForm, Currency, RepresentativeCompany, RepresentativeLink, RoleRepresentative, Shareholder,Representative, Nationality, Country, City, Person, Contact, ShareholderCompany, ShareholderLink
+from .models import BlackList, CompanyTemps, BankAcount, Company, Office, BankAcount, LegalForm, Currency, RepresentativeCompany, RepresentativeLink, RoleRepresentative, Shareholder,Representative, Nationality, Country, City, Person, Contact, ShareholderCompany, ShareholderLink
 
 class CompanyAdmin(admin.ModelAdmin):
     list_display = ("name", "ice", "identifiant_fiscal","rc", "adresse", "create_date", "fiscal_year", "legal_form")
@@ -22,3 +22,5 @@ admin.site.register(City)
 admin.site.register(Person)
 admin.site.register(RepresentativeCompany)
 admin.site.register(RoleRepresentative)
+admin.site.register(CompanyTemps)
+admin.site.register(BlackList)

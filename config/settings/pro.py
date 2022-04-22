@@ -12,14 +12,14 @@ DATABASES = {
         'NAME': 'Office',
         'USER': 'postgres',
         'PASSWORD': 'Sami3AOEC09',
-        # 'HOST': '192.168.1.101',
-        'HOST': 'localhost',
+        'HOST': '192.168.1.101',
+        # 'HOST': 'localhost',
         'PORT': 5432
     }
 }
-dj_from_env = dj_database_url.config(conn_max_age=600)
+dj_from_env = dj_database_url.config(conn_max_age=None)
 DATABASES['default'].update(dj_from_env)
 
-# Heroku settings.
-import django_heroku
-django_heroku.settings(locals())
+# # Heroku settings.
+# import django_heroku
+# django_heroku.settings(locals())

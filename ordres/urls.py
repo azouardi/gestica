@@ -41,6 +41,10 @@ urlpatterns = [
     path('update_validator/<uuid:pk>/', UpdateValidatorView.as_view(), name='updateValidator'),
     path('delete_validator/<uuid:pk>/', DeleteValidatorView.as_view(), name='deleteValidator'),
 
+    path('create_manager/<uuid:pk>/', CreateManagerView.as_view(), name='createManager'),
+    path('update_manager/<uuid:pk>/', UpdateManagerView.as_view(), name='updateManager'),
+    path('delete_manager/<uuid:pk>/', DeleteManagerView.as_view(), name='deleteManager'),
+
 
     path('create_pwsafe/<uuid:pk>/', CreatePWSafeView.as_view(), name='createPWSafe'),
     path('update_pwsafe/<uuid:pk>/', UpdatePWSafeView.as_view(), name='updatePWSafe'),
